@@ -190,10 +190,10 @@ export class Changelog extends Component {
         </p>
         <p>
           <b>Thanks to: </b>
-          DaedalusDock, Baystation 12, /vg/station, Goonstation, TGstation, NTstation, CDK
-          Station devs, FacepunchStation, the original Space Station 13
-          developers, Invisty for the title image and the countless others who
-          have contributed to the game, over the years.
+          DaedalusDock, Baystation 12, /vg/station, Goonstation, TGstation,
+          NTstation, CDK Station devs, FacepunchStation, the original Space
+          Station 13 developers, Invisty for the title image and the countless
+          others who have contributed to the game, over the years.
         </p>
         <p>
           {'Current project maintainers can be found '}
