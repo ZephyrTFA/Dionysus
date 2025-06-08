@@ -319,9 +319,6 @@ GLOBAL_LIST_EMPTY(wizard_spellbook_purchases_by_key)
 	var/datum/action/cooldown/spell/pointed/projectile/fireball/fireball = new(owner)
 	fireball.Grant(living_current)
 
-	var/obj/item/implant/exile/exiled = new /obj/item/implant/exile(living_current)
-	exiled.implant(living_current, body_zone = BODY_ZONE_CHEST)
-
 /datum/antagonist/wizard/academy/create_objectives()
 	var/datum/objective/new_objective = new("Protect Wizard Academy from the intruders")
 	new_objective.owner = owner
