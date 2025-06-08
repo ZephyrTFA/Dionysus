@@ -47,7 +47,6 @@
 #define ACCESS_KEYCARD_AUTH 60
 /// Has access to the satellite and secure tech storage.
 #define ACCESS_SECURE_ENGINEERING 61
-#define ACCESS_GATEWAY 62
 /// For releasing minerals from the ORM
 #define ACCESS_MINERAL_STOREROOM 64
 /// Weapon authorization for secbots
