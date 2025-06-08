@@ -303,7 +303,7 @@ GLOBAL_LIST_EMPTY(wizard_spellbook_purchases_by_key)
 /datum/antagonist/wizard/academy
 	name = "Academy Teacher"
 	show_in_antagpanel = FALSE
-	outfit_type = /datum/outfit/wizard/academy
+	outfit_type = /datum/outfit/wizard
 	move_to_lair = FALSE
 
 /datum/antagonist/wizard/academy/equip_wizard()
