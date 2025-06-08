@@ -64753,7 +64753,6 @@
 /turf/open/floor/plating,
 /area/station/maintenance/starboard/greater)
 "xXf" = (
-/obj/structure/closet/secure_closet/exile,
 /obj/structure/extinguisher_cabinet/directional/west,
 /obj/effect/turf_decal/bot{
 	dir = 1
