@@ -1,4 +1,4 @@
-# Dionysus Dock codebase
+# Dionysus codebase
 
 <!-- [![CI Suite](https://github.com/DaedalusDock/daedalusdock/actions/workflows/ci_suite.yml/badge.svg)](https://github.com/DaedalusDock/daedalusdock/actions/workflows/ci_suite.yml)
 [![Percentage of issues still open](https://isitmaintained.com/badge/open/DaedalusDock/daedalusdock.svg)](https://isitmaintained.com/project/DaedalusDock/daedalusdock "Percentage of issues still open")
