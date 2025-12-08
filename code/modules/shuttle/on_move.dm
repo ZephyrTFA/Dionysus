@@ -318,13 +318,9 @@ All ShuttleMove procs go here
 
 /obj/structure/cable/beforeShuttleMove(turf/newT, rotation, move_mode, obj/docking_port/mobile/moving_dock)
 	. = ..()
-	cut_cable_from_powernet(FALSE)
-	var/clockwise_rotation_amount = round(rotation / 90)
-	rotate_clockwise_amount(clockwise_rotation_amount)
-
-/obj/structure/cable/afterShuttleMove(turf/oldT, list/movement_force, shuttle_dir, shuttle_preferred_direction, move_dir, rotation)
-	. = ..()
-	propagate_if_no_network()
+	cable_connection_1 = turn(cable_connection_1, rotation)
+	cable_connection_2 = turn(cable_connection_2, rotation)
+	update_appearance(UPDATE_ICON_STATE)
 
 /obj/structure/shuttle/beforeShuttleMove(turf/newT, rotation, move_mode, obj/docking_port/mobile/moving_dock)
 	. = ..()

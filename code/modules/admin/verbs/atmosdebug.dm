@@ -51,11 +51,10 @@
 
 	for(var/turf/T in world.contents)
 		for(var/obj/structure/cable/cable in T.contents)
-			var/directions = cable.linked_dirs
 			for(var/obj/structure/cable/other_cable in T.contents)
 				if(cable == other_cable)
 					continue
-				if(other_cable.linked_dirs == directions)
+				if(other_cable.cable_connection_1 == cable.cable_connection_1 && other_cable.cable_connection_2 == cable.cable_connection_2)
 					results += "Doubled wire at [ADMIN_VERBOSEJMP(cable)]"
 
 		var/obj/machinery/power/terminal/term = locate(/obj/machinery/power/terminal) in T.contents

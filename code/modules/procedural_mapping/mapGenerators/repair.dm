@@ -50,7 +50,6 @@
 				atmos_machines += A
 
 	SSatoms.InitializeAtoms(atoms)
-	SSmachines.setup_template_powernets(cables)
 	SSairmachines.setup_template_machinery(atmos_machines)
 	GLOB.reloading_map = FALSE
 

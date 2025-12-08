@@ -103,7 +103,6 @@
 
 	// NOTE, now that Initialize and LateInitialize run correctly, do we really
 	// need these two below?
-	SSmachines.setup_template_powernets(cables)
 	SSairmachines.setup_template_machinery(atmos_machines)
 	SSshuttle.setup_shuttles(ports)
 

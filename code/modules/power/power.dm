@@ -218,21 +218,6 @@
 	powernet.remove_machine(src)
 	return TRUE
 
-// attach a wire to a power machine - leads from the turf you are standing on
-//almost never called, overwritten by all power machines but terminal and generator
-/obj/machinery/power/attackby(obj/item/W, mob/user, params)
-	if(istype(W, /obj/item/stack/cable_coil))
-		var/obj/item/stack/cable_coil/coil = W
-		var/turf/T = user.loc
-		if(T.underfloor_accessibility < UNDERFLOOR_INTERACTABLE || !isfloorturf(T))
-			return
-		if(get_dist(src, user) > 1)
-			return
-		coil.place_turf(T, user)
-	else
-		return ..()
-
-
 ///////////////////////////////////////////
 // Powernet handling helpers
 //////////////////////////////////////////
@@ -432,7 +417,7 @@
 	if(!can_have_cabling())
 		return null
 	for(var/obj/structure/cable/C in src)
-		if(!C.is_knotted())
+		if(C.cable_connection_1 != NONE)
 			continue
 		return C
 	return null

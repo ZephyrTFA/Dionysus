@@ -62,13 +62,13 @@
 //add a cable to the current powernet
 //Warning : this proc DON'T check if the cable exists
 /datum/powernet/proc/add_cable(obj/structure/cable/C)
-	if(C.powernet)// if C already has a powernet...
-		if(C.powernet == src)
-			return
-		else
-			C.powernet.remove_cable(C) //..remove it
-	C.powernet = src
-	cables +=C
+	// if(C.powernet)// if C already has a powernet...
+	// 	if(C.powernet == src)
+	// 		return
+	// 	else
+	// 		C.powernet.remove_cable(C) //..remove it
+	// C.powernet = src
+	// cables +=C
 
 //remove a power machine from the current powernet
 //if the powernet is then empty, delete it

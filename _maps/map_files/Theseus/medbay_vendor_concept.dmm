@@ -25,10 +25,10 @@
 	codes_txt = "patrol;next_patrol=8.1-Aft-to-Escape"
 	},
 /obj/structure/cable/yellow{
-	icon_state = "12"
+	icon_state = "4-8"
 	},
 /obj/structure/cable/yellow{
-	icon_state = "6"
+	icon_state = "2-4"
 	},
 /turf/open/floor/iron,
 /area/space)
@@ -50,7 +50,7 @@
 /area/space)
 "i" = (
 /obj/structure/cable/yellow{
-	icon_state = "12"
+	icon_state = "4-8"
 	},
 /turf/open/floor/iron,
 /area/space)
@@ -91,7 +91,7 @@
 "o" = (
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/structure/cable/yellow{
-	icon_state = "12"
+	icon_state = "4-8"
 	},
 /turf/open/floor/iron,
 /area/space)
@@ -111,7 +111,7 @@
 	},
 /obj/machinery/power/apc/auto_name/directional/east,
 /obj/structure/cable/yellow{
-	icon_state = "1"
+	icon_state = "0-1"
 	},
 /turf/open/floor/iron,
 /area/space)
@@ -178,7 +178,7 @@
 /obj/effect/decal/cleanable/dirt,
 /obj/machinery/light/small/directional/east,
 /obj/structure/cable/yellow{
-	icon_state = "10"
+	icon_state = "2-8"
 	},
 /obj/item/radio/intercom/directional/east{
 	pixel_y = 8
@@ -214,7 +214,7 @@
 	codes_txt = "patrol;next_patrol=10.2-Aft-Port-Corner"
 	},
 /obj/structure/cable/yellow{
-	icon_state = "12"
+	icon_state = "4-8"
 	},
 /turf/open/floor/iron,
 /area/space)
@@ -231,7 +231,7 @@
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
 /obj/structure/cable/yellow{
-	icon_state = "3"
+	icon_state = "1-2"
 	},
 /turf/open/floor/iron,
 /area/space)
@@ -258,7 +258,7 @@
 /area/space)
 "O" = (
 /obj/structure/cable/yellow{
-	icon_state = "68"
+	icon_state = "4-9"
 	},
 /turf/open/floor/plating,
 /area/space)
@@ -266,7 +266,7 @@
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
 /obj/structure/cable/yellow{
-	icon_state = "33"
+	icon_state = "1-6"
 	},
 /turf/open/floor/plating,
 /area/space)
@@ -297,7 +297,7 @@
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
 /obj/structure/cable/yellow{
-	icon_state = "3"
+	icon_state = "1-2"
 	},
 /turf/open/floor/iron,
 /area/space)
@@ -305,7 +305,7 @@
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/structure/cable/yellow{
-	icon_state = "3"
+	icon_state = "1-2"
 	},
 /turf/open/floor/iron,
 /area/space)

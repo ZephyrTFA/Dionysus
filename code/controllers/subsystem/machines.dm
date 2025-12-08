@@ -8,20 +8,8 @@ SUBSYSTEM_DEF(machines)
 	var/list/powernets = list()
 
 /datum/controller/subsystem/machines/Initialize()
-	makepowernets()
 	fire()
 	return ..()
-
-/datum/controller/subsystem/machines/proc/makepowernets()
-	for(var/datum/powernet/power_network as anything in powernets)
-		qdel(power_network)
-	powernets.Cut()
-
-	for(var/obj/structure/cable/power_cable as anything in ::cable_list)
-		if(!power_cable.powernet)
-			var/datum/powernet/new_powernet = new()
-			new_powernet.add_cable(power_cable)
-			propagate_network(power_cable, power_cable.powernet)
 
 /datum/controller/subsystem/machines/stat_entry(msg)
 	msg = "M:[length(processing)]|PN:[length(powernets)]"
@@ -44,15 +32,6 @@ SUBSYSTEM_DEF(machines)
 			thing.datum_flags &= ~DF_ISPROCESSING
 		if (MC_TICK_CHECK)
 			return
-
-/datum/controller/subsystem/machines/proc/setup_template_powernets(list/cables)
-	var/obj/structure/cable/PC
-	for(var/A in 1 to cables.len)
-		PC = cables[A]
-		if(!PC.powernet)
-			var/datum/powernet/NewPN = new()
-			NewPN.add_cable(PC)
-			propagate_network(PC,PC.powernet)
 
 /datum/controller/subsystem/machines/Recover()
 	if (istype(SSmachines.processing))

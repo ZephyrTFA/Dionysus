@@ -993,7 +993,26 @@ INITIALIZE_IMMEDIATE(/obj/effect/mapping_helpers/no_lava)
 		cable = src
 		has_become_cable = TRUE
 	cable.color = color
-	cable.set_directions(direction)
+	var/dir_1 = NONE
+	var/dir_2 = NONE
+	var/list/remaining_directions = GLOB.cardinals.Copy()
+	for(var/cardinal in remaining_directions)
+		remaining_directions -= cardinal	
+		if(direction & cardinal)
+			dir_1 = cardinal
+			break
+	for(var/cardinal in remaining_directions)
+		remaining_directions -= cardinal
+		if(direction & cardinal)
+			dir_2 = cardinal
+			break
+	if(dir_1 > dir_2)
+		cable.cable_connection_1 = dir_2
+		cable.cable_connection_2 = dir_1
+	else
+		cable.cable_connection_1 = dir_1
+		cable.cable_connection_2 = dir_2
+	cable.update_appearance()
 
 /obj/structure/cable/smart_cable/proc/spawn_cables_for_directions(directions)
 	if((directions & NORTH) && (directions & EAST))

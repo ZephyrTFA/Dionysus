@@ -347,12 +347,6 @@ GLOBAL_LIST_EMPTY(station_turfs)
 /turf/attackby(obj/item/C, mob/user, params)
 	if(..() || C.attack_turf(src, user, params))
 		return TRUE
-
-	if(can_lay_cable() && istype(C, /obj/item/stack/cable_coil))
-		var/obj/item/stack/cable_coil/coil = C
-		coil.place_turf(src, user)
-		return TRUE
-
 	return FALSE
 
 /turf/attackby_secondary(obj/item/weapon, mob/user, params)

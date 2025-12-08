@@ -14,7 +14,7 @@
 /datum/cable_click_manager/New(new_parent)
 	parent = new_parent
 
-	phantom_knot = image('icons/obj/power_cond/cable.dmi', "0")
+	phantom_knot = image('icons/obj/power_cond/cable.dmi', "0-0")
 	phantom_knot.appearance_flags = APPEARANCE_UI
 	phantom_knot.plane = ABOVE_LIGHTING_PLANE
 	phantom_knot.color = parent.color
@@ -107,7 +107,7 @@
 			return
 
 		disable_catcher()
-		to_chat(usr, span_obviousnotice("Advanced wire placement disabled."))
+		to_chat(usr, span_obviousnotice("wire placement disabled."))
 		return
 
 	var/turf/T = parse_caught_click_modifiers(params, get_turf(user.client.eye), user.client)
@@ -138,7 +138,7 @@
 		tracked_turf = T
 		return
 
-	if(try_place_wire(T, (position_1 | grid_cell)))
+	if(try_place_wire(T))
 		clear_state()
 
 /datum/cable_click_manager/process(delta_time)
@@ -168,7 +168,7 @@
 	var/grid_cell = get_nonant_from_pixels(text2num(x_split[2]), text2num(y_split[2]))
 
 	if(isnull(position_1))
-		phantom_wire.icon_state = "0"
+		phantom_wire.icon_state = "0-0"
 		phantom_wire.loc = T
 		offset_image_to_nonant_cell(grid_cell, phantom_wire)
 		return
@@ -177,10 +177,24 @@
 	phantom_wire.loc = T
 	phantom_wire.pixel_x = 0
 	phantom_wire.pixel_y = 0
-	phantom_wire.icon_state = "[position_1 | position_2]"
+	if(position_1 > position_2)
+		phantom_wire.icon_state = "[position_2]-[position_1]"
+	else
+		phantom_wire.icon_state = "[position_1]-[position_2]"
 
-/datum/cable_click_manager/proc/try_place_wire(turf/T, cable_direction = NONE)
-	return parent.place_turf(T, user, cable_direction)
+/datum/cable_click_manager/proc/try_place_wire(turf/T)
+	var/cable_dir_1 = position_1
+	var/cable_dir_2 = position_2
+	if(cable_dir_1 > cable_dir_2)
+		var/temp = cable_dir_1
+		cable_dir_1 = cable_dir_2
+		cable_dir_2 = temp
+	for(var/obj/structure/cable/cable in T)
+		if(cable.cable_connection_1 == cable_dir_1 && cable.cable_connection_2 == cable_dir_1)
+			parent.balloon_alert(usr, "conflicting cable!")
+			return FALSE
+	new /obj/structure/cable(T, cable_dir_1, cable_dir_2)
+	return TRUE
 
 /datum/cable_click_manager/proc/clear_state()
 	tracked_turf = null
@@ -214,40 +228,40 @@
 			nonant_column = 0
 
 	var/static/list/lookup = list(
-		CABLE_NORTHWEST, CABLE_NORTH, CABLE_NORTHEAST,
-		CABLE_WEST,      0          , CABLE_EAST,
-		CABLE_SOUTHWEST, CABLE_SOUTH, CABLE_SOUTHEAST
+		NORTH|WEST, NORTH, NORTH|EAST,
+		WEST, 0, EAST,
+		SOUTH|WEST, SOUTH, SOUTH|EAST,
 	)
 
 	return lookup[nonant_row + nonant_column]
 
 /datum/cable_click_manager/proc/offset_image_to_nonant_cell(cell, image/I)
 	switch(cell)
-		if(CABLE_NORTHWEST)
+		if(NORTH|WEST)
 			I.pixel_x = 0
 			I.pixel_y = 32
-		if(CABLE_NORTH)
+		if(NORTH)
 			I.pixel_x = 16
 			I.pixel_y = 32
-		if(CABLE_NORTHEAST)
+		if(NORTH|EAST)
 			I.pixel_x = 32
 			I.pixel_y = 32
-		if(CABLE_WEST)
+		if(WEST)
 			I.pixel_x = 0
 			I.pixel_y = 16
 		if(0)
 			I.pixel_x = 16
 			I.pixel_y = 16
-		if(CABLE_EAST)
+		if(EAST)
 			I.pixel_x = 32
 			I.pixel_y = 16
-		if(CABLE_SOUTHWEST)
+		if(SOUTH|WEST)
 			I.pixel_x = 0
 			I.pixel_y = 0
-		if(CABLE_SOUTH)
+		if(SOUTH)
 			I.pixel_x = 16
 			I.pixel_y = 0
-		if(CABLE_SOUTHEAST)
+		if(SOUTH|EAST)
 			I.pixel_x = 32
 			I.pixel_y = 0
 

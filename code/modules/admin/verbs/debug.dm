@@ -96,7 +96,6 @@
 /client/proc/cmd_debug_make_powernets()
 	set category = "Debug"
 	set name = "Make Powernets"
-	SSmachines.makepowernets()
 	log_admin("[key_name(src)] has remade the powernet. makepowernets() called.")
 	message_admins("[key_name_admin(src)] has remade the powernets. makepowernets() called.")
 	SSblackbox.record_feedback("tally", "admin_verb", 1, "Make Powernets") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!

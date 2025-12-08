@@ -1,0 +1,1 @@
+/datum/powernet_consumer

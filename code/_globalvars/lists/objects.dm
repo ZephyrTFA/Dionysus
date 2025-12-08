@@ -38,6 +38,3 @@ GLOBAL_LIST_EMPTY(roundstart_station_mechcharger_areas) // List of area names of
 
 /// Contains all atmospheric machinery, only used if DEBUG_MAPS is defined.
 GLOBAL_REAL_VAR(list/atmospherics) = list()
-
-/// Is a real global for speed
-GLOBAL_REAL_VAR(list/cable_list) = list()
