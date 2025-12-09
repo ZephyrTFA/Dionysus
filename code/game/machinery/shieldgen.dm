@@ -292,14 +292,6 @@
 		cleanup_field(d)
 	return ..()
 
-/obj/machinery/power/shieldwallgen/should_have_node()
-	return anchored
-
-/obj/machinery/power/shieldwallgen/connect_to_network()
-	if(!anchored)
-		return FALSE
-	. = ..()
-
 /obj/machinery/power/shieldwallgen/process()
 	if(active)
 		icon_state = "shield_wall_gen_on"
@@ -390,7 +382,6 @@
 	. = ..()
 	. |= default_unfasten_wrench(user, tool, time = 0)
 	var/turf/T = get_turf(src)
-	update_cable_icons_on_turf(T)
 	if(. == SUCCESSFUL_UNFASTEN && anchored)
 		connect_to_network()
 
@@ -419,7 +410,7 @@
 	if(locked && !issilicon(user))
 		to_chat(user, span_warning("The controls are locked!"))
 		return
-	if(!powernet)
+	if(!my_cable)
 		to_chat(user, span_warning("\The [src] needs to be powered by a wire!"))
 		return
 

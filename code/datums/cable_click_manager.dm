@@ -114,7 +114,7 @@
 	if(!T || (tracked_turf && T != tracked_turf))
 		return
 
-	if(!T.Adjacent(user))
+	if(!T.Adjacent(user) || !T.can_lay_cable())
 		return
 
 	var/list/screen_split = splittext(params[SCREEN_LOC], ",")

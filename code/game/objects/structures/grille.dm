@@ -32,7 +32,6 @@ TYPEINFO_DEF(/obj/structure/grille)
 	become_atmos_sensitive()
 
 /obj/structure/grille/Destroy()
-	update_cable_icons_on_turf(get_turf(src))
 	lose_atmos_sensitivity()
 	return ..()
 

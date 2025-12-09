@@ -74,14 +74,15 @@
 		tool.play_tool_sound(src, 50)
 		set_anchored(FALSE)
 		to_chat(user, span_notice("You unbolt \the [src] from the floor and detach it from the cable."))
-		disconnect_from_network()
+		my_cable.handle_machine_remove(src)
 		return
 	else
-		if(!connect_to_network())
+		if(!my_cable)
 			to_chat(user, span_warning("\The [src] must be placed over an exposed, powered cable node!"))
 			return
 		tool.play_tool_sound(src, 50)
 		set_anchored(TRUE)
+		my_cable.handle_machine_add(src)
 		to_chat(user, span_notice("You bolt \the [src] to the floor and attach it to the cable."))
 		return
 

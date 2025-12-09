@@ -1,9 +1,10 @@
 /datum/powernet_n
 	var/list/obj/structure/cable/cables //! The cables in this powernet.
-	var/list/datum/powernet_consumer/consumers //! The consumers in this powernet. [cable: consumer]
-	var/list/datum/powernet_producer/producers //! The producers in this powernet. [cable: producer]
+	var/list/list/datum/powernet_consumer/consumers //! The consumers in this powernet. [cable: [consumer]]
+	var/list/list/datum/powernet_producer/producers //! The producers in this powernet. [cable: [producer]]
 	var/net_voltage = 0 //! The voltage of this powernet.
 	var/net_amperage = 0 //! The amperage of this powernet.
+	var/excess_amperage = 0 //! The excess amperage of this powernet. Latest technologies can monitor this because fuck you I said they can.
 	var/last_resistance = 0 //! The resistance of the powernet at the last process.
 	var/last_eff_voltage = 0 //! The effective voltage of the powernet at the last process.
 
@@ -23,6 +24,16 @@
 	producers.Cut()
 	return ..()
 
+/datum/powernet_n/ui_data(mob/user)
+	var/list/data = list()
+	data["voltage"] = net_voltage
+	data["amperage"] = net_amperage
+	data["resistance"] = last_resistance
+	data["effective_voltage"] = last_eff_voltage
+	data["cable_count"] = length(cables)
+	data["excess_amperage"] = excess_amperage
+	return data
+
 /obj/structure/cable
 	var/resistance_factor = 0.9 //! The resistance of this cable.
 	var/datum/powernet_n/powernet_n = null
@@ -39,6 +50,26 @@
 		if(other.powernet_n == src)
 			continue
 		assimilate(other.powernet_n)
+
+/datum/powernet_n/proc/add_machine(obj/structure/cable/cable, obj/machinery/power/machine)
+	if(!cables[cable])
+		CRASH("attempted to add a machine to a powernet using a cable that isn't in the powernet")
+	if(!isnull(machine.consumer_datum))
+		ASSERT(istype(machine.consumer_datum))
+		consumers[cable] |= list(machine.consumer_datum)
+	if(!isnull(machine.producer_datum))
+		ASSERT(istype(machine.producer_datum))
+		producers[cable] |= list(machine.producer_datum)
+
+/datum/powernet_n/proc/remove_machine(obj/structure/cable/cable, obj/machinery/power/machine)
+	if(!cables[cable])
+		CRASH("attempted to remove a machine from a powernet using a cable that isn't in the powernet")
+	if(!isnull(machine.consumer_datum))
+		ASSERT(istype(machine.consumer_datum))
+		consumers[cable] -= list(machine.consumer_datum)
+	if(!isnull(machine.producer_datum))
+		ASSERT(istype(machine.producer_datum))
+		producers[cable] -= list(machine.producer_datum)
 
 /datum/powernet_n/proc/remove_cable(obj/structure/cable/cable)
 	cables -= cable
@@ -96,27 +127,67 @@
 		return 1
 	return 1 / resistance_recip
 
+/*
+ * This is not a dmdoc. Do not turn it into one.
+ * 
+ * Notably we DO NOT CARE about delta_time.
+ * This enforces that the powernet is updated in a sane manner; as I am not willing to both implement and support partial updates.
+ */
 /datum/powernet_n/process(delta_time)
 	if(!length(cables) || !length(consumers) || !length(producers))
 		return
 	
+	// flatten node lists
+	var/list/datum/powernet_consumer/consumers_flat = list()
+	for(var/obj/structure/cable/node as anything in consumers)
+		for(var/datum/powernet_consumer/consumer as anything in consumers[node])
+			consumers_flat[consumer] = TRUE // it is technically possible for a consumer to be in multiple cables, but zebra lists don't care
+	var/list/datum/powernet_producer/producers_flat = list()
+	for(var/obj/structure/cable/node as anything in producers)
+		for(var/datum/powernet_producer/producer as anything in producers[node])
+			producers_flat[producer] = TRUE // see above
+	
+	// get line state
 	var/total_voltage = 0
 	var/line_amperage = 0
 	var/total_sources = 0
-	for(var/datum/powernet_producer/producer as anything in producers)
+	for(var/datum/powernet_producer/producer as anything in producers_flat)
 		total_voltage += producer.voltage
 		line_amperage += producer.amperage
 		total_sources += 1
 	var/line_voltage = total_voltage / total_sources
 
-	var/list/datum/powernet_producer/voltage_mismatch_producers = list()
-	for(var/datum/powernet_producer/producer as anything in producers)
+	// handle producer voltage mismatches
+	for(var/datum/powernet_producer/producer as anything in producers_flat)
 		var/voltage_tolerance_range = producer.voltage * producer.voltage_tolerance
 		var/voltage_drift = abs(producer.voltage - line_voltage)
-		if(voltage_drift > voltage_tolerance_range)
-			voltage_mismatch_producers[producer] = voltage_drift
+		if(voltage_drift < voltage_tolerance_range)
+			continue
+		var/drift_pct = voltage_drift / producer.voltage
+		if(line_voltage < producer.voltage)
+			drift_pct *= -1
+		producer.handle_voltage_mismatch(drift_pct)
 
+	// update network state
 	net_voltage = line_voltage
 	net_amperage = line_amperage
 	last_resistance = calculate_line_resistance(line_voltage, line_amperage)
 	last_eff_voltage = line_voltage * last_resistance
+
+	// calculate line saturation
+	excess_amperage = net_amperage
+	var/total_wanted_amperage = 0
+	var/available_amperage_pct = 1
+	for(var/datum/powernet_consumer/consumer as anything in consumers_flat)
+		total_wanted_amperage += consumer.amperage
+	if(total_wanted_amperage > net_amperage)
+		available_amperage_pct = net_amperage / total_wanted_amperage
+	// process consumers
+	for(var/datum/powernet_consumer/consumer as anything in consumers_flat)
+		excess_amperage -= consumer.consume_power(line_voltage, consumer.amperage * available_amperage_pct)
+	// handle excess amperage on the network
+	if(excess_amperage > 0)
+		for(var/datum/powernet_consumer/consumer as anything in consumers_flat)
+			if(excess_amperage <= 0)
+				break
+			excess_amperage -= consumer.handle_excess_amperage(line_voltage, excess_amperage)

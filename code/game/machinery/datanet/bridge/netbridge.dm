@@ -118,7 +118,6 @@
 
 			//build the terminal and link it to the network
 			make_terminal(T)
-			terminal.connect_to_network()
 			return ITEM_INTERACT_SUCCESS
 	return ITEM_INTERACT_BLOCKING
 

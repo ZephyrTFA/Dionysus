@@ -16,6 +16,7 @@
 	var/cable_connection_1 //! The primary cable connection.
 	var/cable_connection_2 //! The secondary cable connection; can be NONE (cable node).
 	var/datum/powernet/powernet //! The powernet the cable is connected to
+	var/list/obj/machinery/power/connected_machines //! The machines connected to this cable.
 
 /obj/structure/cable/Initialize(mapload, d1, d2)
 	. = ..()
@@ -46,11 +47,23 @@
 		if(isnull(powernet_n))
 			powernet_n = new
 			powernet_n.add_cable(src)
+			refresh_machine_connections()
 	update_appearance()
 
 /obj/structure/cable/Destroy()
 	powernet_n?.remove_cable(src)
 	return ..()
+
+/obj/structure/cable/proc/handle_machine_add(obj/machinery/power/machine)
+	if(!can_machine_connect(machine))
+		return FALSE
+	connected_machines |= machine
+	powernet_n?.add_machine(src, machine)
+	return TRUE
+
+/obj/structure/cable/proc/handle_machine_remove(obj/machinery/power/machine)
+	connected_machines -= machine
+	powernet_n?.remove_machine(src, machine)
 
 /obj/structure/cable/proc/amount_of_cables_worth()
 	if(cable_connection_2 == NONE) // cable node
@@ -222,15 +235,28 @@
 			other_cable.cable_connection_2 == cable_connection_2)
 			. += other_cable
 
-/obj/structure/cable/proc/get_machine_connections(powernetless_only = FALSE)
-	. = list()
+/obj/structure/cable/proc/can_machine_connect(obj/machinery/power/machine)
 	if(cable_connection_2 != NONE)
-		return
-	for(var/obj/machinery/power/P in get_turf(src))
-		if(powernetless_only && P.powernet)
+		return FALSE
+	if(!machine.anchored)
+		return FALSE
+	if(machine.loc != loc)
+		return FALSE
+	return TRUE
+
+/obj/structure/cable/proc/refresh_machine_connections()
+	var/list/new_connections = list()
+	for(var/obj/machinery/power/mashene in get_turf(src))
+		if(!can_machine_connect(mashene))
 			continue
-		if(P.anchored)
-			. += P
+		mashenes[mashene] = TRUE
+	var/list/lost_connections = connected_machines - mashenes
+	var/list/gained_connections = mashenes - connected_machines
+	for(var/obj/machinery/power/machine in lost_connections)
+		handle_machine_remove(machine)
+	for(var/obj/machinery/power/machine in gained_connections)
+		handle_machine_add(machine)
+	connected_machines = mashenes
 
 ///////////////////////////////////////////////
 // Cable variants for mapping

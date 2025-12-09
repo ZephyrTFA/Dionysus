@@ -275,7 +275,6 @@
 		welded = FALSE
 		to_chat(user, span_notice("You cut [src] free from the floor."))
 		disconnect_from_network()
-		update_cable_icons_on_turf(get_turf(src))
 		return TRUE
 
 	if(!anchored)
@@ -291,7 +290,6 @@
 	welded = TRUE
 	to_chat(user, span_notice("You weld [src] to the floor."))
 	connect_to_network()
-	update_cable_icons_on_turf(get_turf(src))
 	return TRUE
 
 /obj/machinery/power/emitter/crowbar_act(mob/living/user, obj/item/item)

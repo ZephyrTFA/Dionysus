@@ -1141,9 +1141,6 @@
 	if (wearing_shock_proof_gloves())
 		return FALSE
 
-	if(!get_powernet_info_from_source(power_source))
-		return FALSE
-
 	if (HAS_TRAIT(src, TRAIT_SHOCKIMMUNE))
 		return FALSE
 

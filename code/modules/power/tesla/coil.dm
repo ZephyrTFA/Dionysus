@@ -58,12 +58,9 @@
 
 /obj/machinery/power/energy_accumulator/tesla_coil/default_unfasten_wrench(mob/user, obj/item/I, time = 20)
 	. = ..()
-	if(. == SUCCESSFUL_UNFASTEN)
-		if(panel_open)
-			icon_state = "coil_open[anchored]"
-		else
-			icon_state = "coil[anchored]"
-		update_cable_icons_on_turf(get_turf(src))
+	if(. != SUCCESSFUL_UNFASTEN)
+		return .
+	icon_state = "coil[panel_open ? "_open" : ""][anchored]"
 
 /obj/machinery/power/energy_accumulator/tesla_coil/wrench_act(mob/living/user, obj/item/tool)
 	. = ..()
