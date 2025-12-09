@@ -13,9 +13,9 @@
 	var/broken = FALSE
 	var/initialized_at
 
-/datum/tgui_panel/New(client/client, id)
+/datum/tgui_panel/New(client/client)
 	src.client = client
-	window = new(client, id)
+	window = new(client, "browseroutput")
 	window.subscribe(src, PROC_REF(on_message))
 
 /datum/tgui_panel/Del()
@@ -36,7 +36,7 @@
  *
  * Initializes tgui panel.
  */
-/datum/tgui_panel/proc/initialize(force = FALSE)
+/datum/tgui_panel/proc/initialize()
 	set waitfor = FALSE
 	// Minimal sleep to defer initialization to after client constructor
 	sleep(1)
@@ -56,6 +56,11 @@
 	// Other setup
 	request_telemetry()
 	addtimer(CALLBACK(src, PROC_REF(on_initialize_timed_out)), 5 SECONDS)
+	// force refresh the panel.
+	// this right here is black magic; if you don't manually refresh the panel it will be in a supoer position of visible and not visible according to BYOND.
+	// Windows always prioritizes the most recently created window; however, WINE picks the one to show based on vibe.
+	winshow(client, "browseroutput", FALSE)
+	winshow(client, "browseroutput", TRUE)	
 
 /**
  * private
