@@ -32,10 +32,12 @@
 			context = "verb/fix_tgui_panel")
 		tgui_panel = new(src)
 
-	tgui_panel.initialize(force = TRUE)
-
-	// Force show the panel to see if there are any errors
+	// reset the skin to it's initial state.
+	winset(src, "output_browser", "reset=true")
+	// which makes this redundant; but hey BYOND is held together by duct tape.
 	winset(src, "output_selector.legacy_output_selector", "left=output_browser")
+	// and tell the panel to initialize.
+	tgui_panel.initialize()
 
 /client/verb/refresh_tgui()
 	set name = "Refresh TGUI"

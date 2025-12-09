@@ -249,8 +249,7 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 	stat_panel.subscribe(src, PROC_REF(on_stat_panel_message))
 
 	// Instantiate tgui panel
-	tgui_panel = new(src, "browseroutput")
-
+	tgui_panel = new(src)
 	set_right_click_menu_mode(TRUE)
 
 	GLOB.ahelp_tickets.ClientLogin(src)
