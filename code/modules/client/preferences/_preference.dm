@@ -36,9 +36,6 @@ GLOBAL_LIST_INIT(preference_entries, init_preference_entries())
 /// An assoc list of preference entries by their `savefile_key`
 GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 
-/// A list of preference modules.
-GLOBAL_LIST_INIT(all_pref_groups, init_all_pref_groups())
-
 /proc/init_preference_entries()
 	var/list/output = list()
 	for (var/datum/preference/preference_type as anything in subtypesof(/datum/preference))
@@ -54,24 +51,6 @@ GLOBAL_LIST_INIT(all_pref_groups, init_all_pref_groups())
 			continue
 		output[initial(preference_type.savefile_key)] = GLOB.preference_entries[preference_type]
 	return output
-
-/proc/init_all_pref_groups()
-	. = list()
-	for(var/datum/preference_group/module as anything in typesof(/datum/preference_group))
-		if(isabstract(module))
-			continue
-
-		. += new module()
-
-	spawn(0)
-		_setup_cats()
-
-	sortTim(., GLOBAL_PROC_REF(cmp_pref_modules))
-
-/proc/_setup_cats()
-	for(var/datum/preference_group/category/P in GLOB.all_pref_groups)
-		for(var/i in 1 to length(P.modules))
-			P.modules[i] = locate(P.modules[i]) in GLOB.all_pref_groups
 
 /// Returns a flat list of preferences in order of their priority
 /proc/get_preferences_in_priority_order()
@@ -611,4 +590,3 @@ GLOBAL_LIST_INIT(all_pref_groups, init_all_pref_groups())
 
 /datum/preference/blob/apply_to_human(mob/living/carbon/human/target, value)
 	return
-

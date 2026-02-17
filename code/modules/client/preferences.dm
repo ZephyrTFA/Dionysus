@@ -74,9 +74,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	/// Preference of how the preview should show the character.
 	var/tmp/preview_pref = PREVIEW_PREF_JOB
 
-	/// Stores the instance of the category we are viewing. (CHARACTER CREATOR)
-	var/tmp/datum/preference_group/category/selected_category
-
 	/// Used by the loadout UI
 	var/tmp/loadout_show_equipped = FALSE
 	var/tmp/loadout_category = LOADOUT_CATEGORY_BACKPACK
@@ -98,8 +95,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 
 	for (var/middleware_type in subtypesof(/datum/preference_middleware))
 		middleware += new middleware_type(src)
-
-	selected_category = locate(/datum/preference_group/category/general) in GLOB.all_pref_groups
 
 	if(istype(C) || istype(C, /datum/client_interface))
 #ifdef UNIT_TESTS
@@ -139,16 +134,11 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	if (.)
 		return
 
-	if(parent != usr.client && !check_rights(show_msg = FALSE))
-		CRASH("Unable to edit prefs that don't belong to you, [usr.key]! (pref owner: [parent?.key || "NULL"])")
-
 	if (href_list["open_keybindings"])
 		current_window = PREFERENCE_TAB_KEYBINDINGS
 		update_static_data(usr)
 		ui_interact(usr)
 		return TRUE
-
-	return html_topic(href, href_list)
 
 /datum/preferences/proc/create_character_preview_view(mob/user)
 	character_preview_view = new(null, src, user.client)

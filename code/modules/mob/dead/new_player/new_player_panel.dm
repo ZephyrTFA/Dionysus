@@ -51,7 +51,7 @@
 
 	if(href_list["character_setup"])
 		var/datum/preferences/preferences = parent.client.prefs
-		preferences.html_show(usr)
+		preferences.preferences_menu.ui_interact(usr)
 		return TRUE
 
 	if(href_list["ready"])
@@ -87,7 +87,7 @@
 			return
 		LateChoices()
 		return
-	
+
 	if(href_list["observe"])
 		parent.admin_observe()
 		return

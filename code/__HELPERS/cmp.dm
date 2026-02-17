@@ -184,10 +184,6 @@ GLOBAL_VAR_INIT(cmp_field, "name")
 /proc/cmp_zm_render_order(atom/A, atom/B)
 	return (B.plane - A.plane) || (B.layer - A.layer)
 
-/// Sort modules by priority
-/proc/cmp_pref_modules(datum/preference_group/A, datum/preference_group/B)
-	return B.priority - A.priority
-
 /proc/cmp_pref_name(datum/preference/A, datum/preference/B)
 	return sorttext(B.explanation, A.explanation)
 
