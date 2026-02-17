@@ -61,9 +61,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	/// The json savefile for this datum
 	var/datum/json_savefile/savefile
 
-	/// The savefile relating to character preferences, PREFERENCE_CHARACTER
-	var/list/character_data
-
 	/// A list of keys that have been updated since the last save.
 	var/list/recently_updated_keys = list()
 
@@ -156,6 +153,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 // they had the ref to Topic to.
 /datum/preferences/ui_status(mob/user, datum/ui_state/state)
 	return user.client == parent ? UI_INTERACTIVE : UI_CLOSE
+
 /datum/preferences/ui_data(mob/user)
 	var/list/data = list()
 
@@ -519,10 +517,6 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen/subscreen)
 		profiles += name
 
 	return profiles
-
-/// Sanitizes the preferences, applies the randomization prefs, and then applies the preference to the human mob.
-/datum/preferences/proc/safe_transfer_prefs_to(mob/living/carbon/human/character, icon_updates = TRUE, is_antag = FALSE)
-	apply_prefs_to(character, icon_updates)
 
 /// Applies the given preferences to a human mob.
 /datum/preferences/proc/apply_prefs_to(mob/living/carbon/human/character, icon_updates = TRUE)

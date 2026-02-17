@@ -539,7 +539,7 @@ GLOBAL_LIST_INIT(job_display_order, list(
 			fully_replace_character_name(null, GLOB.current_anonymous_theme.anonymous_name(src))
 	else
 		var/is_antag = (player_client.mob.mind in GLOB.pre_setup_antags)
-		player_client.prefs.safe_transfer_prefs_to(src, TRUE, is_antag)
+		player_client.prefs.apply_prefs_to(src, TRUE, is_antag)
 
 		if(require_human && !ishumanbasic(src))
 			set_species(/datum/species/human)
