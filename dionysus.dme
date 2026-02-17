@@ -1,4 +1,4 @@
-// DM Environment file for dionysus.dme.
+W// DM Environment file for dionysus.dme.
 // All manual changes should be made outside the BEGIN_ and END_ blocks.
 // New source code should be placed in .dm files: choose File/New --> Code File.
 // BEGIN_INTERNALS
@@ -2624,6 +2624,7 @@
 #include "code\modules\cargo\markets\market_items\tools.dm"
 #include "code\modules\cargo\markets\market_items\weapons.dm"
 #include "code\modules\chatter\chatter.dm"
+#include "code\modules\client\character_preview.dm"
 #include "code\modules\client\client_colour.dm"
 #include "code\modules\client\client_defines.dm"
 #include "code\modules\client\client_procs.dm"
@@ -2633,6 +2634,7 @@
 #include "code\modules\client\preferences.dm"
 #include "code\modules\client\preferences_menu.dm"
 #include "code\modules\client\preferences_savefile.dm"
+#include "code\modules\client\preferences_verbs.dm"
 #include "code\modules\client\title_music_verbs.dm"
 #include "code\modules\client\migrations\convert_to_json_savefile.dm"
 #include "code\modules\client\migrations\migrate_hairstyles.dm"

@@ -1,24 +1,214 @@
-/datum/verbs/menu/Preferences/verb/open_character_preferences()
-	set category = "OOC"
-	set name = "Open Character Preferences"
-	set desc = "Open Character Preferences"
+/datum/preferences_menu
+	var/datum/preferences/preferences
+	var/atom/movable/screen/character_preview_view/character_preview_view
 
-	var/datum/preferences/preferences = usr?.client?.prefs
-	if (!preferences)
+/datum/preferences_menu/New(datum/preferences/preferences)
+	. = ..()
+	src.preferences = preferences
+
+/datum/preferences_menu/Destroy(force, ...)
+	QDEL_NULL(character_preview_view)
+	. = ..()
+
+/datum/preferences_menu/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
+	. = ..()
+	if (.)
 		return
 
-	preferences.html_show(usr)
+	switch (action)
+		if ("change_slot")
+			// Save existing character
+			preferences.save_character()
 
-/datum/verbs/menu/Preferences/verb/open_game_preferences()
-	set category = "OOC"
-	set name = "Open Game Preferences"
-	set desc = "Open Game Preferences"
+			// SAFETY: `load_character` performs sanitization the slot number
+			if (!preferences.load_character(params["slot"]))
+				preferences.tainted_character_profiles = TRUE
+				preferences.randomise_appearance_prefs()
+				preferences.save_character()
 
-	var/datum/preferences/preferences = usr?.client?.prefs
-	if (!preferences)
-		return
+			for (var/datum/preference_middleware/preference_middleware as anything in preferences.middleware)
+				preference_middleware.on_new_character(usr)
 
-	preferences.current_window = PREFERENCE_TAB_GAME_PREFERENCES
-	preferences.update_static_data(usr)
-	preferences.ui_interact(usr)
+			character_preview_view.update_body()
 
+			return TRUE
+		if ("rotate")
+			character_preview_view.dir = turn(character_preview_view.dir, -90)
+
+			return TRUE
+		if ("set_preference")
+			var/requested_preference_key = params["preference"]
+			var/value = params["value"]
+
+			for (var/datum/preference_middleware/preference_middleware as anything in preferences.middleware)
+				if (preference_middleware.pre_set_preference(usr, requested_preference_key, value))
+					return TRUE
+
+			var/datum/preference/requested_preference = GLOB.preference_entries_by_key[requested_preference_key]
+			if (isnull(requested_preference))
+				return FALSE
+
+			// SAFETY: `update_preference` performs validation checks
+			if (!preferences.update_preference(requested_preference, value))
+				return FALSE
+
+			if (istype(requested_preference, /datum/preference/name))
+				preferences.tainted_character_profiles = TRUE
+
+			return TRUE
+		if ("set_color_preference")
+			var/requested_preference_key = params["preference"]
+
+			var/datum/preference/requested_preference = GLOB.preference_entries_by_key[requested_preference_key]
+			if (isnull(requested_preference))
+				return FALSE
+
+			if (!istype(requested_preference, /datum/preference/color))
+				return FALSE
+
+			var/default_value = preferences.read_preference(requested_preference.type)
+
+			// Yielding
+			var/new_color = input(
+				usr,
+				"Select new color",
+				null,
+				default_value || COLOR_WHITE,
+			) as color | null
+
+			if (!new_color)
+				return FALSE
+
+			if (!preferences.update_preference(requested_preference, new_color))
+				return FALSE
+
+			return TRUE
+
+		if ("set_tricolor_preference")
+			var/requested_preference_key = params["preference"]
+			var/index_key = params["value"]
+
+			var/datum/preference/requested_preference = GLOB.preference_entries_by_key[requested_preference_key]
+			if (isnull(requested_preference))
+				return FALSE
+
+			if (!istype(requested_preference, /datum/preference/tri_color))
+				return FALSE
+
+			var/default_value_list = preferences.read_preference(requested_preference.type)
+			if (!islist(default_value_list))
+				return FALSE
+			var/default_value = default_value_list[index_key]
+
+			// Yielding
+			var/new_color = input(
+				usr,
+				"Select new color",
+				null,
+				default_value || COLOR_WHITE,
+			) as color | null
+
+			if (!new_color)
+				return FALSE
+
+			default_value_list[index_key] = new_color
+
+			if (!preferences.update_preference(requested_preference, default_value_list))
+				return FALSE
+
+			return TRUE
+
+	for (var/datum/preference_middleware/preference_middleware as anything in preferences.middleware)
+		var/delegation = preference_middleware.action_delegations[action]
+		if (!isnull(delegation))
+			return call(preference_middleware, delegation)(params, usr)
+
+	return FALSE
+
+/datum/preferences_menu/ui_data(mob/user)
+	var/list/data = list()
+
+	if (isnull(character_preview_view))
+		character_preview_view = create_character_preview_view(user)
+	else if (character_preview_view.client != preferences.parent)
+		// The client re-logged, and doing this when they log back in doesn't seem to properly
+		// carry emissives.
+		character_preview_view.register_to_client(preferences.parent)
+
+	if (preferences.tainted_character_profiles)
+		data["character_profiles"] = preferences.create_character_profiles()
+		preferences.tainted_character_profiles = FALSE
+
+	data["preview_options"] = list(PREVIEW_PREF_JOB,PREVIEW_PREF_LOADOUT, PREVIEW_PREF_UNDERWEAR)
+	data["preview_selection"] = preferences.preview_pref
+
+	data["character_preferences"] = preferences.compile_character_preferences(user)
+
+	data["active_slot"] = preferences.default_slot
+
+	for (var/datum/preference_middleware/preference_middleware as anything in preferences.middleware)
+		data += preference_middleware.get_ui_data(user)
+
+	return data
+
+/datum/preferences_menu/ui_static_data(mob/user)
+	var/list/data = list()
+
+	data["character_profiles"] = preferences.create_character_profiles()
+
+	data["character_preview_view"] = character_preview_view.assigned_map
+	data["overflow_role"] = SSjob.GetJobType(SSjob.overflow_role).id
+	// data["window"] = current_window
+
+	data["content_unlocked"] = preferences.unlock_content
+
+	for (var/datum/preference_middleware/preference_middleware as anything in preferences.middleware)
+		data += preference_middleware.get_ui_static_data(user)
+
+	return data
+
+/datum/preferences_menu/ui_state(mob/user)
+	return GLOB.always_state
+
+// Without this, a hacker would be able to edit other people's preferences if
+// they had the ref to Topic to.
+/datum/preferences_menu/ui_status(mob/user, datum/ui_state/state)
+	return user.client == preferences.parent ? UI_INTERACTIVE : UI_CLOSE
+
+/datum/preferences_menu/ui_close(mob/user)
+	preferences.save_character()
+	preferences.save_preferences()
+	QDEL_NULL(character_preview_view)
+
+/datum/preferences_menu/ui_assets(mob/user)
+	var/list/assets = list(
+		get_asset_datum(/datum/asset/spritesheet/preferences),
+		get_asset_datum(/datum/asset/json/preferences),
+	)
+
+	for (var/datum/preference_middleware/preference_middleware as anything in preferences.middleware)
+		assets += preference_middleware.get_ui_assets()
+
+	return assets
+
+/datum/preferences_menu/ui_interact(mob/user, datum/tgui/ui)
+	// If you leave and come back, re-register the character preview
+	if (!isnull(character_preview_view) && !(character_preview_view in user.client?.screen))
+		user.client?.register_map_obj(character_preview_view)
+
+	ui = SStgui.try_update_ui(user, src, ui)
+	if(!ui)
+		ui = new(user, src, "PreferencesMenu")
+		ui.set_autoupdate(FALSE)
+		ui.open()
+
+		// HACK: Without this the character starts out really tiny because of some BYOND bug.
+		// You can fix it by changing a preference, so let's just forcably update the body to emulate this.
+		addtimer(CALLBACK(character_preview_view, TYPE_PROC_REF(/atom/movable/screen/character_preview_view, update_body)), 1 SECONDS)
+
+/datum/preferences_menu/proc/create_character_preview_view(mob/user)
+	character_preview_view = new(null, src, user.client)
+	character_preview_view.update_body()
+	character_preview_view.register_to_client(user.client)
+
+	return character_preview_view
