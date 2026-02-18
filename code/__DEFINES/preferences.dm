@@ -107,10 +107,13 @@
 #define PREFERENCE_PLAYER "player"
 
 /// Open the game preferences window
-#define PREFERENCE_TAB_GAME_PREFERENCES 1
+#define PREFERENCE_TAB_GAME 1
 
 /// Open the keybindings window
 #define PREFERENCE_TAB_KEYBINDINGS 2
+
+/// Open the game preferences window
+#define PREFERENCE_TAB_CHARACTER 3
 
 /// Will be put under the game preferences window.
 #define PREFERENCE_CATEGORY_GAME_PREFERENCES "game_preferences"

@@ -34,9 +34,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/chat_toggles = TOGGLES_DEFAULT_CHAT
 	var/ghost_form = "ghost"
 
-	/// The current window, PREFERENCE_TAB_* in [`code/__DEFINES/preferences.dm`]
-	var/current_window = PREFERENCE_TAB_GAME_PREFERENCES
-
 	var/unlock_content = 0
 
 	var/list/ignoring = list()
@@ -135,9 +132,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 		return
 
 	if (href_list["open_keybindings"])
-		current_window = PREFERENCE_TAB_KEYBINDINGS
-		update_static_data(usr)
-		ui_interact(usr)
+		preferences_menu.ui_interact(usr, tab = PREFERENCE_TAB_KEYBINDINGS)
 		return TRUE
 
 /datum/preferences/proc/create_character_preview_view(mob/user)

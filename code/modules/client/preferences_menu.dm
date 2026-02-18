@@ -2,6 +2,9 @@
 	var/datum/preferences/preferences
 	var/atom/movable/screen/character_preview_view/character_preview_view
 
+	/// The current window, PREFERENCE_TAB_* in [`code/__DEFINES/preferences.dm`]
+	var/current_window = PREFERENCE_TAB_CHARACTER
+
 /datum/preferences_menu/New(datum/preferences/preferences)
 	. = ..()
 	src.preferences = preferences
@@ -158,7 +161,7 @@
 
 	data["character_preview_view"] = character_preview_view.assigned_map
 	data["overflow_role"] = SSjob.GetJobType(SSjob.overflow_role).id
-	// data["window"] = current_window
+	data["window"] = current_window
 
 	data["content_unlocked"] = preferences.unlock_content
 
@@ -191,10 +194,14 @@
 
 	return assets
 
-/datum/preferences_menu/ui_interact(mob/user, datum/tgui/ui)
+/datum/preferences_menu/ui_interact(mob/user, datum/tgui/ui, tab)
 	// If you leave and come back, re-register the character preview
 	if (!isnull(character_preview_view) && !(character_preview_view in user.client?.screen))
 		user.client?.register_map_obj(character_preview_view)
+
+	if (tab)
+		current_window = tab
+		update_static_data(usr)
 
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)

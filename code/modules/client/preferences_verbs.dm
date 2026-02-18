@@ -7,8 +7,7 @@
 	if (!preferences)
 		return
 
-	preferences.preferences_menu.update_static_data()
-	preferences.preferences_menu.ui_interact(usr)
+	preferences.preferences_menu.ui_interact(usr, tab = PREFERENCE_TAB_CHARACTER)
 
 /datum/verbs/menu/Preferences/verb/open_game_preferences()
 	set category = "OOC"
@@ -19,6 +18,4 @@
 	if (!preferences)
 		return
 
-	preferences.current_window = PREFERENCE_TAB_GAME_PREFERENCES
-	preferences.update_static_data(usr)
-	preferences.ui_interact(usr)
+	preferences.preferences_menu.ui_interact(usr, tab = PREFERENCE_TAB_GAME)
