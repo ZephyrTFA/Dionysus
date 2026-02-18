@@ -205,7 +205,7 @@
 
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, "PreferencesMenu")
+		ui = new(user, src, current_window == PREFERENCE_TAB_CHARACTER ? "DioPrefs" : "PreferencesMenu")
 		ui.set_autoupdate(FALSE)
 		ui.open()
 
