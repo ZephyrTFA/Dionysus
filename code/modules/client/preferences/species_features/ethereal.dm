@@ -1,7 +1,8 @@
 /datum/preference/choiced/ethereal_color
 	explanation = "Bioluminescence"
 	savefile_key = "feature_ethcolor"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
+	feature_identifier = PREFERENCE_FEATURE_DROPDOWN
 
 /datum/preference/choiced/ethereal_color/init_possible_values()
 	return GLOB.color_list_ethereal

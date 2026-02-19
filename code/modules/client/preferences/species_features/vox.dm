@@ -5,8 +5,9 @@
 /datum/preference/choiced/vox_hair
 	explanation = "Quills"
 	savefile_key = "feature_vox_hair"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_mutant_bodypart = "vox_hair"
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 	sub_preference = /datum/preference/color/hair_color
 
@@ -19,8 +20,9 @@
 /datum/preference/choiced/vox_facial_hair
 	explanation = "Facial Quills"
 	savefile_key = "feature_vox_facial_hair"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_mutant_bodypart = "vox_facial_hair"
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/vox_facial_hair/init_possible_values()
 	return GLOB.vox_facial_hair_list
@@ -32,7 +34,7 @@
 /datum/preference/choiced/tail_vox
 	explanation = "Tail"
 	savefile_key = "tail_vox"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = /obj/item/organ/tail/vox
 
 /datum/preference/choiced/tail_vox/init_possible_values()

@@ -2,7 +2,7 @@
 /datum/preference/choiced/mod_select
 	category = PREFERENCE_CATEGORY_GAME_PREFERENCES
 	savefile_key = "mod_select"
-	savefile_identifier = PREFERENCE_PLAYER
+	savefile_identifier = PREFERENCE_SAVEFILE_PLAYER
 
 /datum/preference/choiced/mod_select/init_possible_values()
 	return list(MIDDLE_CLICK, ALT_CLICK)

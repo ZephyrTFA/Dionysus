@@ -1,6 +1,7 @@
 /datum/preference/blob/antagonists
 	savefile_key = "antagonists"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
+	feature_identifier = PREFERENCE_FEATURE_NONE
 
 /datum/preference/blob/antagonists/create_default_value()
 	. = list()

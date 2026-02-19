@@ -1,7 +1,7 @@
 /datum/preference/color/asay_color
 	category = PREFERENCE_CATEGORY_GAME_PREFERENCES
 	savefile_key = "asaycolor"
-	savefile_identifier = PREFERENCE_PLAYER
+	savefile_identifier = PREFERENCE_SAVEFILE_PLAYER
 
 /datum/preference/color/asay_color/create_default_value()
 	return DEFAULT_ASAY_COLOR
@@ -16,7 +16,7 @@
 /datum/preference/choiced/brief_outfit
 	category = PREFERENCE_CATEGORY_GAME_PREFERENCES
 	savefile_key = "brief_outfit"
-	savefile_identifier = PREFERENCE_PLAYER
+	savefile_identifier = PREFERENCE_SAVEFILE_PLAYER
 
 /datum/preference/choiced/brief_outfit/deserialize(input, datum/preferences/preferences)
 	var/path = text2path(input)
@@ -43,7 +43,7 @@
 /datum/preference/toggle/bypass_deadmin_in_centcom
 	category = PREFERENCE_CATEGORY_GAME_PREFERENCES
 	savefile_key = "bypass_deadmin_in_centcom"
-	savefile_identifier = PREFERENCE_PLAYER
+	savefile_identifier = PREFERENCE_SAVEFILE_PLAYER
 
 /datum/preference/toggle/bypass_deadmin_in_centcom/is_accessible(datum/preferences/preferences)
 	if (!..(preferences))

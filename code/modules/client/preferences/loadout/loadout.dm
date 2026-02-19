@@ -1,6 +1,7 @@
 /datum/preference/blob/loadout
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "nu_loadout"
+	feature_identifier = PREFERENCE_FEATURE_NONE
 
 /datum/preference/blob/loadout/apply_to_human(mob/living/carbon/human/target, value)
 	return //We handle this in job code.

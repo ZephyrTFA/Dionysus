@@ -219,3 +219,6 @@
 	character_preview_view.register_to_client(user.client)
 
 	return character_preview_view
+
+/datum/preferences_menu/proc/render_new_preview_appearance(mob/living/carbon/human/dummy/mannequin)
+	return preferences.render_new_preview_appearance(mannequin)

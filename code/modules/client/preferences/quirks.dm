@@ -1,6 +1,7 @@
 /datum/preference/blob/quirks
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "quirked_up"
+	feature_identifier = PREFERENCE_FEATURE_NONE
 
 /datum/preference/blob/quirks/deserialize(input, datum/preferences/preferences)
 	if(!islist(input))

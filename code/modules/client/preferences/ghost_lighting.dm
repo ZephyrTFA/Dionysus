@@ -9,7 +9,7 @@ GLOBAL_LIST_INIT(ghost_lighting_options, list(
 /datum/preference/choiced/ghost_lighting
 	category = PREFERENCE_CATEGORY_GAME_PREFERENCES
 	savefile_key = "ghost_lighting"
-	savefile_identifier = PREFERENCE_PLAYER
+	savefile_identifier = PREFERENCE_SAVEFILE_PLAYER
 
 /datum/preference/choiced/ghost_lighting/create_default_value()
 	return "Darker"

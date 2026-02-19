@@ -1,6 +1,7 @@
 /datum/preference/choiced/pod_hair
 	savefile_key = "feature_pod_hair"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/pod_hair/init_possible_values()
 	return GLOB.pod_hair_list

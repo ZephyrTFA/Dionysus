@@ -2,7 +2,8 @@
 /datum/preference/choiced/jumpsuit
 	explanation = "Uniform"
 	savefile_key = "jumpsuit_style"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/jumpsuit/init_possible_values()
 	var/list/values = list(
@@ -22,7 +23,8 @@
 /datum/preference/choiced/socks
 	explanation = "Socks"
 	savefile_key = "socks"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/socks/init_possible_values()
 	return GLOB.socks_list
@@ -45,7 +47,8 @@
 /datum/preference/choiced/undershirt
 	explanation = "Undershirt"
 	savefile_key = "undershirt"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/undershirt/init_possible_values()
 	return GLOB.undershirt_list
@@ -68,8 +71,9 @@
 /datum/preference/choiced/underwear
 	explanation = "Underwear"
 	savefile_key = "underwear"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	sub_preference = /datum/preference/color/underwear_color
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/underwear/init_possible_values()
 	return GLOB.underwear_list
@@ -87,4 +91,3 @@
 
 /datum/preference/choiced/underwear/create_default_value()
 	return "Nude"
-

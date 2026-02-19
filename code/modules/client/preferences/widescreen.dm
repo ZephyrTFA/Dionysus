@@ -1,7 +1,7 @@
 /datum/preference/toggle/widescreen
 	category = PREFERENCE_CATEGORY_GAME_PREFERENCES
 	savefile_key = "widescreenpref"
-	savefile_identifier = PREFERENCE_PLAYER
+	savefile_identifier = PREFERENCE_SAVEFILE_PLAYER
 	default_value = FALSE
 
 /datum/preference/toggle/widescreen/apply_to_client(client/client, value)

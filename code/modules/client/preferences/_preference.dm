@@ -30,6 +30,9 @@
 /// For choiced preferences, this key will be used to set display names in constant data.
 #define CHOICED_PREFERENCE_DISPLAY_NAMES "display_names"
 
+/// The required list size for crop parameters in generate_icon.
+#define REQUIRED_CROP_LIST_SIZE 4
+
 /// An assoc list list of types to instantiated `/datum/preference` instances
 GLOBAL_LIST_INIT(preference_entries, init_preference_entries())
 
@@ -82,16 +85,18 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 	var/category = "misc"
 
 	/// What savefile should this preference be read from?
-	/// Valid values are PREFERENCE_CHARACTER and PREFERENCE_PLAYER.
+	/// Valid values are PREFERENCE_SAVEFILE_CHARACTER and PREFERENCE_SAVEFILE_PLAYER.
 	/// See the documentation in [code/__DEFINES/preferences.dm].
 	var/savefile_identifier
+
+	var/feature_identifier
 
 	/// The priority of when to apply this preference.
 	/// Used for when you need to rely on another preference.
 	var/priority = PREFERENCE_PRIORITY_DEFAULT
 
 	/// If set, will be available to randomize, but only if the preference
-	/// is for PREFERENCE_CHARACTER.
+	/// is for PREFERENCE_SAVEFILE_CHARACTER.
 	var/can_randomize = TRUE
 
 	/// If the selected species has this in its /datum/species/mutant_bodyparts,
@@ -117,6 +122,11 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 
 	/// Is this type a sub preference?
 	var/is_sub_preference = FALSE
+
+/datum/preference/New()
+	. = ..()
+	if (abstract_type != type && savefile_identifier == PREFERENCE_SAVEFILE_CHARACTER && !feature_identifier)
+		CRASH("[type] has no feature identifier!")
 
 /// Called on the saved input when retrieving.
 /// Also called by the value sent from the user through UI. Do not trust it.
@@ -161,7 +171,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 /// Returns whether or not a preference can be randomized.
 /datum/preference/proc/is_randomizable()
 	SHOULD_NOT_OVERRIDE(TRUE)
-	return savefile_identifier == PREFERENCE_CHARACTER && can_randomize
+	return savefile_identifier == PREFERENCE_SAVEFILE_CHARACTER && can_randomize
 
 /// Given a savefile, return either the saved data or an acceptable default.
 /// This will write to the savefile if a value was not found with the new value.
@@ -193,7 +203,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 	return TRUE
 
 /// Apply this preference onto the given client.
-/// Called when the savefile_identifier == PREFERENCE_PLAYER.
+/// Called when the savefile_identifier == PREFERENCE_SAVEFILE_PLAYER.
 /datum/preference/proc/apply_to_client(client/client, value)
 	SHOULD_NOT_SLEEP(TRUE)
 	SHOULD_CALL_PARENT(FALSE)
@@ -207,7 +217,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 
 /// Apply this preference onto the given human.
 /// Must be overriden by subtypes.
-/// Called when the savefile_identifier == PREFERENCE_CHARACTER.
+/// Called when the savefile_identifier == PREFERENCE_SAVEFILE_CHARACTER.
 /datum/preference/proc/apply_to_human(mob/living/carbon/human/target, value)
 	SHOULD_NOT_SLEEP(TRUE)
 	SHOULD_CALL_PARENT(FALSE)
@@ -225,9 +235,9 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 	// This is because storing a savefile will lock it, causing later issues down the line.
 	// Do not change them to addtimer, since the timer SS might not be running at this time.
 	switch (savefile_identifier)
-		if (PREFERENCE_CHARACTER)
+		if (PREFERENCE_SAVEFILE_CHARACTER)
 			return savefile.get_entry("character[default_slot]")
-		if (PREFERENCE_PLAYER)
+		if (PREFERENCE_SAVEFILE_PLAYER)
 			return savefile.get_entry()
 		else
 			CRASH("Unknown savefile identifier [savefile_identifier]")
@@ -299,7 +309,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 	recently_updated_keys |= preference.type
 	value_cache[preference.type] = new_value
 
-	if (preference.savefile_identifier == PREFERENCE_PLAYER)
+	if (preference.savefile_identifier == PREFERENCE_SAVEFILE_PLAYER)
 		preference.apply_to_client_updated(parent, read_preference(preference.type))
 	else
 		spawn(-1)
@@ -373,6 +383,66 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 
 	///Defines whether get_button() should include cycle arrows
 	var/cyclable = TRUE
+	feature_identifier = PREFERENCE_FEATURE_DROPDOWN
+
+	/// A list of the four co-ordinates to crop to, if `generate_icons` is enabled. Useful for icons whose main contents are smaller than 32x32. Please keep it square. (x1, y1, x2, y2)
+	var/list/crop_area
+	/// A color to apply to the icon if it's greyscale, and `generate_icons` is enabled.
+	var/greyscale_color
+
+/// Automatically handles generating icon states and values for mutant parts.
+/datum/preference/choiced/proc/generate_mutant_valid_values(list/accessories, dir = SOUTH, accessories_to_ignore = null)
+	var/list/data = list()
+
+	for(var/datum/sprite_accessory/accessory as anything in accessories)
+		accessory = accessories[accessory]
+		if(!accessory || !accessory.name)
+			continue
+
+		if(islist(accessories_to_ignore))
+			for(var/path in accessories_to_ignore)
+				if(istype(accessory, path))
+					continue
+
+		data[initial(accessory.name)] = generate_icon(accessory, dir)
+
+	return data
+
+/// Returns the icon state to use. Should only be overridden if the sprite accessory DMIs have their own name format.
+/datum/preference/choiced/proc/generate_icon_state(datum/sprite_accessory/sprite_accessory, original_icon_state, suffix)
+	return "[original_icon_state][suffix]"
+
+/// Generates and allows for post-processing on icons, such as greyscaling and cropping.
+/datum/preference/choiced/proc/generate_icon(datum/sprite_accessory/sprite_accessory, dir = SOUTH)
+	if(!sprite_accessory.icon_state || lowertext(sprite_accessory.icon_state) == "none")
+		return icon('icons/mob/landmarks.dmi', "x")
+
+	var/list/icon_states_to_use = list()
+
+	if(sprite_accessory.color_src == TRI_COLOR_LAYERS)
+		for(var/index in sprite_accessory.color_layer_names)
+			icon_states_to_use += generate_icon_state(sprite_accessory, sprite_accessory.icon_state, "_[sprite_accessory.color_layer_names[index]]")
+	else
+		icon_states_to_use += generate_icon_state(sprite_accessory, sprite_accessory.icon_state)
+
+	for(var/icon_state in icon_states_to_use)
+		icon_exists(sprite_accessory.icon, icon_state, TRUE)
+
+	var/list/icon/icons_to_return = list()
+	var/color = sanitize_hexcolor(greyscale_color)
+
+	for(var/icon_state in icon_states_to_use)
+		var/icon/icon_to_process = icon(sprite_accessory.icon, icon_state, dir, 1)
+
+		if(islist(crop_area) && crop_area.len == REQUIRED_CROP_LIST_SIZE)
+			icon_to_process.Crop(crop_area[1], crop_area[2], crop_area[3], crop_area[4])
+			icon_to_process.Scale(32, 32)
+		else if(crop_area)
+			stack_trace("Invalid crop paramater! The provided crop area list is not four entries long, or is not a list!")
+
+		icons_to_return += icon_to_process
+
+	return icons_to_return
 
 /// Returns a list of every possible value.
 /// The first time this is called, will run `init_values()`.
@@ -479,6 +549,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 /// Will give the value as 6 hex digits, without a hash.
 /datum/preference/color
 	abstract_type = /datum/preference/color
+	feature_identifier = PREFERENCE_FEATURE_COLOR
 
 /datum/preference/color/deserialize(input, datum/preferences/preferences)
 	return sanitize_hexcolor(input)
@@ -513,6 +584,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 	var/step = 1
 
 	abstract_type = /datum/preference/numeric
+	feature_identifier = PREFERENCE_FEATURE_NUMBER
 
 /datum/preference/numeric/deserialize(input, datum/preferences/preferences)
 	if(istext(input)) // Sometimes TGUI will return a string instead of a number, so we take that into account.
@@ -550,6 +622,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 
 	/// The default value of the toggle, if create_default_value is not specified
 	var/default_value = TRUE
+	feature_identifier = PREFERENCE_FEATURE_CHECKBOX
 
 /datum/preference/toggle/create_default_value()
 	return default_value
@@ -562,6 +635,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 
 /datum/preference/text
 	abstract_type = /datum/preference/text
+	feature_identifier = PREFERENCE_FEATURE_SHORT_TEXT
 
 /datum/preference/text/deserialize(input, datum/preferences/preferences)
 	return STRIP_HTML_SIMPLE(input, MAX_FLAVOR_LEN)
@@ -590,3 +664,5 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 
 /datum/preference/blob/apply_to_human(mob/living/carbon/human/target, value)
 	return
+
+#undef REQUIRED_CROP_LIST_SIZE

@@ -169,10 +169,10 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 
 	return preferences
 
-/// Applies all PREFERENCE_PLAYER preferences
+/// Applies all PREFERENCE_SAVEFILE_PLAYER preferences
 /datum/preferences/proc/apply_all_client_preferences()
 	for (var/datum/preference/preference as anything in get_preferences_in_priority_order())
-		if (preference.savefile_identifier != PREFERENCE_PLAYER)
+		if (preference.savefile_identifier != PREFERENCE_SAVEFILE_PLAYER)
 			continue
 
 		value_cache -= preference.type
@@ -182,27 +182,20 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/list/profiles = list()
 
 	for (var/index in 1 to max_save_slots)
-		// It won't be updated in the savefile yet, so just read the name directly
-		if (index == default_slot)
-			profiles += read_preference(/datum/preference/name/real_name)
-			continue
-
 		var/tree_key = "character[index]"
 		var/save_data = savefile.get_entry(tree_key)
-		var/name = save_data?["real_name"]
+		var/name = index == default_slot ? read_preference(/datum/preference/name/real_name) : save_data?["real_name"]
+		var/data = list(list("name" = name, "image" = name ? icon2base64(get_flat_human_icon(null, get_highest_priority_job() || SSjob.GetJobType(SSjob.overflow_role), src, null, list(SOUTH))) : null))
 
-		if (isnull(name))
-			profiles += null
-			continue
+		profiles += data
 
-		profiles += name
 
 	return profiles
 
 /// Applies the given preferences to a human mob.
 /datum/preferences/proc/apply_prefs_to(mob/living/carbon/human/character, icon_updates = TRUE)
 	for (var/datum/preference/preference as anything in get_preferences_in_priority_order())
-		if (preference.savefile_identifier != PREFERENCE_CHARACTER)
+		if (preference.savefile_identifier != PREFERENCE_SAVEFILE_CHARACTER)
 			continue
 		if(preference.requires_accessible && !preference.is_accessible(src))
 			continue

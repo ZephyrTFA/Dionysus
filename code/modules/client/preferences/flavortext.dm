@@ -1,8 +1,9 @@
 /datum/preference/text/flavor_text
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "flavor_text"
 
 	explanation = "Flavor Text"
+	feature_identifier = PREFERENCE_FEATURE_LONG_TEXT
 
 /datum/preference/text/flavor_text/get_button(datum/preferences/prefs)
 	return button_element(prefs, "Set Examine Text", "pref_act=[type]")

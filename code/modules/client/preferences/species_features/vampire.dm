@@ -1,6 +1,6 @@
 /datum/preference/choiced/vampire_status
 	savefile_key = "feature_vampire_status"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	priority = PREFERENCE_PRIORITY_NAME_MODIFICATIONS //this will be overwritten by names otherwise
 	relevant_species_trait = BLOOD_CLANS
 

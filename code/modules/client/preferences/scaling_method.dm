@@ -2,7 +2,8 @@
 /datum/preference/choiced/scaling_method
 	category = PREFERENCE_CATEGORY_GAME_PREFERENCES
 	savefile_key = "scaling_method"
-	savefile_identifier = PREFERENCE_PLAYER
+	savefile_identifier = PREFERENCE_SAVEFILE_PLAYER
+	feature_identifier = PREFERENCE_FEATURE_DROPDOWN_SWITCHER
 
 /datum/preference/choiced/scaling_method/create_default_value()
 	return SCALING_METHOD_DISTORT

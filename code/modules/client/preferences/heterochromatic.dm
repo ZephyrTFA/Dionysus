@@ -1,8 +1,9 @@
 /datum/preference/color/heterochromatic
 	explanation = "Heterochromia"
 	savefile_key = "heterochromia"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	priority = PREFERENCE_PRIORITY_QUIRKS
+	feature_identifier = PREFERENCE_FEATURE_CHECKBOX
 
 /datum/preference/color/heterochromatic/is_accessible(datum/preferences/preferences)
 	if (!..(preferences))

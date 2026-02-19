@@ -747,8 +747,15 @@ GLOBAL_LIST_EMPTY(friendly_animal_types)
 	if(prefs)
 		prefs.apply_prefs_to(body, TRUE)
 
-	var/datum/outfit/outfit = outfit_override || job?.outfit
-	outfit = new outfit()
+	var/datum/outfit/outfit = outfit_override
+	if (!outfit && job)
+		var/datum/job_title/title = job.get_title(prefs.parent)
+		outfit = title.outfits[prefs.read_preference(/datum/preference/choiced/species)]
+		outfit ||= title.outfits[SPECIES_HUMAN]
+
+	if(ispath(outfit))
+		outfit = new outfit()
+
 	if(job)
 		body.dna.species.pre_equip_species_outfit(outfit, body, TRUE)
 

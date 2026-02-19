@@ -1,7 +1,7 @@
 /datum/preference/choiced/enable_screentips
 	category = PREFERENCE_CATEGORY_GAME_PREFERENCES
 	savefile_key = "screentip_pref"
-	savefile_identifier = PREFERENCE_PLAYER
+	savefile_identifier = PREFERENCE_SAVEFILE_PLAYER
 
 /datum/preference/choiced/enable_screentips/init_possible_values()
 	return list(SCREENTIP_PREFERENCE_ENABLED, SCREENTIP_PREFERENCE_CONTEXT_ONLY, SCREENTIP_PREFERENCE_DISABLED)
@@ -29,7 +29,7 @@
 /datum/preference/color/screentip_color
 	category = PREFERENCE_CATEGORY_GAME_PREFERENCES
 	savefile_key = "screentip_color"
-	savefile_identifier = PREFERENCE_PLAYER
+	savefile_identifier = PREFERENCE_SAVEFILE_PLAYER
 
 /datum/preference/color/screentip_color/apply_to_client(client/client, value)
 	client.mob?.hud_used?.screentip_color = value

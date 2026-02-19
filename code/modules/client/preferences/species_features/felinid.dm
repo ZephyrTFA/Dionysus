@@ -1,9 +1,10 @@
 /datum/preference/choiced/tail_human
 	explanation = "Tail"
 	savefile_key = "feature_human_tail"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	can_randomize = FALSE
 	relevant_external_organ = /obj/item/organ/tail/cat
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/tail_human/init_possible_values()
 	return assoc_to_keys(GLOB.tails_list_human)
@@ -18,9 +19,10 @@
 /datum/preference/choiced/ears
 	explanation = "Ears"
 	savefile_key = "feature_human_ears"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	can_randomize = FALSE
 	relevant_mutant_bodypart = "ears"
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/ears/init_possible_values()
 	return assoc_to_keys(GLOB.ears_list)

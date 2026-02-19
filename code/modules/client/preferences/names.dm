@@ -2,8 +2,9 @@
 /datum/preference/name
 	category = "names"
 	priority = PREFERENCE_PRIORITY_NAMES
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	abstract_type = /datum/preference/name
+	feature_identifier = PREFERENCE_FEATURE_NONE
 
 	/// These will be grouped together on the preferences menu
 	var/group
@@ -50,6 +51,7 @@
 	// The `_` makes it first in ABC order.
 	group = "_real_name"
 	savefile_key = "real_name"
+	feature_identifier = PREFERENCE_FEATURE_NONE
 
 /datum/preference/name/real_name/apply_to_human(mob/living/carbon/human/target, value)
 	target.set_real_name(value)
@@ -81,6 +83,7 @@
 	explanation = "Backup Human Name"
 	group = "backup_human"
 	savefile_key = "human_name"
+	feature_identifier = PREFERENCE_FEATURE_NONE
 
 /datum/preference/name/backup_human/create_informed_default_value(datum/preferences/preferences)
 	var/gender = preferences.read_preference(/datum/preference/choiced/gender)
@@ -93,6 +96,7 @@
 	explanation = "Entertainer Name"
 	group = "fun"
 	relevant_job = /datum/job/clown
+	feature_identifier = PREFERENCE_FEATURE_NONE
 
 /datum/preference/name/clown/create_default_value()
 	return pick(GLOB.clown_names)
@@ -117,6 +121,7 @@
 	explanation = "AI Name"
 	group = "silicons"
 	relevant_job = /datum/job/ai
+	feature_identifier = PREFERENCE_FEATURE_NONE
 
 /datum/preference/name/ai/create_default_value()
 	return pick(GLOB.ai_names)
@@ -128,6 +133,7 @@
 
 	explanation = "Religion Name"
 	group = "religion"
+	feature_identifier = PREFERENCE_FEATURE_NONE
 
 /datum/preference/name/religion/create_default_value()
 	return pick(GLOB.religion_names)
@@ -140,6 +146,7 @@
 
 	explanation = "(Chaplain) Deity Name"
 	group = "religion"
+	feature_identifier = PREFERENCE_FEATURE_NONE
 
 /datum/preference/name/deity/create_default_value()
 	return DEFAULT_DEITY
@@ -152,6 +159,7 @@
 
 	explanation = "(Chaplain) Book Name"
 	group = "religion"
+	feature_identifier = PREFERENCE_FEATURE_NONE
 
 /datum/preference/name/bible/create_default_value()
 	return DEFAULT_BIBLE

@@ -1,7 +1,7 @@
 /datum/preference/numeric/pixel_size
 	category = PREFERENCE_CATEGORY_GAME_PREFERENCES
 	savefile_key = "pixel_size"
-	savefile_identifier = PREFERENCE_PLAYER
+	savefile_identifier = PREFERENCE_SAVEFILE_PLAYER
 
 	minimum = 0
 	maximum = 3

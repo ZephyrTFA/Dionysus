@@ -1,9 +1,10 @@
 /// An associative list of job_name:employer_path
 /datum/preference/choiced/employer
 	explanation = "Employer"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "employer"
 	cyclable = FALSE
+	feature_identifier = PREFERENCE_FEATURE_DROPDOWN
 
 /datum/preference/choiced/employer/apply_to_human(mob/living/carbon/human/target, value)
 	return
@@ -46,8 +47,9 @@
 
 /// Associative list of job:integer, where integer is a priority between 1 and 4
 /datum/preference/blob/job_priority
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "job_priority"
+	feature_identifier = PREFERENCE_FEATURE_NONE
 
 /datum/preference/blob/job_priority/create_default_value()
 	return list()

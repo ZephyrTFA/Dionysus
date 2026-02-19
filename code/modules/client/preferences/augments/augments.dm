@@ -12,9 +12,10 @@
 */
 
 /datum/preference/blob/augments
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "augments"
 	priority = PREFERENCE_PRIORITY_AUGMENTS
+	feature_identifier = PREFERENCE_FEATURE_NONE
 
 /datum/preference/blob/augments/apply_to_human(mob/living/carbon/human/target, value)
 	var/datum/species/S = target.dna.species

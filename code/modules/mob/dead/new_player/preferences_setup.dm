@@ -1,7 +1,7 @@
 /// Fully randomizes everything in the character.
 /datum/preferences/proc/randomise_appearance_prefs(randomize_flags = ALL)
 	for (var/datum/preference/preference as anything in get_preferences_in_priority_order())
-		if(preference.savefile_identifier == PREFERENCE_PLAYER)
+		if(preference.savefile_identifier == PREFERENCE_SAVEFILE_PLAYER)
 			continue
 		if(istype(preference, /datum/preference/name/real_name) && !(randomize_flags & RANDOMIZE_NAME))
 			continue
@@ -57,4 +57,3 @@
 	mannequin.update_body()
 	mannequin.add_overlay(mutable_appearance('icons/turf/floors.dmi', icon_state = "floor", layer = SPACE_LAYER))
 	return mannequin.appearance
-

@@ -1,9 +1,10 @@
 /// Gender preference
 /datum/preference/choiced/gender
 	explanation = "Gender"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "gender"
 	priority = PREFERENCE_PRIORITY_GENDER
+	feature_identifier = PREFERENCE_FEATURE_DROPDOWN
 
 /datum/preference/choiced/gender/init_possible_values()
 	return list(MALE, FEMALE, PLURAL)

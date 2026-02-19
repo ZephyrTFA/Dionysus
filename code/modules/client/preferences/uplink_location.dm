@@ -1,8 +1,9 @@
 /datum/preference/choiced/uplink_location
 	explanation = "Uplink Location"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "uplink_loc"
 	can_randomize = FALSE
+	feature_identifier = PREFERENCE_FEATURE_DROPDOWN
 
 /datum/preference/choiced/uplink_location/init_possible_values()
 	return list(UPLINK_PDA, UPLINK_RADIO, UPLINK_PEN, UPLINK_IMPLANT)

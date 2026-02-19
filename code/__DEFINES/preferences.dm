@@ -102,9 +102,9 @@
 
 // Values for /datum/preference/savefile_identifier
 /// This preference is character specific.
-#define PREFERENCE_CHARACTER "character"
+#define PREFERENCE_SAVEFILE_CHARACTER "character"
 /// This preference is account specific.
-#define PREFERENCE_PLAYER "player"
+#define PREFERENCE_SAVEFILE_PLAYER "player"
 
 /// Open the game preferences window
 #define PREFERENCE_TAB_GAME 1
@@ -125,3 +125,20 @@
 #define PLAYTIME_VETERAN 300000 // 5,000 hours
 
 #define SPRITE_ACCESSORY_NONE "None"
+
+#define PREFERENCE_FEATURE_NONE "none" // I'm a special boy!
+#define PREFERENCE_FEATURE_COLOR "color"
+#define PREFERENCE_FEATURE_CHECKBOX "checkbox"
+#define PREFERENCE_FEATURE_CHECKBOX_INVERSE "checkbox_inverse"
+#define PREFERENCE_FEATURE_DROPDOWN "dropdown"
+#define PREFERENCE_FEATURE_ICONNED_DROPDOWN "iconned_dropdown"
+#define PREFERENCE_FEATURE_DROPDOWN_SWITCHER "dropdown_switcher"
+#define PREFERENCE_FEATURE_ICONNED_DROPDOWN_SWITCHER "iconned_dropdown_switcher"
+#define PREFERENCE_FEATURE_NUMBER "number"
+#define PREFERENCE_FEATURE_LONG_TEXT "long_text"
+#define PREFERENCE_FEATURE_SHORT_TEXT "short_text"
+#define PREFERENCE_FEATURE_TRI_COLOR "tri_color"
+#define PREFERENCE_FEATURE_ICON_BOX "icon_box"
+
+/// Used on sprite accessories's color_src to allow setting up to three colorable layers for a sprite accessory.
+#define TRI_COLOR_LAYERS "tri_color_layers"

@@ -3,7 +3,7 @@
 	explanation = "Shackle Laws"
 	savefile_key = "ipc_shackles"
 	requires_accessible = TRUE
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	priority = PREFERENCE_PRIORITY_APPEARANCE_MODS //Lowest ever priority
 
 /datum/preference/choiced/ipc_shackles/is_accessible(datum/preferences/preferences)
@@ -28,8 +28,9 @@
 /datum/preference/choiced/ipc_screen
 	explanation = "Screen"
 	savefile_key = "ipc_screen"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = /obj/item/organ/ipc_screen
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/ipc_screen/init_possible_values()
 	return GLOB.ipc_screens_list
@@ -40,7 +41,7 @@
 /datum/preference/choiced/ipc_antenna
 	explanation = "Antenna"
 	savefile_key = "ipc_antenna"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = /obj/item/organ/ipc_antenna
 	sub_preference = /datum/preference/color/mutcolor/ipc_antenna
 
@@ -53,7 +54,7 @@
 /datum/preference/color/mutcolor/ipc_antenna
 	explanation = "Antenna Color"
 	savefile_key = "ipc_antenna_color"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = /obj/item/organ/ipc_antenna
 	is_sub_preference = TRUE
 
@@ -65,10 +66,11 @@
 /datum/preference/choiced/ipc_brand
 	explanation = "Chassis Brand"
 	savefile_key = "ipc_brand"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_species_trait = BRANDEDPROSTHETICS
 	priority = PREFERENCE_PRIORITY_BRANDED_PROSTHETICS
 	requires_accessible = TRUE
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/ipc_brand/create_default_value()
 	return "None"
@@ -105,8 +107,9 @@ GLOBAL_REAL_VAR(ipc_chassis_options) = list(
 /datum/preference/choiced/saurian_screen
 	explanation = "Head"
 	savefile_key = "saurian_screen"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = /obj/item/organ/saurian_screen
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/saurian_screen/init_possible_values()
 	return GLOB.saurian_screens_list
@@ -117,9 +120,10 @@ GLOBAL_REAL_VAR(ipc_chassis_options) = list(
 /datum/preference/choiced/saurian_antenna
 	explanation = "Antenna"
 	savefile_key = "saurian_antenna"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = /obj/item/organ/saurian_antenna
 	sub_preference = /datum/preference/tri_color/saurian_antenna_color
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/saurian_antenna/init_possible_values()
 	return GLOB.saurian_antenna_list
@@ -130,10 +134,11 @@ GLOBAL_REAL_VAR(ipc_chassis_options) = list(
 /datum/preference/tri_color/saurian_antenna_color
 	explanation = "Antenna Color"
 	savefile_key = "saurian_antenna_color"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = /obj/item/organ/saurian_antenna
 	is_sub_preference = TRUE
 
 	color_key = MUTCOLORS_KEY_SAURIAN_ANTENNA
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 #undef NO_SHACKLES

@@ -1,7 +1,7 @@
 /// Toggles the HUD for ghosts
 /datum/preference/toggle/ghost_hud
 	savefile_key = "ghost_hud"
-	savefile_identifier = PREFERENCE_PLAYER
+	savefile_identifier = PREFERENCE_SAVEFILE_PLAYER
 	category = PREFERENCE_CATEGORY_GAME_PREFERENCES
 
 /datum/preference/toggle/ghost_hud/apply_to_client(client/client, value)
@@ -11,7 +11,7 @@
 /// Determines what ghosts orbiting look like to you.
 /datum/preference/choiced/ghost_orbit
 	savefile_key = "ghost_orbit"
-	savefile_identifier = PREFERENCE_PLAYER
+	savefile_identifier = PREFERENCE_SAVEFILE_PLAYER
 	category = PREFERENCE_CATEGORY_GAME_PREFERENCES
 
 /datum/preference/choiced/ghost_orbit/init_possible_values()
@@ -36,5 +36,5 @@
 /// Whether or not ghosts can examine things by clicking on them.
 /datum/preference/toggle/inquisitive_ghost
 	savefile_key = "inquisitive_ghost"
-	savefile_identifier = PREFERENCE_PLAYER
+	savefile_identifier = PREFERENCE_SAVEFILE_PLAYER
 	category = PREFERENCE_CATEGORY_GAME_PREFERENCES

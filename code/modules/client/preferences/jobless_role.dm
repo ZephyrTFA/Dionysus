@@ -1,6 +1,6 @@
 /datum/preference/choiced/jobless_role
 	savefile_key = "joblessrole"
-	savefile_identifier = PREFERENCE_PLAYER
+	savefile_identifier = PREFERENCE_SAVEFILE_PLAYER
 
 /datum/preference/choiced/jobless_role/create_default_value()
 	return BEOVERFLOW

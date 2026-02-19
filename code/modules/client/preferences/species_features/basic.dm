@@ -3,8 +3,9 @@
 /datum/preference/color/eye_color
 	explanation = "Eye Color"
 	savefile_key = "eye_color"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_species_trait = EYECOLOR
+	feature_identifier = PREFERENCE_FEATURE_COLOR
 
 /datum/preference/color/eye_color/apply_to_human(mob/living/carbon/human/target, value)
 	var/hetero = target.eye_color_heterochromatic
@@ -34,9 +35,10 @@
 /datum/preference/choiced/facial_hairstyle
 	explanation = "Facial Hair"
 	savefile_key = "facial_style_name"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_species_trait = FACEHAIR
 	sub_preference = /datum/preference/color/facial_hair_color
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/facial_hairstyle/init_possible_values()
 	return GLOB.facial_hairstyles_list
@@ -51,9 +53,10 @@
 /datum/preference/color/facial_hair_color
 	explanation = "Facial Hair Color"
 	savefile_key = "facial_hair_color"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	is_sub_preference = TRUE
 	relevant_species_trait = FACEHAIRCOLOR
+	feature_identifier = PREFERENCE_FEATURE_COLOR
 
 /datum/preference/color/facial_hair_color/apply_to_human(mob/living/carbon/human/target, value)
 	target.facial_hair_color = value
@@ -64,10 +67,11 @@
 
 /datum/preference/choiced/facial_hair_gradient
 	explanation = "Facial Hair Gradient"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "facial_hair_gradient"
 	relevant_species_trait = FACEHAIR
 	sub_preference = /datum/preference/color/facial_hair_gradient
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/facial_hair_gradient/init_possible_values()
 	return assoc_to_keys(GLOB.facial_hair_gradients_list)
@@ -83,9 +87,10 @@
 /datum/preference/color/facial_hair_gradient
 	explanation = "Facial Hair Gradient Color"
 	is_sub_preference = TRUE
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "facial_hair_gradient_color"
 	relevant_species_trait = FACEHAIR
+	feature_identifier = PREFERENCE_FEATURE_COLOR
 
 /datum/preference/color/facial_hair_gradient/apply_to_human(mob/living/carbon/human/target, value)
 	LAZYSETLEN(target.grad_color, GRADIENTS_LEN)
@@ -100,9 +105,10 @@
 /datum/preference/color/hair_color
 	explanation = "Hair Color"
 	savefile_key = "hair_color"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	is_sub_preference = TRUE
 	relevant_species_trait = HAIRCOLOR
+	feature_identifier = PREFERENCE_FEATURE_COLOR
 
 /datum/preference/color/hair_color/apply_to_human(mob/living/carbon/human/target, value)
 	target.hair_color = value
@@ -113,11 +119,12 @@
 /datum/preference/choiced/hairstyle
 	explanation = "Hairstyle"
 	savefile_key = "hairstyle_name"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	priority = PREFERENCE_PRIORITY_HUMAN_HAIR
 	relevant_species_trait = HAIR
 	exclude_species_traits = list(NONHUMANHAIR)
 	sub_preference = /datum/preference/color/hair_color
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/hairstyle/init_possible_values()
 	return GLOB.hairstyles_list
@@ -135,10 +142,11 @@
 
 /datum/preference/choiced/hair_gradient
 	explanation = "Hairstyle Gradient"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "hair_gradient"
 	relevant_species_trait = HAIR
 	sub_preference = /datum/preference/color/hair_gradient
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/hair_gradient/init_possible_values()
 	return assoc_to_keys(GLOB.hair_gradients_list)
@@ -161,10 +169,11 @@
 
 /datum/preference/color/hair_gradient
 	explanation = "Hairstyle Gradient Color"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "hair_gradient_color"
 	relevant_species_trait = HAIR
 	is_sub_preference = TRUE
+	feature_identifier = PREFERENCE_FEATURE_COLOR
 
 /datum/preference/color/hair_gradient/apply_to_human(mob/living/carbon/human/target, value)
 	LAZYSETLEN(target.grad_color, GRADIENTS_LEN)
@@ -178,9 +187,10 @@
 
 /datum/preference/color/sclera
 	explanation = "Sclera Color"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "sclera_color"
 	relevant_species_trait = SCLERA
+	feature_identifier = PREFERENCE_FEATURE_COLOR
 
 /datum/preference/color/sclera/create_default_value()
 	return "#f8ef9e"
@@ -192,6 +202,7 @@
 /datum/preference/color/mutcolor
 	abstract_type = /datum/preference/color/mutcolor
 	var/color_key = ""
+	feature_identifier = PREFERENCE_FEATURE_COLOR
 
 /datum/preference/color/mutcolor/apply_to_human(mob/living/carbon/human/target, value)
 	target.dna.mutant_colors["[color_key]_1"] = sanitize_hexcolor(value)
@@ -200,6 +211,7 @@
 	abstract_type = /datum/preference/tri_color
 	///dna.features["mutcolors"][color_key] = input
 	var/color_key = ""
+	feature_identifier = PREFERENCE_FEATURE_TRI_COLOR
 
 /datum/preference/tri_color/deserialize(input, datum/preferences/preferences)
 	var/list/input_colors = input
@@ -242,9 +254,10 @@
 	. += color_button_element(prefs, colors[3], "pref_act=[type];color=3")
 
 /datum/preference/appearance_mods
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "appearance_mods"
 	priority = PREFERENCE_PRIORITY_APPEARANCE_MODS
+	feature_identifier = PREFERENCE_FEATURE_NONE
 
 /datum/preference/appearance_mods/deserialize(input, datum/preferences/preferences)
 	var/list/input_list = input:Copy()
@@ -401,4 +414,3 @@
 		if(!prefs.update_preference(requested_preference, pref_mods))
 			return FALSE
 		return TRUE
-

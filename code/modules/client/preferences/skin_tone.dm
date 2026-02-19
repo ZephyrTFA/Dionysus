@@ -1,7 +1,8 @@
 /datum/preference/choiced/skin_tone
 	explanation = "Skin Tone"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "skin_tone"
+	feature_identifier = PREFERENCE_FEATURE_COLOR
 
 /datum/preference/choiced/skin_tone/init_possible_values()
 	return GLOB.skin_tones

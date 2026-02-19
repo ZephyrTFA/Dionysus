@@ -4,8 +4,9 @@
 /datum/preference/choiced/teshari_feathers
 	explanation = "Head Feathers"
 	savefile_key = "teshari_feathers"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = /obj/item/organ/teshari_feathers
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 	sub_preference = /datum/preference/color/hair_color
 
@@ -18,8 +19,9 @@
 /datum/preference/choiced/teshari_ears
 	explanation = "Ears"
 	savefile_key = "teshari_ears"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = /obj/item/organ/teshari_ears
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 	sub_preference = /datum/preference/color/facial_hair_color
 
@@ -32,8 +34,9 @@
 /datum/preference/choiced/teshari_body_feathers
 	explanation = "Body Feathers"
 	savefile_key = "teshari_body_feathers"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = /obj/item/organ/teshari_body_feathers
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 	sub_preference = /datum/preference/tri_color/teshari_body_feathers
 
@@ -46,8 +49,9 @@
 /datum/preference/choiced/tail_teshari
 	explanation = "Tail"
 	savefile_key = "tail_teshari"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = /obj/item/organ/tail/teshari
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 	sub_preference = /datum/preference/tri_color/teshari_tail
 
@@ -59,7 +63,7 @@
 
 /datum/preference/tri_color/teshari_tail
 	is_sub_preference = TRUE
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "teshari_tail_colors"
 	relevant_external_organ = /obj/item/organ/tail/teshari
 
@@ -67,7 +71,7 @@
 
 /datum/preference/tri_color/teshari_body_feathers
 	is_sub_preference = TRUE
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "teshari_body_colors"
 	relevant_external_organ = /obj/item/organ/teshari_body_feathers
 

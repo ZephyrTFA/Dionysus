@@ -1,8 +1,9 @@
 /datum/preference/choiced/moth_antennae
 	explanation = "Antennae"
 	savefile_key = "feature_moth_antennae"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = "moth_antennae"
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/moth_antennae/init_possible_values()
 	return GLOB.moth_antennae_list
@@ -13,8 +14,9 @@
 /datum/preference/choiced/moth_markings
 	explanation = "Body Markings"
 	savefile_key = "feature_moth_markings"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_mutant_bodypart = "moth_markings"
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/moth_markings/init_possible_values()
 	return GLOB.moth_markings_list
@@ -25,8 +27,9 @@
 /datum/preference/choiced/moth_wings
 	explanation = "Wings"
 	savefile_key = "feature_moth_wings"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = "moth_wings"
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/moth_wings/init_possible_values()
 	return GLOB.moth_wings_list
@@ -37,10 +40,11 @@
 /datum/preference/choiced/hairstyle_moth
 	explanation = "Furstyle"
 	savefile_key = "moth_hairstyle_name"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	priority = PREFERENCE_PRIORITY_NONHUMAN_HAIR
 	relevant_species_trait = NONHUMANHAIR
 	requires_accessible = TRUE
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/hairstyle_moth/init_possible_values()
 	return GLOB.moth_hairstyles_list

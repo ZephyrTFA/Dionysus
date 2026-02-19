@@ -1,9 +1,10 @@
 /// Species preference
 /datum/preference/choiced/species
 	explanation = "Species"
-	savefile_identifier = PREFERENCE_CHARACTER
+	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "species"
 	priority = PREFERENCE_PRIORITY_SPECIES
+	feature_identifier = PREFERENCE_FEATURE_NONE
 
 /datum/preference/choiced/species/deserialize(input, datum/preferences/preferences)
 	return GLOB.species_list[sanitize_inlist(input, get_choices_serialized(), SPECIES_HUMAN)]

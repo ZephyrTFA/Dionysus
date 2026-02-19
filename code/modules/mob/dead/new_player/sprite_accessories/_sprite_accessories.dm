@@ -1,3 +1,11 @@
+GLOBAL_LIST_EMPTY_TYPED(cached_sprite_accessory_sprites, /icon)
+GLOBAL_LIST_INIT(sprite_accessory_layers, list( \
+	BODY_BEHIND_LAYER, \
+	BODY_ADJ_LAYER, \
+	FRONT_MUTATIONS_LAYER, \
+	BODY_FRONT_LAYER, \
+))
+
 /*
 
 	Hello and welcome to sprite_accessories: For sprite accessories, such as hair,
@@ -20,6 +28,7 @@
 	if(!istype(L))
 		L = list()
 	if(!istype(male))
+		BODY_BEHIND_LAYER
 		male = list()
 	if(!istype(female))
 		female = list()
@@ -63,6 +72,7 @@
 	var/icon_state
 	/// The preview name of the accessory.
 	var/name
+	var/name_
 	/// Determines if the accessory will be skipped or included in random hair generations.
 	var/gender = NEUTER
 	/// Something that can be worn by either gender, but looks different on each.
@@ -86,6 +96,22 @@
 	var/dimension_y = 32
 	/// Should this sprite block emissives?
 	var/em_block = FALSE
+	/// A list of indexes to layer names. See /datum/sprite_accessory/New() for the defaults.
+	var/list/color_layer_names = list()
+
+/datum/sprite_accessory/New()
+	. = ..()
+	if(color_src == TRI_COLOR_LAYERS)
+		if(!GLOB.cached_sprite_accessory_sprites[icon])
+			GLOB.cached_sprite_accessory_sprites[icon] = icon_states(new /icon(icon))
+		for(var/layer in GLOB.sprite_accessory_layers)
+			var/layertext = layer == BODY_BEHIND_LAYER ? "BEHIND" : (layer == BODY_ADJ_LAYER ? "ADJ" : "FRONT")
+			if("m_[icon_state]_[layertext]_primary" in GLOB.cached_sprite_accessory_sprites[icon])
+				color_layer_names["1"] = "primary"
+			if("m_[icon_state]_[layertext]_secondary" in GLOB.cached_sprite_accessory_sprites[icon])
+				color_layer_names["2"] = "secondary"
+			if("m_[icon_state]_[layertext]_tertiary" in GLOB.cached_sprite_accessory_sprites[icon])
+				color_layer_names["3"] = "tertiary"
 
 /datum/sprite_accessory/blank
 	name = "None"
