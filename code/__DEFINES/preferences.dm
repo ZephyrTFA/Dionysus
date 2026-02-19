@@ -117,6 +117,8 @@
 
 /// Will be put under the game preferences window.
 #define PREFERENCE_CATEGORY_GAME_PREFERENCES "game_preferences"
+/// Will be put under the game preferences window.
+#define PREFERENCE_CATEGORY_SUPPLEMENTAL_FEATURES "supplemental_features"
 
 // Playtime is tracked in minutes
 /// The time needed to unlock hardcore random mode in preferences
@@ -142,3 +144,8 @@
 
 /// Used on sprite accessories's color_src to allow setting up to three colorable layers for a sprite accessory.
 #define TRI_COLOR_LAYERS "tri_color_layers"
+
+#define PREFERENCES_SET_MUTANT_CHOICE_LIST(name, global_list) /datum/preference/choiced/mutant/##name/New() { \
+	. = ..(); \
+	sprite_accessory = ##global_list; \
+}

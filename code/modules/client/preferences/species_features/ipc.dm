@@ -43,7 +43,7 @@
 	savefile_key = "ipc_antenna"
 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = /obj/item/organ/ipc_antenna
-	sub_preference = /datum/preference/color/mutcolor/ipc_antenna
+	sub_preference = /datum/preference/color/mutant/ipc_antenna
 
 /datum/preference/choiced/ipc_antenna/init_possible_values()
 	return GLOB.ipc_antenna_list
@@ -51,16 +51,14 @@
 /datum/preference/choiced/ipc_antenna/apply_to_human(mob/living/carbon/human/target, value)
 	target.dna.features["ipc_antenna"] = value
 
-/datum/preference/color/mutcolor/ipc_antenna
+/datum/preference/color/mutant/ipc_antenna
 	explanation = "Antenna Color"
 	savefile_key = "ipc_antenna_color"
 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = /obj/item/organ/ipc_antenna
 	is_sub_preference = TRUE
 
-	color_key = MUTCOLORS_KEY_IPC_ANTENNA
-
-/datum/preference/color/mutcolor/ipc_antenna/create_default_value()
+/datum/preference/color/mutant/ipc_antenna/create_default_value()
 	return "#b4b4b4"
 
 /datum/preference/choiced/ipc_brand
@@ -130,6 +128,52 @@ GLOBAL_REAL_VAR(ipc_chassis_options) = list(
 
 /datum/preference/choiced/saurian_antenna/apply_to_human(mob/living/carbon/human/target, value)
 	target.dna.features["saurian_antenna"] = value
+
+/datum/preference/tri_color
+	abstract_type = /datum/preference/tri_color
+	///dna.features["mutcolors"][color_key] = input
+	var/color_key = ""
+	feature_identifier = PREFERENCE_FEATURE_TRI_COLOR
+
+/datum/preference/tri_color/deserialize(input, datum/preferences/preferences)
+	var/list/input_colors = input
+	return list(sanitize_hexcolor(input_colors[1]), sanitize_hexcolor(input_colors[2]), sanitize_hexcolor(input_colors[3]))
+
+/datum/preference/tri_color/create_default_value()
+	return list("#FF0000", "#00FF00", "#0000FF")
+
+/datum/preference/tri_color/is_valid(list/value)
+	return islist(value) && value.len == 3 && (findtext(value[1], GLOB.is_color) && findtext(value[2], GLOB.is_color) && findtext(value[3], GLOB.is_color))
+
+/datum/preference/tri_color/apply_to_human(mob/living/carbon/human/target, value)
+	if (isabstract(src))
+		CRASH("`apply_to_human()` was called for abstract preference [type]")
+
+	target.dna.mutant_colors["[color_key]_1"] = sanitize_hexcolor(value[1])
+	target.dna.mutant_colors["[color_key]_2"] = sanitize_hexcolor(value[2])
+	target.dna.mutant_colors["[color_key]_3"] = sanitize_hexcolor(value[3])
+
+/datum/preference/tri_color/user_edit(mob/user, datum/preferences/prefs, list/params)
+	var/list/colors = prefs.read_preference(type)
+	var/index = text2num(params["color"])
+
+	if(!index)
+		return
+
+	var/default = colors[index]
+
+	var/input = input(user, "Change [explanation]",, default) as null|color
+	if(!input)
+		return
+	colors[index] = input
+	return prefs.update_preference(src, colors)
+
+/datum/preference/tri_color/get_button(datum/preferences/prefs)
+	var/list/colors = prefs.read_preference(type)
+	. = ""
+	. += color_button_element(prefs, colors[1], "pref_act=[type];color=1")
+	. += color_button_element(prefs, colors[2], "pref_act=[type];color=2")
+	. += color_button_element(prefs, colors[3], "pref_act=[type];color=3")
 
 /datum/preference/tri_color/saurian_antenna_color
 	explanation = "Antenna Color"

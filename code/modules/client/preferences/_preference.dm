@@ -22,6 +22,7 @@
 #define PREFERENCE_PRIORITY_NAMES 10
 /// Preferences that aren't names, but change the name changes set by PREFERENCE_PRIORITY_NAMES.
 #define PREFERENCE_PRIORITY_NAME_MODIFICATIONS 11
+/// Preferences that modify appearance in any non-trivial way
 #define PREFERENCE_PRIORITY_APPEARANCE_MODS 12
 
 /// The maximum preference priority, keep this updated, but don't use it for `priority`.
@@ -38,6 +39,19 @@ GLOBAL_LIST_INIT(preference_entries, init_preference_entries())
 
 /// An assoc list of preference entries by their `savefile_key`
 GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
+
+/// Takes an assoc list of names to /datum/sprite_accessory and returns a value
+/// fit for `/datum/preference/init_possible_values()`
+/proc/possible_values_for_sprite_accessory_list(list/datum/sprite_accessory/sprite_accessories)
+	var/list/possible_values = list()
+	for (var/name in sprite_accessories)
+		var/datum/sprite_accessory/sprite_accessory = sprite_accessories[name]
+		if (istype(sprite_accessory))
+			possible_values[name] = icon(sprite_accessory.icon, sprite_accessory.icon_state)
+		else
+			// This means it didn't have an icon state
+			possible_values[name] = icon('icons/effects/landmarks_static.dmi', "x")
+	return possible_values
 
 /proc/init_preference_entries()
 	var/list/output = list()
@@ -218,7 +232,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 /// Apply this preference onto the given human.
 /// Must be overriden by subtypes.
 /// Called when the savefile_identifier == PREFERENCE_SAVEFILE_CHARACTER.
-/datum/preference/proc/apply_to_human(mob/living/carbon/human/target, value)
+/datum/preference/proc/apply_to_human(mob/living/carbon/human/target, value, datum/preferences/preferences)
 	SHOULD_NOT_SLEEP(TRUE)
 	SHOULD_CALL_PARENT(FALSE)
 	CRASH("`apply_to_human()` was not implemented for [type]!")
@@ -387,8 +401,6 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 
 	/// A list of the four co-ordinates to crop to, if `generate_icons` is enabled. Useful for icons whose main contents are smaller than 32x32. Please keep it square. (x1, y1, x2, y2)
 	var/list/crop_area
-	/// A color to apply to the icon if it's greyscale, and `generate_icons` is enabled.
-	var/greyscale_color
 
 /// Automatically handles generating icon states and values for mutant parts.
 /datum/preference/choiced/proc/generate_mutant_valid_values(list/accessories, dir = SOUTH, accessories_to_ignore = null)
@@ -404,7 +416,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 				if(istype(accessory, path))
 					continue
 
-		data[initial(accessory.name)] = generate_icon(accessory, dir)
+		data[initial(accessory.name)] = generate_icons(accessory, dir)
 
 	return data
 
@@ -413,9 +425,9 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 	return "[original_icon_state][suffix]"
 
 /// Generates and allows for post-processing on icons, such as greyscaling and cropping.
-/datum/preference/choiced/proc/generate_icon(datum/sprite_accessory/sprite_accessory, dir = SOUTH)
+/datum/preference/choiced/proc/generate_icons(datum/sprite_accessory/sprite_accessory, dir = SOUTH)
 	if(!sprite_accessory.icon_state || lowertext(sprite_accessory.icon_state) == "none")
-		return icon('icons/mob/landmarks.dmi', "x")
+		return //icon('icons/effects/landmarks_static.dmi', "x")
 
 	var/list/icon_states_to_use = list()
 
@@ -429,7 +441,6 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 		icon_exists(sprite_accessory.icon, icon_state, TRUE)
 
 	var/list/icon/icons_to_return = list()
-	var/color = sanitize_hexcolor(greyscale_color)
 
 	for(var/icon_state in icon_states_to_use)
 		var/icon/icon_to_process = icon(sprite_accessory.icon, icon_state, dir, 1)
@@ -511,7 +522,13 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 		var/list/icons = list()
 
 		for (var/choice in choices)
-			icons[choice] = get_spritesheet_key(choice)
+			if (islist(choices[choice]))
+				var/list/choice_icons = list()
+				for (var/icon in choices[choice])
+					choice_icons += get_spritesheet_key(icon)
+				icons[choice] = choice_icons
+			else if (choices[choice])
+				icons[choice] = get_spritesheet_key(choices[choice])
 
 		data["icons"] = icons
 

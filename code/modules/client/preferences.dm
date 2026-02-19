@@ -199,7 +199,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			continue
 		if(preference.requires_accessible && !preference.is_accessible(src))
 			continue
-		preference.apply_to_human(character, read_preference(preference.type))
+		preference.apply_to_human(character, read_preference(preference.type), src)
 
 	character.dna.real_name = character.real_name
 

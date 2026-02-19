@@ -195,6 +195,7 @@ GLOBAL_LIST_INIT(total_uf_len_by_block, populate_total_uf_len_by_block())
 	. = ""
 	var/list/L = new /list(DNA_FEATURE_BLOCKS)
 
+	// *deathgasp
 	if(mutant_colors[MUTCOLORS_GENERIC_1])
 		L[DNA_MUTANT_COLOR_BLOCK] = sanitize_hexcolor(mutant_colors[MUTCOLORS_GENERIC_1], include_crunch = FALSE)
 	if(mutant_colors[MUTCOLORS_GENERIC_2])

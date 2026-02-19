@@ -28,7 +28,6 @@ GLOBAL_LIST_INIT(sprite_accessory_layers, list( \
 	if(!istype(L))
 		L = list()
 	if(!istype(male))
-		BODY_BEHIND_LAYER
 		male = list()
 	if(!istype(female))
 		female = list()
@@ -101,7 +100,8 @@ GLOBAL_LIST_INIT(sprite_accessory_layers, list( \
 
 /datum/sprite_accessory/New()
 	. = ..()
-	if(color_src == TRI_COLOR_LAYERS)
+	// These are meant to be only instantiated once, so this is safe to do here.
+	if(color_src == TRI_COLOR_LAYERS && type != abstract_type)
 		if(!GLOB.cached_sprite_accessory_sprites[icon])
 			GLOB.cached_sprite_accessory_sprites[icon] = icon_states(new /icon(icon))
 		for(var/layer in GLOB.sprite_accessory_layers)
