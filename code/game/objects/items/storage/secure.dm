@@ -191,6 +191,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/item/storage/secure/safe, 32)
 
 /obj/item/storage/secure/safe/Initialize()
 	. = ..()
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 	atom_storage.set_holdable(cant_hold_list = list(/obj/item/storage/secure/briefcase))
 	atom_storage.max_specific_storage = WEIGHT_CLASS_GIGANTIC
 

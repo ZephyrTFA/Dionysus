@@ -272,6 +272,10 @@
 	circuit = null
 	light_power = 0
 
+/obj/machinery/computer/security/telescreen/Initialize(mapload)
+	. = ..()
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
+
 /obj/machinery/computer/security/telescreen/update_icon_state()
 	icon_state = initial(icon_state)
 	if(machine_stat & BROKEN)

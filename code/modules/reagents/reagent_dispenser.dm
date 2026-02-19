@@ -141,6 +141,10 @@
 	anchored = TRUE
 	density = FALSE
 
+/obj/structure/reagent_dispensers/wall/Initialize(mapload)
+	. = ..()
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
+
 /obj/structure/reagent_dispensers/wall/peppertank
 	name = "pepper spray refiller"
 	desc = "Contains condensed capsaicin for use in law \"enforcement.\""

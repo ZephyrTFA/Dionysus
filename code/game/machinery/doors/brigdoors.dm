@@ -49,9 +49,8 @@
 
 	Radio = new/obj/item/radio(src)
 	Radio.set_listening(FALSE, TRUE)
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 
-/obj/machinery/door_timer/Initialize(mapload)
-	. = ..()
 	if(id != null)
 		for(var/obj/machinery/door/window/brigdoor/M in urange(20, src))
 			if (M.id == id)

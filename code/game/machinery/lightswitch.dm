@@ -49,6 +49,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/light_switch, 26)
 	AddComponent(/datum/component/usb_port, list(
 		/obj/item/circuit_component/light_switch,
 	))
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 
 	if(istext(area))
 		area = text2path(area)

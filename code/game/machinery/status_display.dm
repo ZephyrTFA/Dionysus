@@ -35,6 +35,10 @@
 	var/message1 = ""
 	var/message2 = ""
 
+/obj/machinery/status_display/Initialize(mapload, ndir, building)
+	. = ..()
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
+
 TYPEINFO_DEF(/obj/item/wallframe/status_display)
 	default_materials = list(/datum/material/steel=14000, /datum/material/glass=8000)
 

@@ -27,6 +27,7 @@ TYPEINFO_DEF(/obj/machinery/button)
 		setDir(ndir)
 		panel_open = TRUE
 		update_appearance()
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 
 	if(!built && !device && device_type)
 		device = new device_type(src)

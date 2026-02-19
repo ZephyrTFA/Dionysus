@@ -2915,6 +2915,7 @@
 #include "code\modules\computer4\peripherals\printer.dm"
 #include "code\modules\construction\girder.dm"
 #include "code\modules\construction\grille.dm"
+#include "code\modules\construction\wall_mounted.dm"
 #include "code\modules\construction\wall\mappables.dm"
 #include "code\modules\construction\wall\trim_kit.dm"
 #include "code\modules\construction\wall\wall_actual.dm"

@@ -155,6 +155,7 @@ GLOBAL_REAL_VAR(default_apc_armor) = list(BLUNT = 20, PUNCTURE = 20, SLASH = 0, 
 
 /obj/machinery/power/apc/Initialize(mapload)
 	. = ..()
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(on_wall_detach)))
 	alarm_manager = new(src)
 
 	if(!mapload)
@@ -195,6 +196,13 @@ GLOBAL_REAL_VAR(default_apc_armor) = list(BLUNT = 20, PUNCTURE = 20, SLASH = 0, 
 	///This is how we test to ensure that mappers use the directional subtypes of APCs, rather than use the parent and pixel-shift it themselves.
 	if(apc_mad)
 		log_mapping("APC: ([src]) at [AREACOORD(src)] [apc_mad]")
+
+/obj/machinery/power/apc/proc/on_wall_detach()
+	SIGNAL_HANDLER
+	deconstruct()
+	new /obj/item/electronics/apc(loc)
+	new /obj/item/stack/cable_coil(loc, 1)
+	qdel(src)
 
 /obj/machinery/power/apc/Destroy()
 	UNSET_TRACKING(__TYPE__)
