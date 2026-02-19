@@ -34,7 +34,7 @@ export type Feature<
  * TSending = The type you will be sending
  * TServerData = The data the server sends through preferences.json
  */
-type FeatureValue<
+export type FeatureValue<
   TReceiving,
   TSending = TReceiving,
   TServerData = undefined,

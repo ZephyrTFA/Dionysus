@@ -119,6 +119,12 @@ export enum Window {
   Keybindings = 2,
 }
 
+export type CharacterProfile = {
+  // Base64
+  image: string | null;
+  name: string | null;
+};
+
 export type PreferencesMenuData = {
   active_slot: number;
   antag_bans?: string[];
@@ -148,7 +154,7 @@ export type PreferencesMenuData = {
 
   character_preview_view: string;
 
-  character_profiles: (string | null)[];
+  character_profiles: CharacterProfile[];
 
   content_unlocked: BooleanLike;
   job_alt_titles: Record<string, string>;

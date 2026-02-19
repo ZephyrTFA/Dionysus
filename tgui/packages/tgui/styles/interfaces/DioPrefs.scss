@@ -1,0 +1,100 @@
+@use 'sass:color';
+@use 'sass:map';
+@use '../components/Button.scss';
+@use '../colors.scss';
+
+$char_size: 32px * 5; // Might need to fudge this a little for oversized characters. We'll see.
+
+.DioPrefs {
+  &__CharacterSelect {
+
+    &__Container {
+      width: 100%;
+      height: 100%;
+    }
+
+    &__Entry {
+      position: relative; // I have to do some weird positioning tricks here cause dynamic text in CSS is CBT
+      background-color: gray;
+      margin: 10px;
+      width: $char_size;
+      height: $char_size + 44px;
+      overflow: hidden;
+
+      .Portrait {
+        position: absolute;
+        width: $char_size;
+        height: $char_size;
+        image-rendering: pixelated;
+
+        &.Icon {
+          font-size: $char_size;
+          margin-left: 25px;
+        }
+      }
+
+      .Text {
+        background-color: white;
+        color: black;
+        text-align: center;
+        font-size: 18px;
+        height: 44px;
+        position: absolute;
+        bottom: 0;
+        min-width: 100%;
+        white-space: nowrap;
+        animation: marqueeIfOverflowing 6s linear infinite forwards;
+        left: 0;
+      }
+    }
+  }
+
+  &__CharacterDoll {
+    overflow: hidden;
+
+    &__ImageContainer {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      transition: transform 0.4s;
+
+      &__Image {
+        width: 100%;
+        height: 100%;
+        image-rendering: pixelated;
+      }
+    }
+
+    .Button {
+      image-rendering: pixelated;
+      // TODO: Make this CSS less shit
+      background-color: rgba(0, 0, 0, 0) !important;
+      border: 2px !important;
+      border-color: red !important;
+      border-radius: 1px !important;
+
+      &:hover {
+        background-color: rgba(0, 200, 0, 0.5) !important;
+      }
+
+      &--selected {
+        background-color: rgba(57, 95, 54, 0.5) !important;
+      }
+    }
+  }
+}
+
+@keyframes marqueeIfOverflowing {
+
+  0%,
+  10%,
+  90%,
+  100% {
+    transform: translateX(0px);
+  }
+
+  40%,
+  60% {
+    transform: translateX(calc(-1 * max(0px, 100% - $char_size)));
+  }
+}
