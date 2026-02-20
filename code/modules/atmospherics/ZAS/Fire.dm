@@ -432,7 +432,7 @@ If it gains pressure too slowly, it may leak or just rupture instead of explodin
 		if(door.dir == dir_to) //Same direction or diagonal (full tile)
 			door.fire_act(exposed_temperature, exposed_volume, adjacent)
 
-/turf/closed/wall/fire_act(exposed_temperature, exposed_volume, turf/adjacent)
+/turf/closed/constructed_wall/fire_act(exposed_temperature, exposed_volume, turf/adjacent)
 	if(!uses_integrity)
 		burn(exposed_temperature)
 	else if (exposed_temperature > heat_capacity)
