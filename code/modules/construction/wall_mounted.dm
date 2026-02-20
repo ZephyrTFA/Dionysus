@@ -9,7 +9,11 @@
 		return COMPONENT_INCOMPATIBLE
 	var/atom/parent_atom = parent
 	var/turf/parent_loc = get_turf(parent_atom)
-	if(!isnull(GLOB.current_test) || (parent_loc == null))
+#ifndef UNIT_TESTS
+	if(parent_loc == null)
+#else
+	if(UNLINT(TRUE)) // explicitly bypass wall mounting in unit tests
+#endif
 		QDEL_IN(src, 0)
 		return
 	var/parent_dir = parent_atom.dir
