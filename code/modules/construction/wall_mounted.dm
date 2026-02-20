@@ -9,8 +9,8 @@
 		return COMPONENT_INCOMPATIBLE
 	var/atom/parent_atom = parent
 	var/turf/parent_loc = get_turf(parent_atom)
-	if(parent_loc == null)
-		QDEL_IN(src, 1)
+	if(!isnull(GLOB.current_test) || (parent_loc == null))
+		QDEL_IN(src, 0)
 		return
 	var/parent_dir = parent_atom.dir
 	var/turf/closed/constructed_wall/found_wall
