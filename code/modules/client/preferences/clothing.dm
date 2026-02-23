@@ -72,7 +72,7 @@
 	explanation = "Underwear"
 	savefile_key = "underwear"
 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
-	sub_preference = /datum/preference/color/underwear_color
+	sub_preferences = list(/datum/preference/color/underwear_color)
 	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/underwear/init_possible_values()

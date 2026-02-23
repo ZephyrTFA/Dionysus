@@ -3,9 +3,9 @@
 // This isn't technically mutant stuff only anymore, it's just the historic term for parts that aren't seen on baseline humans.
 // Except I've fucked the system into submission and now I can use it for anything I want.
 /datum/preference/choiced/mutant
-	priority = PREFERENCE_PRIORITY_APPEARANCE_MODS
+	priority = PREFERENCE_PRIORITY_NAME_MODIFICATIONS // Otherwise organs will get qdel'd on body replacement.
 	abstract_type = /datum/preference/choiced/mutant
-	//category = PREFERENCE_CATEGORY_APPEARANCE
+	// category = PREFERENCE_CATEGORY_APPEARANCE
 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	should_generate_icons = TRUE
 	can_randomize = FALSE // Let's not force folk with mutant horrors beyond their comprehension, and force them to clean up a crappy randomly generated partslist.
@@ -35,6 +35,9 @@
 	if(accessory.name == "None" || !is_accessible(preferences))
 		return
 	var/obj/item/organ/new_organ_to_add = new organ_type_to_use(FALSE, accessory.name)
+	if (color_feature_id)
+		new_organ_to_add.color_source = ORGAN_COLOR_DNA
+		new_organ_to_add.draw_color = target.dna.features["[relevant_mutant_bodypart]_color"]
 	new_organ_to_add.Insert(target, TRUE, FALSE)
 
 /datum/preference/choiced/mutant/is_accessible(datum/preferences/preferences)
@@ -46,10 +49,9 @@
 
 /datum/preference/choiced/mutant/compile_constant_data()
 	. = ..()
-	if(color_feature_id)
-		.[PREFERENCE_CATEGORY_SUPPLEMENTAL_FEATURES] = color_feature_id
+	// if(color_feature_id)
+	// 	.[SUPPLEMENTAL_FEATURE_KEY] = color_feature_id
 
-// Mutant colors
 /datum/preference/color/mutant
 	category = PREFERENCE_CATEGORY_SUPPLEMENTAL_FEATURES
 	abstract_type = /datum/preference/color/mutant
@@ -90,8 +92,12 @@
 	var/datum/sprite_accessory/accessory = pref.sprite_accessory[preferences.read_preference(choiced_preference_datum)]
 
 	var/return_value = list()
+	var/static/list/color_layers = list("primary", "secondary", "tertiary")
+	var/list/icon_states = icon_states(accessory.icon)
 
-	for(var/index = 1, index <= max(accessory.color_layer_names.len, 1), index++)
-		return_value += value[index]
+	for(var/index = 1, index <= color_layers.len, index++)
+		var/icon_state = pref.generate_icon_state(accessory, accessory.icon_state, "_[color_layers[index]]")
+		if (index == 1 && (icon_state in icon_states)) // euugggh
+			return_value += value[index]
 
 	return jointext(return_value, ";")

@@ -117,8 +117,16 @@
 
 /// Will be put under the game preferences window.
 #define PREFERENCE_CATEGORY_GAME_PREFERENCES "game_preferences"
-/// Will be put under the game preferences window.
+/// This preference has to be manually rendered by another.
 #define PREFERENCE_CATEGORY_SUPPLEMENTAL_FEATURES "supplemental_features"
+// These will be in the appearance menu.
+#define PREFERENCE_CATEGORY_APPEARANCE_HEAD "head"
+#define PREFERENCE_CATEGORY_APPEARANCE_LEFT_ARM "left_arm"
+#define PREFERENCE_CATEGORY_APPEARANCE_RIGHT_ARM "right_arm"
+#define PREFERENCE_CATEGORY_APPEARANCE_GROIN "groin"
+#define PREFERENCE_CATEGORY_APPEARANCE_TORSO "torso"
+#define PREFERENCE_CATEGORY_APPEARANCE_LEFT_LEG "left_leg"
+#define PREFERENCE_CATEGORY_APPEARANCE_RIGHT_LEG "right_leg"
 
 // Playtime is tracked in minutes
 /// The time needed to unlock hardcore random mode in preferences

@@ -1,8 +1,20 @@
-
 GLOBAL_REAL_VAR(layer2text) = list(
 	"[BODY_BEHIND_LAYER]" = "BEHIND",
 	"[BODY_ADJ_LAYER]" = "ADJ",
 	"[BODY_FRONT_LAYER]" = "FRONT",
+	"[FRONT_MUTATIONS_LAYER]" = "FRONT_UNDER",
+)
+GLOBAL_REAL_VAR(layer_text) = list(
+	"BEHIND",
+	"ADJ",
+	"FRONT",
+	"FRONT_UNDER",
+)
+GLOBAL_REAL_VAR(layer_values) = list(
+	BODY_BEHIND_LAYER,
+	BODY_ADJ_LAYER,
+	BODY_FRONT_LAYER,
+	FRONT_MUTATIONS_LAYER,
 )
 
 GLOBAL_LIST_EMPTY(organ_overlays_cache)
@@ -77,10 +89,13 @@ GLOBAL_LIST_EMPTY(organ_overlays_cache)
 /obj/item/organ/proc/build_overlays(physique, image_dir)
 	RETURN_TYPE(/list)
 	. = list()
-	var/icon/finished_icon = build_icon(physique)
+	var/icon/finished_icon = build_external_organ_icon(render_key || feature_key, sprite_datum, physique, draw_color, color_source, layers, appearance_mods)
 	for(var/image_layer in layers)
 
 		var/image/overlay = image(finished_icon, global.layer2text["[image_layer]"], layer = -image_layer, dir = image_dir)
+
+		if(sprite_datum.em_block)
+			overlay.overlays += emissive_blocker(overlay.icon, overlay.icon_state, overlay.alpha)
 
 		if(sprite_datum.center)
 			center_image(overlay, sprite_datum.dimension_x, sprite_datum.dimension_y)
@@ -89,43 +104,69 @@ GLOBAL_LIST_EMPTY(organ_overlays_cache)
 
 	return .
 
-/obj/item/organ/proc/build_icon_state(physique, image_layer)
+/proc/build_sprite_accessory_icon_state(key, datum/sprite_accessory/sprite_datum, physique, image_layer_text, color_layer, is_inner)
 	var/gender = (physique == FEMALE) ? "f" : "m"
+
 	var/list/icon_state_builder = list()
 	icon_state_builder += sprite_datum.gender_specific ? gender : "m" //Male is default because sprite accessories are so ancient they predate the concept of not hardcoding gender
-	icon_state_builder += render_key ? render_key : feature_key
+	if (!is_inner)
+		icon_state_builder += key
+	else
+		icon_state_builder += "[key]inner"
 	icon_state_builder += sprite_datum.icon_state
-	icon_state_builder += global.layer2text["[image_layer]"]
+	icon_state_builder += image_layer_text
+	if (color_layer)
+		icon_state_builder += color_layer
 	return icon_state_builder.Join("_")
 
-/obj/item/organ/proc/build_icon(physique)
+/proc/build_external_organ_icon(key, datum/sprite_accessory/sprite_datum, physique, draw_color, color_source, list/layers = global.layer_values, list/appearance_mods)
 	RETURN_TYPE(/icon)
-	PRIVATE_PROC(TRUE)
-
-	var/dump_error = FALSE
 
 	var/icon/return_icon = icon()
+
+	// I'm not a fan of this, but I'd have to refactor the entire organ pipeline to do color layers fully properly.
+	// Thankfully, I can just beat people who try to create giant monofiles for sprites. - Rimi
+	var/list/color_layers
+	if(sprite_datum.color_src == TRI_COLOR_LAYERS)
+		color_layers = list("primary", "secondary", "tertiary")
+	else
+		color_layers = list(null) // lazy but keeps it simple, stupid
+
 	for(var/image_layer in layers)
-		var/finished_icon_state = build_icon_state(physique, image_layer)
 		var/layer_text = global.layer2text["[image_layer]"]
+		var/icon/temp_icon
 
-		if(!icon_exists(sprite_datum.icon, finished_icon_state))
-			stack_trace("Organ state layer [layer_text] missing from [sprite_datum.type]!")
-			//dump_error = TRUE
+		for(var/color_layer_index = 1, color_layer_index <= length(color_layers), color_layer_index++)
+			var/color_layer = color_layers[color_layer_index]
+			var/finished_icon_state = build_sprite_accessory_icon_state(key, sprite_datum, physique, layer_text, color_layer)
+			if (!icon_exists(sprite_datum.icon, finished_icon_state))
+				// Not too big an issue cause prefs spritesheet should cause all of this to be pre-cached.
+				// If it does become an issue, then we'll want an external tool to parse icons and build a DB of valid icon states.
+				// I don't feel like doing that.
+				continue
 
-		var/icon/temp_icon = icon(sprite_datum.icon, finished_icon_state)
-		if(sprite_datum.color_src && draw_color)
-			temp_icon.Blend(draw_color, ICON_MULTIPLY)
+			if(!temp_icon)
+				temp_icon = icon(sprite_datum.icon, finished_icon_state)
+			else
+				temp_icon.Blend(icon(sprite_datum.icon, finished_icon_state), ICON_OVERLAY)
 
-		for(var/datum/appearance_modifier/mod as anything in appearance_mods)
-			if(image_layer in mod.eorgan_layers_affected)
-				mod.BlendOnto(temp_icon)
-		return_icon.Insert(temp_icon, layer_text)
+			if(sprite_datum.color_src && draw_color)
+				if(color_source == ORGAN_COLOR_DNA || color_source == TRI_COLOR_LAYERS)
+					temp_icon.Blend(sanitize_hexcolor(draw_color[color_layer_index]), ICON_MULTIPLY)
+				else
+					temp_icon.Blend(sanitize_hexcolor(draw_color), ICON_MULTIPLY)
 
-	if(dump_error)
-		if(fexists("data/blenddebug/[sprite_datum.name].dmi"))
-			fdel("data/blenddebug/[sprite_datum.name].dmi")
-		fcopy(return_icon, "data/blenddebug/[sprite_datum.name].dmi")
+			if(sprite_datum.hasinner)
+				temp_icon.Blend(icon(sprite_datum.icon, build_sprite_accessory_icon_state(key, sprite_datum, physique, layer_text, color_layer, is_inner = TRUE)), ICON_OVERLAY)
+
+		if(appearance_mods)
+			for(var/datum/appearance_modifier/mod as anything in appearance_mods)
+				if(image_layer in mod.eorgan_layers_affected)
+					mod.BlendOnto(temp_icon)
+
+		if (temp_icon)
+			return_icon.Insert(temp_icon, layer_text)
+
 	return return_icon
 
 ///Generate a unique key based on our sprites. So that if we've aleady drawn these sprites, they can be found in the cache and wont have to be drawn again (blessing and curse)

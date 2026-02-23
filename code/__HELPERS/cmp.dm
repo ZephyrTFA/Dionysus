@@ -21,6 +21,10 @@
 	var/comp_b = b.name || "[b.type]"
 	return sorttext(comp_b, comp_a)
 
+/// Sorts "None" first, and other values follow standard alphabetical order. Intended for preferences.
+/proc/cmp_text_none_first_asc(name1, name2)
+	return name1 == "None" ? -1 : name2 == "None" ? 1 : sorttext(name2, name1)
+
 GLOBAL_VAR_INIT(cmp_field, "name")
 /proc/cmp_records_asc(datum/data/record/a, datum/data/record/b)
 	return sorttext(b.fields[GLOB.cmp_field], a.fields[GLOB.cmp_field])

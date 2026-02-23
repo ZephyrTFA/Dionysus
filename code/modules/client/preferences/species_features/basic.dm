@@ -51,7 +51,7 @@
 	savefile_key = "facial_style_name"
 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_species_trait = FACEHAIR
-	sub_preference = /datum/preference/color/facial_hair_color
+	sub_preferences = list(/datum/preference/color/facial_hair_color)
 	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/facial_hairstyle/init_possible_values()
@@ -84,7 +84,7 @@
 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "facial_hair_gradient"
 	relevant_species_trait = FACEHAIR
-	sub_preference = /datum/preference/color/facial_hair_gradient
+	sub_preferences = list(/datum/preference/color/facial_hair_gradient)
 	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/facial_hair_gradient/init_possible_values()
@@ -137,7 +137,7 @@
 	priority = PREFERENCE_PRIORITY_HUMAN_HAIR
 	relevant_species_trait = HAIR
 	exclude_species_traits = list(NONHUMANHAIR)
-	sub_preference = /datum/preference/color/hair_color
+	sub_preferences = list(/datum/preference/color/hair_color)
 	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/hairstyle/init_possible_values()
@@ -159,7 +159,7 @@
 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "hair_gradient"
 	relevant_species_trait = HAIR
-	sub_preference = /datum/preference/color/hair_gradient
+	sub_preferences = list(/datum/preference/color/hair_gradient)
 	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/hair_gradient/init_possible_values()
@@ -213,6 +213,7 @@
 	target.sclera_color = value
 	target.update_eyes()
 
+// REMINDER: Remove this and instead make these apply from mutant prefs.
 /datum/preference/appearance_mods
 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "appearance_mods"

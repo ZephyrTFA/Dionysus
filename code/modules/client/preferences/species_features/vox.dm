@@ -9,7 +9,7 @@
 	relevant_mutant_bodypart = "vox_hair"
 	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
-	sub_preference = /datum/preference/color/hair_color
+	sub_preferences = list(/datum/preference/color/hair_color)
 
 /datum/preference/choiced/vox_hair/init_possible_values()
 	return GLOB.vox_hair_list

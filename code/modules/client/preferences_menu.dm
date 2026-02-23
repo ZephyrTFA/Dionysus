@@ -149,6 +149,9 @@
 
 	data["active_slot"] = preferences.default_slot
 
+	// We should definitely cache this.
+	data["character_profiles"] = preferences.create_character_profiles()
+
 	for (var/datum/preference_middleware/preference_middleware as anything in preferences.middleware)
 		data += preference_middleware.get_ui_data(user)
 
@@ -156,8 +159,6 @@
 
 /datum/preferences_menu/ui_static_data(mob/user)
 	var/list/data = list()
-
-	data["character_profiles"] = preferences.create_character_profiles()
 
 	data["character_preview_view"] = character_preview_view.assigned_map
 	data["overflow_role"] = SSjob.GetJobType(SSjob.overflow_role).id
@@ -214,7 +215,7 @@
 		addtimer(CALLBACK(character_preview_view, TYPE_PROC_REF(/atom/movable/screen/character_preview_view, update_body)), 1 SECONDS)
 
 /datum/preferences_menu/proc/create_character_preview_view(mob/user)
-	character_preview_view = new(null, src, user.client)
+	character_preview_view = new(null, preferences, user.client)
 	character_preview_view.update_body()
 	character_preview_view.register_to_client(user.client)
 

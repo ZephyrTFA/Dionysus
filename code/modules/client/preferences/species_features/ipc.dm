@@ -43,7 +43,7 @@
 	savefile_key = "ipc_antenna"
 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = /obj/item/organ/ipc_antenna
-	sub_preference = /datum/preference/color/mutant/ipc_antenna
+	sub_preferences = list(/datum/preference/color/mutant/ipc_antenna)
 
 /datum/preference/choiced/ipc_antenna/init_possible_values()
 	return GLOB.ipc_antenna_list
@@ -120,7 +120,7 @@ GLOBAL_REAL_VAR(ipc_chassis_options) = list(
 	savefile_key = "saurian_antenna"
 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = /obj/item/organ/saurian_antenna
-	sub_preference = /datum/preference/tri_color/saurian_antenna_color
+	sub_preferences = list(/datum/preference/tri_color/saurian_antenna_color)
 	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/saurian_antenna/init_possible_values()

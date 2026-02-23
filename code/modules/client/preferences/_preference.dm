@@ -33,6 +33,7 @@
 
 /// The required list size for crop parameters in generate_icon.
 #define REQUIRED_CROP_LIST_SIZE 4
+#define REQUIRED_COLOR_LIST_SIZE 3
 
 /// An assoc list list of types to instantiated `/datum/preference` instances
 GLOBAL_LIST_INIT(preference_entries, init_preference_entries())
@@ -123,7 +124,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 
 	/// If the selected species has this in its /datum/species/var/cosmetic_organs,
 	/// will show the feature as selectable.
-	var/relevant_external_organ = null
+	var/obj/item/organ/relevant_external_organ = null
 
 	/// Any species that has any of the listed species traits will not have the option to pick this pref
 	var/exclude_species_traits = list()
@@ -131,8 +132,8 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 	/// If this preference is not accessible, do not attempt to apply it to mobs.
 	var/requires_accessible = FALSE
 
-	/// A typepath for a sub preference. Ex: Hair Style's sub_preference is /datum/preference/color/hair_color
-	var/sub_preference
+	/// A typepath for a sub preference. Ex: Hair Style's sub_preferences is /datum/preference/color/hair_color
+	var/sub_preferences
 
 	/// Is this type a sub preference?
 	var/is_sub_preference = FALSE
@@ -327,7 +328,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 		preference.apply_to_client_updated(parent, read_preference(preference.type))
 	else
 		spawn(-1)
-			character_preview_view?.update_body()
+			preferences_menu.character_preview_view?.update_body()
 
 	return TRUE
 
@@ -344,7 +345,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 	CRASH("`is_valid()` was not implemented for [type]!")
 
 /// Returns data to be sent to users in the menu
-/datum/preference/proc/compile_ui_data(mob/user, value)
+/datum/preference/proc/compile_ui_data(mob/user, value, /datum/preferences/preferences)
 	SHOULD_NOT_SLEEP(TRUE)
 
 	return serialize(value)
@@ -353,7 +354,12 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 /datum/preference/proc/compile_constant_data()
 	SHOULD_NOT_SLEEP(TRUE)
 
-	return null
+	var/list/data = list("name" = explanation)
+	if (length(sub_preferences))
+		for (var/sub_preference in sub_preferences)
+			var/datum/preference/sub_preference_instance = GLOB.preference_entries[sub_preferences]
+			LAZYADD(data[PREFERENCE_CATEGORY_SUPPLEMENTAL_FEATURES], list("key" = sub_preference_instance.savefile_key, "feature" = sub_preference_instance.feature_identifier))
+	return data
 
 /// Returns whether or not this preference is accessible.
 /// If FALSE, will not show in the UI and will not be editable (by update_preference).
@@ -401,6 +407,15 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 
 	/// A list of the four co-ordinates to crop to, if `generate_icons` is enabled. Useful for icons whose main contents are smaller than 32x32. Please keep it square. (x1, y1, x2, y2)
 	var/list/crop_area
+	/// A color to apply to the icon if it's greyscale, and `generate_icons` is enabled.
+	var/greyscale_color
+
+/datum/preference/choiced/New()
+	. = ..()
+	if(crop_area && (!istype(crop_area) || length(crop_area) != REQUIRED_CROP_LIST_SIZE))
+		CRASH("Invalid crop paramater! The provided crop area list is not four entries long, or is not a list!")
+	if(greyscale_color && islist(greyscale_color) && length(greyscale_color) != REQUIRED_COLOR_LIST_SIZE)
+		CRASH("Invalid greyscale color paramater! The provided greyscale color list is not three entries long!")
 
 /// Automatically handles generating icon states and values for mutant parts.
 /datum/preference/choiced/proc/generate_mutant_valid_values(list/accessories, dir = SOUTH, accessories_to_ignore = null)
@@ -416,7 +431,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 				if(istype(accessory, path))
 					continue
 
-		data[initial(accessory.name)] = generate_icons(accessory, dir)
+		data[initial(accessory.name)] = generate_icon(accessory, dir)
 
 	return data
 
@@ -425,35 +440,47 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 	return "[original_icon_state][suffix]"
 
 /// Generates and allows for post-processing on icons, such as greyscaling and cropping.
-/datum/preference/choiced/proc/generate_icons(datum/sprite_accessory/sprite_accessory, dir = SOUTH)
+/datum/preference/choiced/proc/generate_icon(datum/sprite_accessory/sprite_accessory, dir = SOUTH)
 	if(!sprite_accessory.icon_state || lowertext(sprite_accessory.icon_state) == "none")
-		return //icon('icons/effects/landmarks_static.dmi', "x")
+		return icon('icons/effects/landmarks_static.dmi', "x")
 
-	var/list/icon_states_to_use = list()
+	var/color
+	if(greyscale_color)
+		if (sprite_accessory.color_src == TRI_COLOR_LAYERS)
+			if(islist(greyscale_color))
+				color = greyscale_color
+			else
+				var/color_tmp = greyscale_color
+				color = list(greyscale_color)
+				for(var/i in 1 to 2)
+					color_tmp = "#[darken_color(darken_color(copytext(color_tmp, 2)))]"
+					color += color_tmp
+		else if (islist(greyscale_color))
+			color = greyscale_color[1]
+		else
+			color = greyscale_color
 
-	if(sprite_accessory.color_src == TRI_COLOR_LAYERS)
-		for(var/index in sprite_accessory.color_layer_names)
-			icon_states_to_use += generate_icon_state(sprite_accessory, sprite_accessory.icon_state, "_[sprite_accessory.color_layer_names[index]]")
-	else
-		icon_states_to_use += generate_icon_state(sprite_accessory, sprite_accessory.icon_state)
+	var/icon/iconsheet = build_external_organ_icon(relevant_mutant_bodypart, sprite_accessory, MALE, color, sprite_accessory.color_src == TRI_COLOR_LAYERS ? TRI_COLOR_LAYERS : null)
 
-	for(var/icon_state in icon_states_to_use)
-		icon_exists(sprite_accessory.icon, icon_state, TRUE)
+	var/list/generated_icon_states = icon_states(iconsheet)
+	var/icon/icon_to_return = icon(iconsheet, generated_icon_states[1], dir, 1, FALSE)
+	generated_icon_states.Remove(1)
 
-	var/list/icon/icons_to_return = list()
+	for (var/icon_state in generated_icon_states)
+		icon_to_return.Blend(icon(iconsheet, icon_state, dir, 1, FALSE), ICON_OVERLAY)
 
-	for(var/icon_state in icon_states_to_use)
-		var/icon/icon_to_process = icon(sprite_accessory.icon, icon_state, dir, 1)
+	// So... fcopying the icon to a temp file here fixes prefs exporting blank icons. Wtf??
+	// Also it has to be here and not later or earlier??? Extra wtf?
+	if(fexists("data/temp_blend.dmi"))
+		fdel("data/temp_blend.dmi")
+	fcopy(icon_to_return, "data/temp_blend.dmi")
+	fdel("data/temp_blend.dmi") // Leave no evidence of my crime
 
-		if(islist(crop_area) && crop_area.len == REQUIRED_CROP_LIST_SIZE)
-			icon_to_process.Crop(crop_area[1], crop_area[2], crop_area[3], crop_area[4])
-			icon_to_process.Scale(32, 32)
-		else if(crop_area)
-			stack_trace("Invalid crop paramater! The provided crop area list is not four entries long, or is not a list!")
+	if(islist(crop_area))
+		icon_to_return.Crop(crop_area[1], crop_area[2], crop_area[3], crop_area[4])
+		icon_to_return.Scale(32, 32)
 
-		icons_to_return += icon_to_process
-
-	return icons_to_return
+	return icon_to_return
 
 /// Returns a list of every possible value.
 /// The first time this is called, will run `init_values()`.
@@ -509,7 +536,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 	return pick(get_choices())
 
 /datum/preference/choiced/compile_constant_data()
-	var/list/data = list()
+	var/list/data = ..()
 
 	var/list/choices = list()
 
@@ -522,13 +549,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 		var/list/icons = list()
 
 		for (var/choice in choices)
-			if (islist(choices[choice]))
-				var/list/choice_icons = list()
-				for (var/icon in choices[choice])
-					choice_icons += get_spritesheet_key(icon)
-				icons[choice] = choice_icons
-			else if (choices[choice])
-				icons[choice] = get_spritesheet_key(choices[choice])
+			icons[choice] = get_spritesheet_key(choice)
 
 		data["icons"] = icons
 

@@ -92,7 +92,7 @@
 
 	for(var/image_layer in layers)
 		var/icon2use = sprite_datum.icon
-		var/state2use = build_icon_state(physique, image_layer)
+		var/state2use = build_sprite_accessory_icon_state(render_key || feature_key, sprite_datum, physique, global.layer2text[image_layer])
 
 		if(icon_exists(icon2use, "[state2use]_secondary"))
 			var/mutable_appearance/tail_secondary = mutable_appearance(icon2use, "[state2use]_secondary", layer = -image_layer)

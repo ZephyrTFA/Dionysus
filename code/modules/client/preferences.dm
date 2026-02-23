@@ -49,9 +49,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	///What outfit typepaths we've favorited in the SelectEquipment menu
 	var/list/favorite_outfits = list()
 
-	/// A preview of the current character
-	var/atom/movable/screen/character_preview_view/character_preview_view
-
 	/// A list of instantiated middleware
 	var/list/datum/preference_middleware/middleware = list()
 
@@ -79,7 +76,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/datum/preferences_menu/preferences_menu
 
 /datum/preferences/Destroy(force, ...)
-	QDEL_NULL(character_preview_view)
 	QDEL_LIST(middleware)
 	value_cache = null
 	return ..()
@@ -135,13 +131,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 		preferences_menu.ui_interact(usr, tab = PREFERENCE_TAB_KEYBINDINGS)
 		return TRUE
 
-/datum/preferences/proc/create_character_preview_view(mob/user)
-	character_preview_view = new(null, src, user.client)
-	character_preview_view.update_body()
-	character_preview_view.register_to_client(user.client)
-
-	return character_preview_view
-
 /datum/preferences/proc/compile_character_preferences(mob/user)
 	var/list/preferences = list()
 
@@ -152,7 +141,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 		LAZYINITLIST(preferences[preference.category])
 
 		var/value = read_preference(preference.type)
-		var/data = preference.compile_ui_data(user, value)
+		var/data = preference.compile_ui_data(user, value, src)
 
 		preferences[preference.category][preference.savefile_key] = data
 
@@ -181,15 +170,21 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 /datum/preferences/proc/create_character_profiles()
 	var/list/profiles = list()
 
+	var/restore_slot = default_slot
 	for (var/index in 1 to max_save_slots)
 		var/tree_key = "character[index]"
 		var/save_data = savefile.get_entry(tree_key)
-		var/name = index == default_slot ? read_preference(/datum/preference/name/real_name) : save_data?["real_name"]
-		var/data = list(list("name" = name, "image" = name ? icon2base64(get_flat_human_icon(null, get_highest_priority_job() || SSjob.GetJobType(SSjob.overflow_role), src, null, list(SOUTH))) : null))
+		if(save_data?["real_name"])
+			load_character(index)
+		else
+			profiles += list(list("name" = null, "image" = null))
+			continue
 
-		profiles += data
+		var/name = read_preference(/datum/preference/name/real_name)
+		var/image = name ? icon2base64(get_flat_human_icon(null, get_highest_priority_job() || SSjob.GetJobType(SSjob.overflow_role), src, null, list(SOUTH))) : null
+		profiles += list(list("name" = name, "image" = image))
 
-
+	load_character(restore_slot)
 	return profiles
 
 /// Applies the given preferences to a human mob.
