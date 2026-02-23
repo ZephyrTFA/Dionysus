@@ -90,33 +90,39 @@
 		if ("set_tricolor_preference")
 			var/requested_preference_key = params["preference"]
 			var/index_key = params["value"]
+			if(!isnum(index_key))
+				return FALSE
 
 			var/datum/preference/requested_preference = GLOB.preference_entries_by_key[requested_preference_key]
 			if (isnull(requested_preference))
 				return FALSE
 
-			if (!istype(requested_preference, /datum/preference/tri_color))
+			if (!istype(requested_preference, /datum/preference/color/mutant))
 				return FALSE
 
-			var/default_value_list = preferences.read_preference(requested_preference.type)
-			if (!islist(default_value_list))
+			var/old_value_list = preferences.read_preference(requested_preference.type)
+			if (!islist(old_value_list))
 				return FALSE
-			var/default_value = default_value_list[index_key]
+			var/old_value = old_value_list[index_key]
 
 			// Yielding
-			var/new_color = input(
+			var/new_color = tgui_color_picker(
 				usr,
 				"Select new color",
 				null,
-				default_value || COLOR_WHITE,
-			) as color | null
+				"#[old_value]" || COLOR_WHITE,
+			)
 
 			if (!new_color)
 				return FALSE
 
-			default_value_list[index_key] = new_color
+			// Handles turning #000000 to current skin color
+			if(new_color == COLOR_BLACK)
+				new_color = preferences.read_preference(/datum/preference/color/skin_color)
 
-			if (!preferences.update_preference(requested_preference, default_value_list))
+			old_value_list[index_key] = copytext(new_color, 2)
+
+			if (!preferences.update_preference(requested_preference, jointext(old_value_list, ";")))
 				return FALSE
 
 			return TRUE

@@ -4575,6 +4575,7 @@ W// DM Environment file for dionysus.dme.
 #include "code\modules\tgui\status_composers.dm"
 #include "code\modules\tgui\tgui.dm"
 #include "code\modules\tgui\tgui_alert.dm"
+#include "code\modules\tgui\tgui_color.dm"
 #include "code\modules\tgui\tgui_input_list.dm"
 #include "code\modules\tgui\tgui_input_number.dm"
 #include "code\modules\tgui\tgui_input_text.dm"
