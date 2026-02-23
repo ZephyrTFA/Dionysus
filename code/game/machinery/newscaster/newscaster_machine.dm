@@ -59,6 +59,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/newscaster, 30)
 
 /obj/machinery/newscaster/Initialize(mapload, ndir, building)
 	. = ..()
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 	GLOB.allCasters += src
 	GLOB.allbountyboards += src
 	update_appearance()

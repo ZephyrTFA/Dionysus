@@ -115,6 +115,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/requests_console, 30)
 	name = "\improper [department] requests console"
 
 	SET_TRACKING(__TYPE__)
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 
 	if(departmentType)
 

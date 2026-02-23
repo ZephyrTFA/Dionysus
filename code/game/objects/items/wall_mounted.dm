@@ -57,6 +57,13 @@ TYPEINFO_DEF(/obj/item/wallframe)
 
 	qdel(src)
 
+/turf/closed/constructed_wall/attackby(obj/item/wallframe/wallframe_item, mob/user, params)
+	if(istype(wallframe_item))
+		if(wallframe_item.try_build(src, user))
+			wallframe_item.attach(src, user)
+		return TRUE
+	return ..()
+
 /obj/item/wallframe/proc/after_attach(obj/O)
 	transfer_fingerprints_to(O)
 

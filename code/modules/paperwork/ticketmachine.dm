@@ -23,6 +23,7 @@
 /obj/machinery/ticket_machine/Initialize(mapload)
 	. = ..()
 	update_appearance()
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 	SET_TRACKING(__TYPE__)
 
 /obj/machinery/ticket_machine/Destroy()

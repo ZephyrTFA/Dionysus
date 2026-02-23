@@ -87,6 +87,7 @@ DEFINE_INTERACTABLE(/obj/machinery/light)
 /obj/machinery/light/Initialize(mapload)
 	. = ..()
 	SET_TRACKING(__TYPE__)
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 	maploaded = mapload
 
 	if(start_with_cell && !no_emergency)

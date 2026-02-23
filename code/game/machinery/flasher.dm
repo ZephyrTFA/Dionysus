@@ -36,6 +36,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/flasher, 26)
 /obj/machinery/flasher/Initialize(mapload, ndir = 0, built = 0)
 	. = ..()
 	SET_TRACKING(__TYPE__)
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 	if(!built)
 		bulb = new(src)
 

@@ -128,9 +128,16 @@
 /obj/structure/sign/poster/proc/roll_and_drop(atom/location)
 	pixel_x = 0
 	pixel_y = 0
+	var/turf/my_loc = get_turf(src)
+	UnregisterSignal(my_loc, COMSIG_TURF_CHANGE)
 	var/obj/item/poster/P = new poster_item_type(location, src)
 	forceMove(P)
 	return P
+
+/obj/structure/sign/poster/proc/wall_changed(turf/new_turf)
+	SIGNAL_HANDLER
+	if(!iswall(new_turf))
+		deconstruct()
 
 //separated to reduce code duplication. Moved here for ease of reference and to unclutter r_wall/attackby()
 /turf/closed/constructed_wall/proc/place_poster(obj/item/poster/P, mob/user)
@@ -161,6 +168,7 @@
 	if(!do_after(user, D, PLACE_SPEED, extra_checks = CALLBACK(D, TYPE_PROC_REF(/obj/structure/sign/poster, snowflake_wall_turf_check), src)))
 		to_chat(user, span_notice("The poster falls down!"))
 		D.roll_and_drop(user_drop_location)
+	D.RegisterSignal(src, COMSIG_TURF_CHANGE, TYPE_PROC_REF(/obj/structure/sign/poster, wall_changed))
 
 /obj/structure/sign/poster/proc/snowflake_wall_turf_check(atom/hopefully_still_a_wall_turf)
 	return iswallturf(hopefully_still_a_wall_turf)

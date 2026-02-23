@@ -74,6 +74,7 @@ TYPEINFO_DEF(/obj/machinery/firealarm)
 	AddComponent(/datum/component/usb_port, list(
 		/obj/item/circuit_component/firealarm,
 	))
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 
 	AddElement( \
 		/datum/element/contextual_screentip_bare_hands, \

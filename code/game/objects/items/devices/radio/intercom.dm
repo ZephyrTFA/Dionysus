@@ -20,6 +20,7 @@
 /obj/item/radio/intercom/Initialize(mapload, ndir, building)
 	. = ..()
 	SET_TRACKING(__TYPE__)
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 	var/area/current_area = get_area(src)
 	if(!current_area)
 		return

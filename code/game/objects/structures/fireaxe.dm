@@ -19,6 +19,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/structure/fireaxecabinet, 32)
 /obj/structure/fireaxecabinet/Initialize(mapload)
 	. = ..()
 	fireaxe = new(src)
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 	update_appearance()
 
 /obj/structure/fireaxecabinet/Destroy()

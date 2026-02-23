@@ -70,6 +70,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/camera/xray, 0)
 /obj/machinery/camera/Initialize(mapload, obj/structure/camera_assembly/old_assembly)
 	. = ..()
 	SET_TRACKING(__TYPE__)
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 
 	for(var/i in network)
 		network -= i
