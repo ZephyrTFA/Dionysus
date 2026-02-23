@@ -87,7 +87,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 /datum/preference
 	abstract_type = /datum/preference
 	/// The display default name when inserted into the chargen
-	var/explanation = "ERROR"
+	var/explanation
 
 	/// The key inside the savefile to use.
 	/// This is also sent to the UI.
@@ -354,11 +354,11 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 /datum/preference/proc/compile_constant_data()
 	SHOULD_NOT_SLEEP(TRUE)
 
-	var/list/data = list("name" = explanation)
+	var/list/data = list("name" = explanation, "feature" = feature_identifier)
 	if (length(sub_preferences))
 		for (var/sub_preference in sub_preferences)
-			var/datum/preference/sub_preference_instance = GLOB.preference_entries[sub_preferences]
-			LAZYADD(data[PREFERENCE_CATEGORY_SUPPLEMENTAL_FEATURES], list("key" = sub_preference_instance.savefile_key, "feature" = sub_preference_instance.feature_identifier))
+			var/datum/preference/sub_preference_instance = GLOB.preference_entries[sub_preference]
+			LAZYADD(data[PREFERENCE_CATEGORY_SUPPLEMENTAL_FEATURES], list(list("key" = sub_preference_instance.savefile_key, "feature" = sub_preference_instance.feature_identifier)))
 	return data
 
 /// Returns whether or not this preference is accessible.
@@ -639,7 +639,9 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 	return isnum(value) && value >= round(minimum, step) && value <= round(maximum, step)
 
 /datum/preference/numeric/compile_constant_data()
-	return list(
+	. = ..()
+
+	. += list(
 		"minimum" = minimum,
 		"maximum" = maximum,
 		"step" = step,
