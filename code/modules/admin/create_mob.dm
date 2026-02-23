@@ -38,7 +38,6 @@
 	H.dna.blood_type = H.dna.species.get_random_blood_type()
 
 	// Mutant randomizing, doesn't affect the mob appearance unless it's the specific mutant.
-	H.dna.mutant_colors = random_mutant_colors()
 	H.dna.features = random_features()
 
 	H.update_body(is_creating = TRUE)

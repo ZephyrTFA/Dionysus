@@ -2728,7 +2728,6 @@ W// DM Environment file for dionysus.dme.
 #include "code\modules\client\preferences\species_features\ipc.dm"
 #include "code\modules\client\preferences\species_features\lizard.dm"
 #include "code\modules\client\preferences\species_features\moth.dm"
-#include "code\modules\client\preferences\species_features\mutants.dm"
 #include "code\modules\client\preferences\species_features\pod.dm"
 #include "code\modules\client\preferences\species_features\teshari.dm"
 #include "code\modules\client\preferences\species_features\vampire.dm"

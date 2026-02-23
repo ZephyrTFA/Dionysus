@@ -61,7 +61,7 @@
 	preference = "ipc_antenna"
 
 	dna_block = DNA_IPC_ANTENNA_BLOCK
-	color_source = ORGAN_COLOR_INHERIT_ALL
+	color_source = ORGAN_COLOR_DNA
 	mutcolor_used = MUTCOLORS_KEY_IPC_ANTENNA
 
 /obj/item/organ/ipc_antenna/get_global_feature_list()
@@ -85,7 +85,7 @@
 	preference = "saurian_screen"
 
 	dna_block = DNA_SAURIAN_SCREEN_BLOCK
-	color_source = ORGAN_COLOR_INHERIT_ALL
+	color_source = ORGAN_COLOR_DNA
 	mutcolor_used = MUTCOLORS_KEY_GENERIC
 
 /obj/item/organ/saurian_screen/get_global_feature_list()
@@ -105,7 +105,9 @@
 		if(!icon_exists(sprite_datum.icon, "[state2use]_secondary", FALSE))
 			continue
 		var/image/secondary = image(sprite_datum.icon, "[state2use]_secondary")
-		secondary.color = mutcolors[MUTCOLORS_GENERIC_2]
+		var/list/colors = owner?.dna?.features["[feature_key]_color"]
+		if (istype(colors) && length(colors))
+			secondary.color = colors[2]
 		. += secondary
 
 	if(!ishuman(owner))
@@ -147,7 +149,7 @@
 	feature_key = "saurian_scutes"
 	dna_block = DNA_SAURIAN_SCUTES_BLOCK
 
-	color_source = ORGAN_COLOR_INHERIT_ALL
+	color_source = ORGAN_COLOR_DNA
 	mutcolor_used = MUTCOLORS_KEY_GENERIC
 	mutcolor_index = 3
 
@@ -167,7 +169,7 @@
 	preference = "saurian_screen"
 
 	dna_block = DNA_SAURIAN_SCREEN_BLOCK
-	color_source = ORGAN_COLOR_INHERIT_ALL
+	color_source = ORGAN_COLOR_DNA
 	mutcolor_used = MUTCOLORS_KEY_GENERIC
 
 /obj/item/organ/saurian_screen/get_global_feature_list()
@@ -187,7 +189,9 @@
 		if(!icon_exists(sprite_datum.icon, "[state2use]_secondary", FALSE))
 			continue
 		var/image/secondary = image(sprite_datum.icon, "[state2use]_secondary")
-		secondary.color = mutcolors[MUTCOLORS_GENERIC_2]
+		var/list/colors = owner?.dna?.features["[feature_key]_color"]
+		if (istype(colors) && length(colors))
+			secondary.color = colors[2]
 		. += secondary
 
 	if(!ishuman(owner))
@@ -216,7 +220,7 @@
 	render_key = "ipc_antenna_synth"
 
 	dna_block = DNA_SAURIAN_ANTENNA_BLOCK
-	color_source = ORGAN_COLOR_INHERIT_ALL
+	color_source = ORGAN_COLOR_DNA
 	mutcolor_used = MUTCOLORS_KEY_SAURIAN_ANTENNA
 
 /obj/item/organ/saurian_antenna/get_global_feature_list()
@@ -236,5 +240,7 @@
 		if(!icon_exists(sprite_datum.icon, "[state2use]_secondary", FALSE))
 			continue
 		var/image/secondary = image(sprite_datum.icon, "[state2use]_secondary")
-		secondary.color = mutcolors[MUTCOLORS_GENERIC_2]
+		var/list/colors = owner?.dna?.features["[feature_key]_color"]
+		if (istype(colors) && length(colors))
+			secondary.color = colors[2]
 		. += secondary

@@ -47,8 +47,6 @@ GLOBAL_LIST_EMPTY(organ_overlays_cache)
 	///Where does this organ inherit it's color from?
 	var/color_source = ORGAN_COLOR_INHERIT
 
-	///Used by ORGAN_COLOR_INHERIT_ALL, allows full control of the owner's mutcolors
-	var/list/mutcolors = list()
 	///See above
 	var/mutcolor_used
 	///Which index of the mutcolor key list to use. Defaults to 1, so MUTCOLORS_GENERIC_1 if mutcolor_used is MUTCOLORS_KEY_GENERIC
@@ -179,10 +177,9 @@ GLOBAL_LIST_EMPTY(organ_overlays_cache)
 
 	. += "[sprite_datum?.icon_state]"
 	. += "[render_key ? render_key : feature_key]"
-	if(color_source == ORGAN_COLOR_INHERIT_ALL)
-		. += "color1:[mutcolors["[mutcolor_used]_1"]]"
-		. += "color2:[mutcolors["[mutcolor_used]_2"]]"
-		. += "color3:[mutcolors["[mutcolor_used]_3"]]"
+	if(islist(draw_color))
+		for(var/index in 1 to length(draw_color))
+			. += "color[index]:[draw_color[index]]"
 	else
 		. += "[draw_color]"
 	for(var/datum/appearance_modifier/mod as anything in appearance_mods)

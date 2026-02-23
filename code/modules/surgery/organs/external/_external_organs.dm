@@ -57,10 +57,6 @@
 		// if(ORGAN_COLOR_STATIC)
 		//   Do nothing
 
-		if(ORGAN_COLOR_INHERIT_ALL)
-			mutcolors = ownerlimb.mutcolors.Copy()
-			draw_color = mutcolors["[mutcolor_used]_[mutcolor_index]"]
-
 		if(ORGAN_COLOR_DNA)
 			color = owner.dna.features["[feature_key]_color"]
 

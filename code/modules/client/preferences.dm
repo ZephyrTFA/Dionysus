@@ -170,21 +170,15 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 /datum/preferences/proc/create_character_profiles()
 	var/list/profiles = list()
 
-	var/restore_slot = default_slot
 	for (var/index in 1 to max_save_slots)
 		var/tree_key = "character[index]"
 		var/save_data = savefile.get_entry(tree_key)
-		if(save_data?["real_name"])
-			load_character(index)
-		else
-			profiles += list(list("name" = null, "image" = null))
-			continue
+		var/name = index == default_slot ? read_preference(/datum/preference/name/real_name) : save_data?["real_name"]
+		var/data = list(list("name" = name, "image" = name ? icon2base64(get_flat_human_icon(null, get_highest_priority_job() || SSjob.GetJobType(SSjob.overflow_role), src, null, list(SOUTH))) : null))
 
-		var/name = read_preference(/datum/preference/name/real_name)
-		var/image = name ? icon2base64(get_flat_human_icon(null, get_highest_priority_job() || SSjob.GetJobType(SSjob.overflow_role), src, null, list(SOUTH))) : null
-		profiles += list(list("name" = name, "image" = image))
+		profiles += data
 
-	load_character(restore_slot)
+
 	return profiles
 
 /// Applies the given preferences to a human mob.

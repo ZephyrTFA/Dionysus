@@ -120,7 +120,7 @@ GLOBAL_REAL_VAR(ipc_chassis_options) = list(
 	savefile_key = "saurian_antenna"
 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	relevant_external_organ = /obj/item/organ/saurian_antenna
-	sub_preferences = list(/datum/preference/tri_color/saurian_antenna_color)
+	// sub_preferences = list(/datum/preference/tri_color/saurian_antenna_color)
 	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 /datum/preference/choiced/saurian_antenna/init_possible_values()
@@ -128,61 +128,5 @@ GLOBAL_REAL_VAR(ipc_chassis_options) = list(
 
 /datum/preference/choiced/saurian_antenna/apply_to_human(mob/living/carbon/human/target, value)
 	target.dna.features["saurian_antenna"] = value
-
-/datum/preference/tri_color
-	abstract_type = /datum/preference/tri_color
-	///dna.features["mutcolors"][color_key] = input
-	var/color_key = ""
-	feature_identifier = PREFERENCE_FEATURE_TRI_COLOR
-
-/datum/preference/tri_color/deserialize(input, datum/preferences/preferences)
-	var/list/input_colors = input
-	return list(sanitize_hexcolor(input_colors[1]), sanitize_hexcolor(input_colors[2]), sanitize_hexcolor(input_colors[3]))
-
-/datum/preference/tri_color/create_default_value()
-	return list("#FF0000", "#00FF00", "#0000FF")
-
-/datum/preference/tri_color/is_valid(list/value)
-	return islist(value) && value.len == 3 && (findtext(value[1], GLOB.is_color) && findtext(value[2], GLOB.is_color) && findtext(value[3], GLOB.is_color))
-
-/datum/preference/tri_color/apply_to_human(mob/living/carbon/human/target, value)
-	if (isabstract(src))
-		CRASH("`apply_to_human()` was called for abstract preference [type]")
-
-	target.dna.mutant_colors["[color_key]_1"] = sanitize_hexcolor(value[1])
-	target.dna.mutant_colors["[color_key]_2"] = sanitize_hexcolor(value[2])
-	target.dna.mutant_colors["[color_key]_3"] = sanitize_hexcolor(value[3])
-
-/datum/preference/tri_color/user_edit(mob/user, datum/preferences/prefs, list/params)
-	var/list/colors = prefs.read_preference(type)
-	var/index = text2num(params["color"])
-
-	if(!index)
-		return
-
-	var/default = colors[index]
-
-	var/input = input(user, "Change [explanation]",, default) as null|color
-	if(!input)
-		return
-	colors[index] = input
-	return prefs.update_preference(src, colors)
-
-/datum/preference/tri_color/get_button(datum/preferences/prefs)
-	var/list/colors = prefs.read_preference(type)
-	. = ""
-	. += color_button_element(prefs, colors[1], "pref_act=[type];color=1")
-	. += color_button_element(prefs, colors[2], "pref_act=[type];color=2")
-	. += color_button_element(prefs, colors[3], "pref_act=[type];color=3")
-
-/datum/preference/tri_color/saurian_antenna_color
-	explanation = "Antenna Color"
-	savefile_key = "saurian_antenna_color"
-	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
-	relevant_external_organ = /obj/item/organ/saurian_antenna
-	is_sub_preference = TRUE
-
-	color_key = MUTCOLORS_KEY_SAURIAN_ANTENNA
-	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
 #undef NO_SHACKLES

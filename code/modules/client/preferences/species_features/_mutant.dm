@@ -7,6 +7,7 @@
 	abstract_type = /datum/preference/choiced/mutant
 	// category = PREFERENCE_CATEGORY_APPEARANCE
 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
+	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 	should_generate_icons = TRUE
 	can_randomize = FALSE // Let's not force folk with mutant horrors beyond their comprehension, and force them to clean up a crappy randomly generated partslist.
 	/// The ID to use for supplemental features. If null, it won't do anything.
@@ -18,7 +19,7 @@
 	/// A list of types to exclude, including their subtypes.
 	var/list/accessories_to_ignore
 	/// Organ to use for this sprite accessory. The organ's sprites are overriden by the accessory sprites.
-	var/organ_type_to_use
+	var/obj/item/organ/organ_type_to_use
 
 /datum/preference/choiced/mutant/create_default_value()
 	return "None"
@@ -49,13 +50,15 @@
 
 /datum/preference/choiced/mutant/compile_constant_data()
 	. = ..()
-	// if(color_feature_id)
-	// 	.[SUPPLEMENTAL_FEATURE_KEY] = color_feature_id
+	if(color_feature_id)
+		var/datum/preference/sub_preference_instance = GLOB.preference_entries_by_key[color_feature_id]
+		LAZYADD(.[PREFERENCE_CATEGORY_SUPPLEMENTAL_FEATURES], list(list("key" = sub_preference_instance.savefile_key, "feature" = sub_preference_instance.feature_identifier)))
 
 /datum/preference/color/mutant
 	category = PREFERENCE_CATEGORY_SUPPLEMENTAL_FEATURES
 	abstract_type = /datum/preference/color/mutant
 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
+	feature_identifier = PREFERENCE_FEATURE_TRI_COLOR
 
 	/// The path of the mutant choice datum to read from. Important.
 	var/choiced_preference_datum
@@ -93,11 +96,13 @@
 
 	var/return_value = list()
 	var/static/list/color_layers = list("primary", "secondary", "tertiary")
-	var/list/icon_states = icon_states(accessory.icon)
 
-	for(var/index = 1, index <= color_layers.len, index++)
-		var/icon_state = pref.generate_icon_state(accessory, accessory.icon_state, "_[color_layers[index]]")
-		if (index == 1 && (icon_state in icon_states)) // euugggh
-			return_value += value[index]
+
+	for(var/index in 1 to 3)
+		for(var/layer in global.layer2text)
+			var/icon_state = build_sprite_accessory_icon_state(initial(pref.organ_type_to_use.render_key) || initial(pref.organ_type_to_use.feature_key), accessory, MALE, global.layer2text[layer], color_layers[index])
+			if (index == 1 || icon_exists(accessory.icon, icon_state))
+				return_value += value[index]
+				break // This color layer is being used, we don't need to look any further
 
 	return jointext(return_value, ";")

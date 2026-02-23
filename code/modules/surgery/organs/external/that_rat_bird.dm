@@ -80,7 +80,7 @@
 	preference = "teshari_body_feathers"
 
 	dna_block = DNA_TESHARI_BODY_FEATHERS_BLOCK
-	color_source = ORGAN_COLOR_INHERIT_ALL
+	color_source = ORGAN_COLOR_DNA
 	mutcolor_used = MUTCOLORS_KEY_TESHARI_BODY_FEATHERS
 
 /obj/item/organ/teshari_body_feathers/can_draw_on_bodypart(mob/living/carbon/human/human)
@@ -113,7 +113,9 @@
 			if(!IS_ORGANIC_LIMB(BP))
 				continue
 			var/mutable_appearance/new_overlay = mutable_appearance(sprite_datum.icon, "[state2use]_[BP.body_zone]", layer = -image_layer)
-			new_overlay.color = mutcolors[bodypart_color_indexes[BP.body_zone]]
+			var/list/colors = owner?.dna?.features["[feature_key]_color"]
+			if (istype(colors) && length(colors))
+				new_overlay.color = colors[bodypart_color_indexes[BP.body_zone]]
 			. += new_overlay
 
 /obj/item/organ/teshari_body_feathers/build_cache_key()
