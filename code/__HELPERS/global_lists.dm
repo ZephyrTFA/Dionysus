@@ -164,7 +164,6 @@ GLOBAL_LIST_INIT(WALLITEMS_INTERIOR, typecacheof(list(
 	/obj/machinery/flasher,
 	/obj/machinery/keycard_auth,
 	/obj/machinery/light_switch,
-	/obj/machinery/newscaster,
 	/obj/machinery/power/apc,
 	/obj/machinery/requests_console,
 	/obj/machinery/status_display,

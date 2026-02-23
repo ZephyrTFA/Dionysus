@@ -46,6 +46,7 @@
 
 /obj/machinery/embedded_controller/radio/simple_vent_controller/Initialize(mapload)
 	. = ..()
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 	if(!mapload)
 		return
 	var/datum/computer/file/embedded_program/simple_vent_controller/new_prog = new

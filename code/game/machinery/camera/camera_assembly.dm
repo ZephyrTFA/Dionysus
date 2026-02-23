@@ -69,6 +69,7 @@ TYPEINFO_DEF(/obj/item/wallframe/camera)
 	. = ..()
 	if(building)
 		setDir(ndir)
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 
 /obj/structure/camera_assembly/update_icon_state()
 	icon_state = "[xray_module ? "xray" : null][initial(icon_state)]"

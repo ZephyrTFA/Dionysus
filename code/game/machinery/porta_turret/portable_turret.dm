@@ -889,6 +889,7 @@ TYPEINFO_DEF(/obj/machinery/porta_turret/syndicate/shuttle)
 	. = ..()
 	if(built)
 		locked = FALSE
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 	power_change() //Checks power and initial settings
 
 /obj/machinery/turretid/Destroy()

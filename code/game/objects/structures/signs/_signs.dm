@@ -17,6 +17,14 @@ TYPEINFO_DEF(/obj/structure/sign)
 	///sign_change_name is used to make nice looking, alphebetized and categorized names when you use a pen on any sign item or structure which is_editable.
 	var/sign_change_name
 
+/obj/structure/sign/Initialize(mapload)
+	. = ..()
+	if(mapload)
+		become_wall_mounted()
+
+/obj/structure/sign/proc/become_wall_mounted()
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE), allowed_attachment_angles = list(0, 90, 180, 270))
+
 /obj/structure/sign/blank //This subtype is necessary for now because some other things (posters, picture frames, paintings) inheret from the parent type.
 	icon_state = "backing"
 	name = "sign backing"
@@ -209,6 +217,7 @@ TYPEINFO_DEF(/obj/item/sign)
 	playsound(target_turf, 'sound/items/deconstruct.ogg', 50, TRUE)
 	placed_sign.update_integrity(get_integrity())
 	placed_sign.setDir(dir)
+	placed_sign.become_wall_mounted()
 	qdel(src)
 
 /obj/item/sign/random/Initialize(mapload)

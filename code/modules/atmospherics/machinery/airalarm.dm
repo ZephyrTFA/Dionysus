@@ -157,6 +157,7 @@ TYPEINFO_DEF(/obj/machinery/airalarm)
 	wires = new /datum/wires/airalarm(src)
 	if(ndir)
 		setDir(ndir)
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE), allowed_attachment_angles = list(180))
 
 	if(nbuild)
 		buildstage = AIRALARM_BUILD_NO_CIRCUIT

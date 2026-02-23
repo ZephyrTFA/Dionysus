@@ -27,6 +27,7 @@ TYPEINFO_DEF(/obj/structure/light_construct)
 	. = ..()
 	if(building)
 		setDir(ndir)
+	AddComponent(/datum/component/wall_mounted, CALLBACK(src, PROC_REF(deconstruct), FALSE))
 
 /obj/structure/light_construct/Destroy()
 	QDEL_NULL(cell)
