@@ -132,8 +132,12 @@ export type PreferencesMenuData = {
   antag_days_left?: Record<string, number>;
   character_preferences: {
     clothing: Record<string, string>;
+    crotch: Record<string, string>;
     features: Record<string, string>;
     game_preferences: Record<string, unknown>;
+    head: Record<string, string>;
+    left_arm: Record<string, string>;
+    left_leg: Record<string, string>;
     misc: {
       gender: Gender;
       joblessrole: JoblessRole;
@@ -144,12 +148,15 @@ export type PreferencesMenuData = {
       [otherKey: string]: unknown;
       random_body: RandomSetting;
     };
-
     randomization: Record<string, RandomSetting>;
+    right_arm: Record<string, string>;
+    right_leg: Record<string, string>;
 
     secondary_features: Record<string, unknown>;
 
     supplemental_features: Record<string, unknown>;
+
+    torso: Record<string, string>;
   };
 
   character_preview_view: string;

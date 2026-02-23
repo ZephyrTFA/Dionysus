@@ -84,6 +84,10 @@ $char_size: 32px * 5; // Might need to fudge this a little for oversized charact
   }
 }
 
+.preferences32x32 {
+  image-rendering: pixelated;
+}
+
 @keyframes marqueeIfOverflowing {
 
   0%,

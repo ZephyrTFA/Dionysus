@@ -1,4 +1,6 @@
-import { useBackend, useLocalState } from '../backend';
+import { Dispatch, SetStateAction, useState } from 'react';
+
+import { useBackend } from '../backend';
 import { PreferencesMenuData } from '../interfaces/PreferencesMenu/data';
 import { Box } from './Box';
 import { Button } from './Button';
@@ -12,6 +14,14 @@ export type Rect = {
 };
 
 export type Part = {
+  id:
+    | 'head'
+    | 'left_arm'
+    | 'right_arm'
+    | 'groin'
+    | 'torso'
+    | 'left_leg'
+    | 'right_leg';
   name: string;
   onSet?: (oldPart: Part | null) => {};
   onUnset?: (newPart: Part) => {};
@@ -22,18 +32,20 @@ export const CharacterDoll = (props: {
   center?: number;
   dollSize: number;
   iconSize?: number;
-  parts: Record<string, Part>;
+  parts: Part[];
+  selectedPart: Part | null;
+  setSelectedPart: Dispatch<SetStateAction<Part | null>>;
 }) => {
-  const { dollSize, parts, iconSize = 32, center = dollSize / 2 } = props;
+  const {
+    dollSize,
+    parts,
+    iconSize = 32,
+    center = dollSize / 2,
+    selectedPart,
+    setSelectedPart,
+  } = props;
   const { data } = useBackend<PreferencesMenuData>();
-  const [selectedPart, setSelectedPart] = useLocalState<null | Part>(
-    'DioPrefs_selected_part',
-    null,
-  );
-  const [lastOrigin, setLastOrigin] = useLocalState<null | string>(
-    'DioPrefs_doll_last_origin',
-    null,
-  );
+  const [lastOrigin, setLastOrigin] = useState<null | string>(null);
 
   const pixelMultiplier = dollSize / iconSize;
 
@@ -55,19 +67,21 @@ export const CharacterDoll = (props: {
         className="DioPrefs__CharacterDoll__ImageContainer"
         style={{
           transformOrigin: lastOrigin || '',
-          transform: selectedPart ? 'scale(2)' : 'scale(1)',
+          transform: props.selectedPart ? 'scale(2)' : 'scale(1)',
         }}
       >
         {!selectedPart &&
-          Object.keys(parts).map((key) => {
-            const part = parts[key];
+          parts.map((part) => {
             return (
               <CharacterPart
                 part={part}
                 pixelMultiplier={pixelMultiplier}
                 dollSize={dollSize}
                 center={center}
-                key={key}
+                key={part.id}
+                setSelectedPart={setSelectedPart}
+                selectedPart={selectedPart}
+                setLastOrigin={setLastOrigin}
               />
             );
           })}
@@ -86,17 +100,20 @@ const CharacterPart = (props: {
   dollSize: number;
   part: Part;
   pixelMultiplier: number;
+  selectedPart;
+  setLastOrigin;
+  setSelectedPart;
 }) => {
   const { data } = useBackend<PreferencesMenuData>();
-  const { part, pixelMultiplier, dollSize, center } = props;
-  const [selectedPart, setSelectedPart] = useLocalState<null | Part>(
-    'DioPrefs_selected_part',
-    null,
-  );
-  const [lastOrigin, setLastOrigin] = useLocalState<null | string>(
-    'DioPrefs_doll_last_origin',
-    null,
-  );
+  const {
+    part,
+    pixelMultiplier,
+    dollSize,
+    center,
+    selectedPart,
+    setSelectedPart,
+    setLastOrigin,
+  } = props;
 
   const scale = (n: number) => {
     return n * pixelMultiplier;
@@ -116,7 +133,7 @@ const CharacterPart = (props: {
         selectedPart?.onSet && selectedPart.onSet(oldPart);
         // This is so fucking lazy, but it works and looks clean enough
         setLastOrigin(
-          `${scale(part.pos.x + (-center + part.pos.x) * 0.8)}px ${scale(part.pos.y + (-center + part.pos.y) * 0.8)}px`,
+          `${scale(part.pos.x - 0.5 + (-center + part.pos.x) * 0.8)}px ${scale(part.pos.y + (-center + part.pos.y) * 0.8)}px`,
         );
       }}
       style={{

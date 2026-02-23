@@ -4,7 +4,7 @@ import { useBackend, useLocalState } from '../../backend';
 import { Dropdown, Flex, Stack } from '../../components';
 import { Window } from '../../layouts';
 import { AntagsPage } from './AntagsPage';
-import { PreferencesMenuData } from './data';
+import { CharacterProfile, PreferencesMenuData } from './data';
 import { JobsPage } from './JobsPage';
 import { MainPage } from './MainPage';
 import { PageButton } from './PageButton';
@@ -22,7 +22,7 @@ enum Page {
 const CharacterProfiles = (props: {
   activeSlot: number;
   onClick: (index: number) => void;
-  profiles: (string | null)[];
+  profiles: CharacterProfile[];
 }) => {
   const { profiles, activeSlot, onClick } = props;
 
@@ -31,10 +31,10 @@ const CharacterProfiles = (props: {
       <Flex.Item width="25%">
         <Dropdown
           width="100%"
-          displayText={profiles[activeSlot]}
+          displayText={profiles[activeSlot].name}
           options={profiles.map((profile, slot) => ({
             value: slot,
-            displayText: profile ?? 'New Character',
+            displayText: profile.name ?? 'New Character',
           }))}
           onSelected={(slot) => {
             onClick(slot);

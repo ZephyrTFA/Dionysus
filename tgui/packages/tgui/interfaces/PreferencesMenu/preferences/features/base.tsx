@@ -53,6 +53,11 @@ export type FeatureValueProps<
   value: TReceiving;
 }>;
 
+export type SupplementalFeature = {
+  feature: string;
+  key: string;
+};
+
 export const FeatureColorInput = (props: FeatureValueProps<string>) => {
   return (
     <Button
@@ -146,6 +151,8 @@ export type FeatureChoicedServerData = {
   choices: string[];
   display_names?: Record<string, string>;
   icons?: Record<string, string>;
+  name: string;
+  supplemental_features?: SupplementalFeature[];
 };
 
 export type FeatureChoiced = Feature<string, string, FeatureChoicedServerData>;
@@ -306,7 +313,7 @@ export const FeatureNumberInput = (
 
 export const FeatureValueInput = (props: {
   act: typeof sendAct;
-  feature: Feature<unknown>;
+  feature: FeatureValue<unknown, unknown, unknown>;
   featureId: string;
   shrink?: boolean;
 
@@ -329,7 +336,7 @@ export const FeatureValueInput = (props: {
   return (
     <ServerPreferencesFetcher
       render={(serverData) => {
-        return createElement(feature.component, {
+        return createElement(feature, {
           act: props.act,
           featureId: props.featureId,
           serverData: serverData?.[props.featureId] as any,
