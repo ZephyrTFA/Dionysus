@@ -145,16 +145,17 @@ GLOBAL_LIST_EMPTY(organ_overlays_cache)
 				// I don't feel like doing that.
 				continue
 
-			if(!temp_icon)
-				temp_icon = icon(sprite_datum.icon, finished_icon_state)
-			else
-				temp_icon.Blend(icon(sprite_datum.icon, finished_icon_state), ICON_OVERLAY)
-
+			var/icon/temp_temp_icon = icon(sprite_datum.icon, finished_icon_state)
 			if(sprite_datum.color_src && draw_color)
 				if(color_source == ORGAN_COLOR_DNA || color_source == TRI_COLOR_LAYERS)
 					temp_icon.Blend(sanitize_hexcolor(draw_color[color_layer_index]), ICON_MULTIPLY)
 				else
 					temp_icon.Blend(sanitize_hexcolor(draw_color), ICON_MULTIPLY)
+
+			if(!temp_icon)
+				temp_icon = temp_temp_icon
+			else
+				temp_icon.Blend(temp_temp_icon, ICON_OVERLAY)
 
 			if(sprite_datum.hasinner)
 				temp_icon.Blend(icon(sprite_datum.icon, build_sprite_accessory_icon_state(key, sprite_datum, physique, layer_text, color_layer, is_inner = TRUE)), ICON_OVERLAY)
