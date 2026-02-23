@@ -146,9 +146,9 @@ GLOBAL_LIST_EMPTY(organ_overlays_cache)
 			var/icon/temp_temp_icon = icon(sprite_datum.icon, finished_icon_state)
 			if(sprite_datum.color_src && draw_color)
 				if(color_source == ORGAN_COLOR_DNA || color_source == TRI_COLOR_LAYERS)
-					temp_icon.Blend(sanitize_hexcolor(draw_color[color_layer_index]), ICON_MULTIPLY)
+					temp_temp_icon.Blend(sanitize_hexcolor(draw_color[color_layer_index]), ICON_MULTIPLY)
 				else
-					temp_icon.Blend(sanitize_hexcolor(draw_color), ICON_MULTIPLY)
+					temp_temp_icon.Blend(sanitize_hexcolor(draw_color), ICON_MULTIPLY)
 
 			if(!temp_icon)
 				temp_icon = temp_temp_icon
