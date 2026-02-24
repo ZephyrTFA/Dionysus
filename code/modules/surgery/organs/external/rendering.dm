@@ -132,7 +132,7 @@ GLOBAL_LIST_EMPTY(organ_overlays_cache)
 
 	for(var/image_layer in layers)
 		var/layer_text = global.layer2text["[image_layer]"]
-		var/icon/temp_icon
+		var/icon/layer_icon
 
 		for(var/color_layer_index = 1, color_layer_index <= length(color_layers), color_layer_index++)
 			var/color_layer = color_layers[color_layer_index]
@@ -143,28 +143,28 @@ GLOBAL_LIST_EMPTY(organ_overlays_cache)
 				// I don't feel like doing that.
 				continue
 
-			var/icon/temp_temp_icon = icon(sprite_datum.icon, finished_icon_state)
+			var/icon/color_layer_icon = icon(sprite_datum.icon, finished_icon_state)
 			if(sprite_datum.color_src && draw_color)
 				if(color_source == ORGAN_COLOR_DNA || color_source == TRI_COLOR_LAYERS)
-					temp_temp_icon.Blend(sanitize_hexcolor(draw_color[color_layer_index]), ICON_MULTIPLY)
+					color_layer_icon.Blend(sanitize_hexcolor(draw_color[color_layer_index]), ICON_MULTIPLY)
 				else
-					temp_temp_icon.Blend(sanitize_hexcolor(draw_color), ICON_MULTIPLY)
+					color_layer_icon.Blend(sanitize_hexcolor(draw_color), ICON_MULTIPLY)
 
-			if(!temp_icon)
-				temp_icon = temp_temp_icon
+			if(!layer_icon)
+				layer_icon = color_layer_icon
 			else
-				temp_icon.Blend(temp_temp_icon, ICON_OVERLAY)
+				layer_icon.Blend(color_layer_icon, ICON_OVERLAY)
 
 			if(sprite_datum.hasinner)
-				temp_icon.Blend(icon(sprite_datum.icon, build_sprite_accessory_icon_state(key, sprite_datum, physique, layer_text, color_layer, is_inner = TRUE)), ICON_OVERLAY)
+				layer_icon.Blend(icon(sprite_datum.icon, build_sprite_accessory_icon_state(key, sprite_datum, physique, layer_text, color_layer, is_inner = TRUE)), ICON_OVERLAY)
 
 		if(appearance_mods)
 			for(var/datum/appearance_modifier/mod as anything in appearance_mods)
 				if(image_layer in mod.eorgan_layers_affected)
-					mod.BlendOnto(temp_icon)
+					mod.BlendOnto(layer_icon)
 
-		if (temp_icon)
-			return_icon.Insert(temp_icon, layer_text)
+		if (layer_icon)
+			return_icon.Insert(layer_icon, layer_text)
 
 	return return_icon
 
