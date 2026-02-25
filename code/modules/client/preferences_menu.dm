@@ -142,7 +142,7 @@
 	else if (character_preview_view.client != preferences.parent)
 		// The client re-logged, and doing this when they log back in doesn't seem to properly
 		// carry emissives.
-		character_preview_view.register_to_client(preferences.parent)
+		user.client.register_map_obj(src)
 
 	if (preferences.tainted_character_profiles)
 		data["character_profiles"] = preferences.create_character_profiles()
@@ -223,7 +223,7 @@
 /datum/preferences_menu/proc/create_character_preview_view(mob/user)
 	character_preview_view = new(null, preferences, user.client)
 	character_preview_view.update_body()
-	character_preview_view.register_to_client(user.client)
+	user.client.register_map_obj(src)
 
 	return character_preview_view
 

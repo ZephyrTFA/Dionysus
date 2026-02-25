@@ -330,7 +330,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 	else
 		spawn(-1)
 			preferences_menu.character_preview_view?.update_body()
-			var/datum/tgui/ui = SStgui.get_open_ui(user, src)
+			var/datum/tgui/ui = SStgui.get_open_ui(parent, src)
 			ui?.send_update()
 
 	return TRUE

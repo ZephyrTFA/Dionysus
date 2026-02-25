@@ -11,8 +11,6 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen/character_preview_view)
 
 	/// The body that is displayed
 	var/mob/living/carbon/human/dummy/body
-	/// The appearance to display
-	var/mutable_appearance/rendered_appearance
 
 	/// The preferences this refers to
 	var/datum/preferences/preferences
@@ -63,6 +61,7 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen/character_preview_view)
 		var/static/icon/dummy
 		if (!dummy)
 			dummy = icon('icons/mob/tails.dmi', "blank_template")
+			dummy.Scale(32, 128)
 
 		canvas = image(dummy)
 
@@ -70,7 +69,7 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen/character_preview_view)
 
 	var/offset = 0
 	for(var/dir in GLOB.cardinals)
-		var/mutable_appearance/app = mutable_appearance(body.appearance, direction=dir)
+		var/mutable_appearance/app = mutable_appearance(body, direction=dir)
 		app.pixel_x = offset
 		canvas.add_overlay(app)
 		offset += 32
@@ -84,21 +83,3 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen/character_preview_view)
 
 	// Without this, it doesn't show up in the menu
 	body.appearance_flags &= ~KEEP_TOGETHER
-
-/// Registers the relevant map objects to a client
-/atom/movable/screen/character_preview_view/proc/register_to_client(client/client)
-	QDEL_LIST(plane_masters)
-
-	src.client = client
-
-	if (!client)
-		return
-
-	for (var/plane_master_type in subtypesof(/atom/movable/screen/plane_master) - /atom/movable/screen/plane_master/blackness)
-		var/atom/movable/screen/plane_master/plane_master = new plane_master_type()
-		plane_master.screen_loc = "[assigned_map]:0,CENTER"
-		client?.screen |= plane_master
-
-		plane_masters += plane_master
-
-	client?.register_map_obj(src)
