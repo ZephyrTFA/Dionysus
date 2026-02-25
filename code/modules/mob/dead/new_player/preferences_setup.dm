@@ -55,5 +55,4 @@
 			mannequin.add_quirk(quirk_type, parent)
 
 	mannequin.update_body()
-	mannequin.add_overlay(mutable_appearance('icons/turf/floors.dmi', icon_state = "floor", layer = SPACE_LAYER))
 	return mannequin.appearance

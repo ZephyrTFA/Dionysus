@@ -1,6 +1,6 @@
 /datum/preferences_menu
 	var/datum/preferences/preferences
-	var/atom/movable/screen/character_preview_view/character_preview_view
+	var/atom/movable/screen/map_view/byondui/char_preview/character_preview_view
 
 	/// The current window, PREFERENCE_TAB_* in [`code/__DEFINES/preferences.dm`]
 	var/current_window = PREFERENCE_TAB_CHARACTER
@@ -137,13 +137,6 @@
 /datum/preferences_menu/ui_data(mob/user)
 	var/list/data = list()
 
-	if (isnull(character_preview_view))
-		character_preview_view = create_character_preview_view(user)
-	else if (character_preview_view.client != preferences.parent)
-		// The client re-logged, and doing this when they log back in doesn't seem to properly
-		// carry emissives.
-		user.client.register_map_obj(src)
-
 	if (preferences.tainted_character_profiles)
 		data["character_profiles"] = preferences.create_character_profiles()
 		preferences.tainted_character_profiles = FALSE
@@ -212,18 +205,18 @@
 
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
+		character_preview_view = create_character_preview_view(user)
 		ui = new(user, src, current_window == PREFERENCE_TAB_CHARACTER ? "DioPrefs" : "PreferencesMenu")
 		ui.set_autoupdate(FALSE)
 		ui.open()
 
 		// HACK: Without this the character starts out really tiny because of some BYOND bug.
 		// You can fix it by changing a preference, so let's just forcably update the body to emulate this.
-		addtimer(CALLBACK(character_preview_view, TYPE_PROC_REF(/atom/movable/screen/character_preview_view, update_body)), 1 SECONDS)
+		addtimer(CALLBACK(character_preview_view, TYPE_PROC_REF(/atom/movable/screen/map_view/byondui/char_preview, update_body)), 1 SECONDS)
 
 /datum/preferences_menu/proc/create_character_preview_view(mob/user)
 	character_preview_view = new(null, preferences, user.client)
 	character_preview_view.update_body()
-	user.client.register_map_obj(src)
 
 	return character_preview_view
 
