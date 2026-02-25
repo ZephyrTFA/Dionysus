@@ -80,7 +80,8 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 
 	var/list/flattened = list()
 	for (var/index in 1 to MAX_PREFERENCE_PRIORITY)
-		flattened += preferences[index]
+		if (preferences[index])
+			flattened += preferences[index]
 	return flattened
 
 /// Represents an individual preference.
@@ -421,17 +422,15 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 /datum/preference/choiced/proc/generate_mutant_valid_values(list/accessories, dir = SOUTH, accessories_to_ignore = null)
 	var/list/data = list()
 
-	for(var/datum/sprite_accessory/accessory as anything in accessories)
-		accessory = accessories[accessory]
-		if(!accessory || !accessory.name)
-			continue
+	for(var/accessory_name in accessories)
+		var/datum/sprite_accessory/accessory = accessories[accessory_name]
 
 		if(islist(accessories_to_ignore))
 			for(var/path in accessories_to_ignore)
 				if(istype(accessory, path))
 					continue
 
-		data[initial(accessory.name)] = generate_icon(accessory, dir)
+		data[initial(accessory.name) || accessory_name] = generate_icon(accessory, dir)
 
 	return data
 
@@ -441,7 +440,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 
 /// Generates and allows for post-processing on icons, such as greyscaling and cropping.
 /datum/preference/choiced/proc/generate_icon(datum/sprite_accessory/sprite_accessory, dir = SOUTH)
-	if(!sprite_accessory.icon_state || lowertext(sprite_accessory.icon_state) == "none")
+	if(!sprite_accessory?.icon_state || lowertext(sprite_accessory.icon_state) == "none")
 		return icon('icons/effects/landmarks_static.dmi', "x")
 
 	var/color
@@ -460,25 +459,28 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 		else
 			color = greyscale_color
 
-	var/icon/iconsheet = build_external_organ_icon(relevant_mutant_bodypart, sprite_accessory, MALE, color, sprite_accessory.color_src == TRI_COLOR_LAYERS ? TRI_COLOR_LAYERS : null)
+	var/icon/human_icon = sprite_accessory.get_base_preview_icon()
 
+	var/icon/iconsheet = build_external_organ_icon(relevant_mutant_bodypart, sprite_accessory, MALE, color, sprite_accessory.color_src == TRI_COLOR_LAYERS ? TRI_COLOR_LAYERS : null)
 	var/list/generated_icon_states = icon_states(iconsheet)
-	var/icon/icon_to_return = icon(iconsheet, generated_icon_states[1], dir, 1, FALSE)
-	generated_icon_states.Remove(1)
+
+	var/icon/icon_to_return
+
+	if(human_icon)
+		icon_to_return = icon(human_icon, dir=dir, frame=1, moving=0)
+	else
+		icon_to_return = icon(iconsheet, generated_icon_states[1], dir, 1, FALSE)
+		generated_icon_states.Remove(1)
 
 	for (var/icon_state in generated_icon_states)
 		icon_to_return.Blend(icon(iconsheet, icon_state, dir, 1, FALSE), ICON_OVERLAY)
 
-	// So... fcopying the icon to a temp file here fixes prefs exporting blank icons. Wtf??
-	// Also it has to be here and not later or earlier??? Extra wtf?
-	if(fexists("data/temp_blend.dmi"))
-		fdel("data/temp_blend.dmi")
-	fcopy(icon_to_return, "data/temp_blend.dmi")
-	fdel("data/temp_blend.dmi") // Leave no evidence of my crime
-
 	if(islist(crop_area))
 		icon_to_return.Crop(crop_area[1], crop_area[2], crop_area[3], crop_area[4])
-		icon_to_return.Scale(32, 32)
+
+	// Okay so apparently byond doesn't actually populate icon metadata with it's supposed size when adding the first icon state
+	// So I have to poke it here to say "hey dipshit, it's this size"
+	icon_to_return.Scale(32, 32)
 
 	return icon_to_return
 

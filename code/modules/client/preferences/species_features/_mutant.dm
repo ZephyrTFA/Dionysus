@@ -10,8 +10,8 @@
 	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 	should_generate_icons = TRUE
 	can_randomize = FALSE // Let's not force folk with mutant horrors beyond their comprehension, and force them to clean up a crappy randomly generated partslist.
-	/// The ID to use for supplemental features. If null, it won't do anything.
-	var/color_feature_id
+	/// The color feature to use for supplemental features. If null, it won't do anything.
+	var/color_feature
 	/// The global list containing the sprite accessories to use. Override New to set.
 	var/list/sprite_accessory
 	/// Direction to render the preview on. Can take NORTH, SOUTH, EAST, WEST.
@@ -31,15 +31,19 @@
 	target.dna.features[relevant_mutant_bodypart] = value
 
 	var/datum/sprite_accessory/accessory = sprite_accessory[value]
+	if(!is_applicable_value(accessory) || !is_accessible(preferences))
+		return
 	if(!accessory)
 		CRASH("Accessory is null for [value]!")
-	if(accessory.name == "None" || !is_accessible(preferences))
-		return
 	var/obj/item/organ/new_organ_to_add = new organ_type_to_use(FALSE, accessory.name)
-	if (color_feature_id)
+	if (color_feature)
 		new_organ_to_add.color_source = ORGAN_COLOR_DNA
 		new_organ_to_add.draw_color = target.dna.features["[relevant_mutant_bodypart]_color"]
 	new_organ_to_add.Insert(target, TRUE, FALSE)
+
+/// This proc is equivalent to saying "should I apply this?". If false, the entire mutant pref will be skipped.
+/datum/preference/choiced/mutant/proc/is_applicable_value(datum/sprite_accessory/accessory)
+	return accessory?.icon_state && accessory.icon_state != "none" && accessory.name != "None"
 
 /datum/preference/choiced/mutant/is_accessible(datum/preferences/preferences)
 	. = ..()
@@ -50,8 +54,8 @@
 
 /datum/preference/choiced/mutant/compile_constant_data()
 	. = ..()
-	if(color_feature_id)
-		var/datum/preference/sub_preference_instance = GLOB.preference_entries_by_key[color_feature_id]
+	if(color_feature)
+		var/datum/preference/sub_preference_instance = GLOB.preference_entries[color_feature]
 		LAZYADD(.[PREFERENCE_CATEGORY_SUPPLEMENTAL_FEATURES], list(list("key" = sub_preference_instance.savefile_key, "feature" = sub_preference_instance.feature_identifier)))
 
 /datum/preference/color/mutant
@@ -79,6 +83,12 @@
 
 	return input
 
+/datum/preference/color/mutant/is_accessible(datum/preferences/preferences)
+	. = ..()
+	var/datum/preference/choiced/mutant/pref = GLOB.preference_entries[choiced_preference_datum]
+	if (!pref.is_accessible(preferences))
+		return FALSE // Don't try to serialize this if it can't even be seen.
+
 /datum/preference/color/mutant/create_default_value()
 	return list(random_color(), random_color(), random_color())
 
@@ -93,6 +103,9 @@
 /datum/preference/color/mutant/compile_ui_data(mob/user, value, datum/preferences/preferences)
 	var/datum/preference/choiced/mutant/pref = GLOB.preference_entries[choiced_preference_datum]
 	var/datum/sprite_accessory/accessory = pref.sprite_accessory[preferences.read_preference(choiced_preference_datum)]
+
+	if (!pref.is_applicable_value(accessory))
+		return "" // No colors for you
 
 	var/return_value = list()
 	var/static/list/color_layers = list("primary", "secondary", "tertiary")

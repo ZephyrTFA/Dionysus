@@ -141,6 +141,8 @@
 #define ORGAN_SLOT_ZOMBIE "zombie_infection"
 
 /// Organ slot external
+#define ORGAN_SLOT_EXTERNAL_HAIR "hair"
+#define ORGAN_SLOT_EXTERNAL_FACIAL_HAIR "facial_hair"
 #define ORGAN_SLOT_EXTERNAL_TAIL "tail"
 #define ORGAN_SLOT_EXTERNAL_SPINES "spines"
 #define ORGAN_SLOT_EXTERNAL_SNOUT "snout"

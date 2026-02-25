@@ -225,8 +225,12 @@ const ChoicedSelection = (props: {
                       (feature.feature === 'tri_color' && 'Part Color')
                     }
                   >
+                    {JSON.stringify(feature)}
                     <FeatureValueInput
-                      act={act}
+                      act={(action, data) => {
+                        act(action, data);
+                        console.log(action + ' | ' + JSON.stringify(data));
+                      }}
                       feature={PREFERENCE_ID_TO_COMPONENT[feature.feature]}
                       featureId={feature.key}
                       shrink

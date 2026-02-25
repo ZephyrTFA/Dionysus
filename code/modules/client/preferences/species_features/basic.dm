@@ -35,7 +35,7 @@
 		eyes_organ.eye_color_left = value
 	eyes_organ.old_eye_color_left = value
 
-	if(hetero) // Don't override the snowflakes please
+	if(hetero) // Don't override the angel demon hybrids please
 		return
 
 	if (!initial(eyes_organ.eye_color_right))
@@ -46,158 +46,141 @@
 /datum/preference/color/eye_color/create_default_value()
 	return "#000000"
 
-/datum/preference/choiced/facial_hairstyle
+/datum/preference/choiced/mutant/facial_hairstyle
 	explanation = "Facial Hair"
 	savefile_key = "facial_style_name"
-	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
-	relevant_species_trait = FACEHAIR
-	sub_preferences = list(/datum/preference/color/facial_hair_color)
+	relevant_mutant_bodypart = "facial_hair"
+	exclude_species_traits = list(NONHUMANHAIR)
+	color_feature = /datum/preference/color/mutant/facial_hair_color
 	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
+	organ_type_to_use = /obj/item/organ/hair/facial
+	category = PREFERENCE_CATEGORY_APPEARANCE_HEAD
 
-/datum/preference/choiced/facial_hairstyle/init_possible_values()
-	return generate_possible_values_for_sprite_accessories_on_head(GLOB.facial_hairstyles_list)
+PREFERENCES_SET_MUTANT_CHOICE_LIST(facial_hairstyle, GLOB.facial_hairstyles_list)
 
-/datum/preference/choiced/facial_hairstyle/apply_to_human(mob/living/carbon/human/target, value)
-	target.facial_hairstyle = value
-	target.update_body_parts()
-
-/datum/preference/choiced/facial_hairstyle/create_default_value()
+/datum/preference/choiced/mutant/facial_hairstyle/create_default_value()
 	return "Shaved"
 
-/datum/preference/color/facial_hair_color
-	explanation = "Facial Hair Color"
+/datum/preference/choiced/mutant/facial_hairstyle/is_applicable_value(datum/sprite_accessory/accessory)
+	return ..() && accessory.name != "Shaved"
+
+/datum/preference/color/mutant/facial_hair_color
 	savefile_key = "facial_hair_color"
-	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
-	is_sub_preference = TRUE
-	relevant_species_trait = FACEHAIRCOLOR
-	feature_identifier = PREFERENCE_FEATURE_COLOR
+	exclude_species_traits = list(NONHUMANHAIR)
+	choiced_preference_datum = /datum/preference/choiced/mutant/facial_hairstyle
 
-/datum/preference/color/facial_hair_color/apply_to_human(mob/living/carbon/human/target, value)
-	target.facial_hair_color = value
-	target.update_body_parts()
+/datum/preference/color/mutant/facial_hair_color/create_default_value()
+	return list("#422f03", "#422f03", "#422f03")
 
-/datum/preference/color/facial_hair_color/create_default_value()
-	return "#422f03"
+// RIMI TODO: Move to spritemod
+// /datum/preference/choiced/facial_hair_gradient
+// 	explanation = "Facial Hair Gradient"
+// 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
+// 	savefile_key = "facial_hair_gradient"
+// 	relevant_species_trait = FACEHAIR
+// 	sub_preferences = list(/datum/preference/color/facial_hair_gradient)
+// 	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
-/datum/preference/choiced/facial_hair_gradient
-	explanation = "Facial Hair Gradient"
-	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
-	savefile_key = "facial_hair_gradient"
-	relevant_species_trait = FACEHAIR
-	sub_preferences = list(/datum/preference/color/facial_hair_gradient)
-	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
+// /datum/preference/choiced/facial_hair_gradient/init_possible_values()
+// 	return assoc_to_keys(GLOB.facial_hair_gradients_list)
 
-/datum/preference/choiced/facial_hair_gradient/init_possible_values()
-	return assoc_to_keys(GLOB.facial_hair_gradients_list)
+// /datum/preference/choiced/facial_hair_gradient/apply_to_human(mob/living/carbon/human/target, value)
+// 	LAZYSETLEN(target.grad_style, GRADIENTS_LEN)
+// 	target.grad_style[GRADIENT_FACIAL_HAIR_KEY] = value
+// 	target.update_body_parts()
 
-/datum/preference/choiced/facial_hair_gradient/apply_to_human(mob/living/carbon/human/target, value)
-	LAZYSETLEN(target.grad_style, GRADIENTS_LEN)
-	target.grad_style[GRADIENT_FACIAL_HAIR_KEY] = value
-	target.update_body_parts()
+// /datum/preference/choiced/facial_hair_gradient/create_default_value()
+// 	return "None"
 
-/datum/preference/choiced/facial_hair_gradient/create_default_value()
-	return "None"
+// /datum/preference/color/facial_hair_gradient
+// 	explanation = "Facial Hair Gradient Color"
+// 	is_sub_preference = TRUE
+// 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
+// 	savefile_key = "facial_hair_gradient_color"
+// 	relevant_species_trait = FACEHAIR
+// 	feature_identifier = PREFERENCE_FEATURE_COLOR
 
-/datum/preference/color/facial_hair_gradient
-	explanation = "Facial Hair Gradient Color"
-	is_sub_preference = TRUE
-	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
-	savefile_key = "facial_hair_gradient_color"
-	relevant_species_trait = FACEHAIR
-	feature_identifier = PREFERENCE_FEATURE_COLOR
+// /datum/preference/color/facial_hair_gradient/apply_to_human(mob/living/carbon/human/target, value)
+// 	LAZYSETLEN(target.grad_color, GRADIENTS_LEN)
+// 	target.grad_color[GRADIENT_FACIAL_HAIR_KEY] = value
+// 	target.update_body_parts()
 
-/datum/preference/color/facial_hair_gradient/apply_to_human(mob/living/carbon/human/target, value)
-	LAZYSETLEN(target.grad_color, GRADIENTS_LEN)
-	target.grad_color[GRADIENT_FACIAL_HAIR_KEY] = value
-	target.update_body_parts()
+// /datum/preference/color/facial_hair_gradient/is_accessible(datum/preferences/preferences)
+// 	if (!..(preferences))
+// 		return FALSE
+// 	return preferences.read_preference(/datum/preference/choiced/facial_hair_gradient) != "None"
 
-/datum/preference/color/facial_hair_gradient/is_accessible(datum/preferences/preferences)
-	if (!..(preferences))
-		return FALSE
-	return preferences.read_preference(/datum/preference/choiced/facial_hair_gradient) != "None"
-
-/datum/preference/color/hair_color
-	explanation = "Hair Color"
+/datum/preference/color/mutant/hair_color
 	savefile_key = "hair_color"
-	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
-	is_sub_preference = TRUE
-	relevant_species_trait = HAIRCOLOR
-	feature_identifier = PREFERENCE_FEATURE_COLOR
+	exclude_species_traits = list(NONHUMANHAIR)
+	choiced_preference_datum = /datum/preference/choiced/mutant/hairstyle
 
-/datum/preference/color/hair_color/apply_to_human(mob/living/carbon/human/target, value)
-	target.hair_color = value
+/datum/preference/color/mutant/hair_color/create_default_value()
+	return list("#422f03", "#422f03", "#422f03")
 
-/datum/preference/color/hair_color/create_default_value()
-	return "#422f03"
-
-/datum/preference/choiced/hairstyle
+/datum/preference/choiced/mutant/hairstyle
 	explanation = "Hairstyle"
 	savefile_key = "hairstyle_name"
-	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
-	priority = PREFERENCE_PRIORITY_HUMAN_HAIR
-	relevant_species_trait = HAIR
+	relevant_mutant_bodypart = "hair"
 	exclude_species_traits = list(NONHUMANHAIR)
-	sub_preferences = list(/datum/preference/color/hair_color)
+	color_feature = /datum/preference/color/mutant/hair_color
 	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
+	organ_type_to_use = /obj/item/organ/hair
+	category = PREFERENCE_CATEGORY_APPEARANCE_HEAD
 
-/datum/preference/choiced/hairstyle/init_possible_values()
-	return GLOB.hairstyles_list
+PREFERENCES_SET_MUTANT_CHOICE_LIST(hairstyle, GLOB.hairstyles_list)
 
-/datum/preference/choiced/hairstyle/apply_to_human(mob/living/carbon/human/target, value)
-	target.hairstyle = value
-
-/datum/preference/choiced/hairstyle/is_accessible(datum/preferences/preferences)
-	if(!..(preferences))
-		return FALSE
-	return !ispath(preferences.read_preference(/datum/preference/choiced/species), /datum/species/moth)
-
-/datum/preference/choiced/hairstyle/create_default_value()
+/datum/preference/choiced/mutant/hairstyle/create_default_value()
 	return "Bald"
 
-/datum/preference/choiced/hair_gradient
-	explanation = "Hairstyle Gradient"
-	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
-	savefile_key = "hair_gradient"
-	relevant_species_trait = HAIR
-	sub_preferences = list(/datum/preference/color/hair_gradient)
-	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
+/datum/preference/choiced/mutant/hairstyle/is_applicable_value(datum/sprite_accessory/accessory)
+	return ..() && accessory.name != "Bald"
 
-/datum/preference/choiced/hair_gradient/init_possible_values()
-	return assoc_to_keys(GLOB.hair_gradients_list)
+// RIMI TODO: Move to spritemod
+// /datum/preference/choiced/hair_gradient
+// 	explanation = "Hairstyle Gradient"
+// 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
+// 	savefile_key = "hair_gradient"
+// 	relevant_species_trait = HAIR
+// 	sub_preferences = list(/datum/preference/color/hair_gradient)
+// 	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 
-/datum/preference/choiced/hair_gradient/apply_to_human(mob/living/carbon/human/target, value)
-	LAZYSETLEN(target.grad_style, GRADIENTS_LEN)
-	target.grad_style[GRADIENT_HAIR_KEY] = value
-	target.update_body_parts()
+// /datum/preference/choiced/hair_gradient/init_possible_values()
+// 	return assoc_to_keys(GLOB.hair_gradients_list)
 
-/datum/preference/choiced/hair_gradient/create_default_value()
-	return "None"
+// /datum/preference/choiced/hair_gradient/apply_to_human(mob/living/carbon/human/target, value)
+// 	LAZYSETLEN(target.grad_style, GRADIENTS_LEN)
+// 	target.grad_style[GRADIENT_HAIR_KEY] = value
+// 	target.update_body_parts()
 
-/datum/preference/choiced/hair_gradient/is_accessible(datum/preferences/preferences)
-	if (!..(preferences))
-		return FALSE
-	if(preferences.read_preference(/datum/preference/choiced/species) == /datum/species/moth)
-		return FALSE
+// /datum/preference/choiced/hair_gradient/create_default_value()
+// 	return "None"
 
-	return TRUE
+// /datum/preference/choiced/hair_gradient/is_accessible(datum/preferences/preferences)
+// 	if (!..(preferences))
+// 		return FALSE
+// 	if(preferences.read_preference(/datum/preference/choiced/species) == /datum/species/moth)
+// 		return FALSE
 
-/datum/preference/color/hair_gradient
-	explanation = "Hairstyle Gradient Color"
-	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
-	savefile_key = "hair_gradient_color"
-	relevant_species_trait = HAIR
-	is_sub_preference = TRUE
-	feature_identifier = PREFERENCE_FEATURE_COLOR
+// 	return TRUE
 
-/datum/preference/color/hair_gradient/apply_to_human(mob/living/carbon/human/target, value)
-	LAZYSETLEN(target.grad_color, GRADIENTS_LEN)
-	target.grad_color[GRADIENT_HAIR_KEY] = value
-	target.update_body_parts()
+// /datum/preference/color/hair_gradient
+// 	explanation = "Hairstyle Gradient Color"
+// 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
+// 	savefile_key = "hair_gradient_color"
+// 	relevant_species_trait = HAIR
+// 	is_sub_preference = TRUE
+// 	feature_identifier = PREFERENCE_FEATURE_COLOR
 
-/datum/preference/color/hair_gradient/is_accessible(datum/preferences/preferences)
-	if (!..(preferences))
-		return FALSE
-	return preferences.read_preference(/datum/preference/choiced/hair_gradient) != "None"
+// /datum/preference/color/hair_gradient/apply_to_human(mob/living/carbon/human/target, value)
+// 	LAZYSETLEN(target.grad_color, GRADIENTS_LEN)
+// 	target.grad_color[GRADIENT_HAIR_KEY] = value
+// 	target.update_body_parts()
+
+// /datum/preference/color/hair_gradient/is_accessible(datum/preferences/preferences)
+// 	if (!..(preferences))
+// 		return FALSE
+// 	return preferences.read_preference(/datum/preference/choiced/hair_gradient) != "None"
 
 /datum/preference/color/sclera
 	explanation = "Sclera Color"
@@ -213,7 +196,7 @@
 	target.sclera_color = value
 	target.update_eyes()
 
-// REMINDER: Remove this and instead make these apply from mutant prefs.
+// RIMI TODO: Remove this and instead make these apply from mutant prefs.
 /datum/preference/appearance_mods
 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "appearance_mods"

@@ -87,6 +87,23 @@
 	/// Should this sprite block emissives?
 	var/em_block = FALSE
 
+/// Please use static vars to cache your icons.
+/// THIS SHOULD ONLY HAVE ONE FRAME AND STATE
+/// You should have all four directions, however.
+/datum/sprite_accessory/proc/get_base_preview_icon()
+	var/static/icon/human_icon
+	if (!human_icon)
+		human_icon = icon('icons/mob/human_parts_greyscale.dmi', "human_chest_m")
+		human_icon.Blend(icon('icons/mob/human_parts_greyscale.dmi', "human_head_m"), ICON_OVERLAY)
+		human_icon.Blend(icon('icons/mob/human_parts_greyscale.dmi', "human_r_arm"), ICON_OVERLAY)
+		human_icon.Blend(icon('icons/mob/human_parts_greyscale.dmi', "human_l_arm"), ICON_OVERLAY)
+		human_icon.Blend(icon('icons/mob/human_parts_greyscale.dmi', "human_r_hand"), ICON_OVERLAY)
+		human_icon.Blend(icon('icons/mob/human_parts_greyscale.dmi', "human_l_hand"), ICON_OVERLAY)
+		human_icon.Blend(icon('icons/mob/human_parts_greyscale.dmi', "human_r_leg"), ICON_OVERLAY)
+		human_icon.Blend(icon('icons/mob/human_parts_greyscale.dmi', "human_l_leg"), ICON_OVERLAY)
+		human_icon.Blend(skintone2hex("caucasian1"), ICON_MULTIPLY)
+	return human_icon
+
 /datum/sprite_accessory/blank
 	name = "None"
 	icon_state = "None"

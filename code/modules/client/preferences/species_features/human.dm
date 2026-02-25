@@ -3,7 +3,7 @@
 	relevant_mutant_bodypart = "tail"
 	greyscale_color = COLOR_DARK_BROWN
 	explanation = "Tail"
-	color_feature_id = "tail_human_color"
+	color_feature = /datum/preference/color/mutant/tail_human
 	sprite_direction = NORTH
 	accessories_to_ignore = list(/datum/sprite_accessory/tails/lizard)
 	category = PREFERENCE_CATEGORY_APPEARANCE_GROIN
@@ -28,7 +28,7 @@ PREFERENCES_SET_MUTANT_CHOICE_LIST(tail_human, GLOB.tails_list_human)
 	relevant_mutant_bodypart = "ears"
 	greyscale_color = COLOR_DARK_BROWN
 	explanation = "Ears"
-	color_feature_id = "ears_color"
+	color_feature = /datum/preference/color/mutant/ears
 	crop_area = list(11, 22, 21, 32) // We want just the head area.
 	category = PREFERENCE_CATEGORY_APPEARANCE_HEAD
 	organ_type_to_use = /obj/item/organ/ears/cat // TODO: Maybe make these not a direct nerf, but at the same time... cuteness comes at a cost
@@ -51,7 +51,7 @@ PREFERENCES_SET_MUTANT_CHOICE_LIST(ears, GLOB.ears_list)
 // 	savefile_key = "feature_horns"
 // 	relevant_mutant_bodypart = "horns"
 // 	explanation = "Horns"
-// 	color_feature_id = "horns_color"
+// 	color_feature = "horns_color"
 // 	crop_area = list(11, 22, 21, 32) // We want just the head area.
 
 // MUTANT_CHOICED_NEW(horns, GLOB.horns_list)

@@ -110,7 +110,7 @@
 				usr,
 				"Select new color",
 				null,
-				"#[old_value]" || COLOR_WHITE,
+				old_value || COLOR_WHITE,
 			)
 
 			if (!new_color)
