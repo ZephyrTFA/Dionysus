@@ -146,6 +146,18 @@
 
 	data["character_preferences"] = preferences.compile_character_preferences(user)
 
+	character_preview_view.update_body()
+
+	var/icon/char_icon = get_flat_existing_human_icon(character_preview_view.body)
+	var/icon/preview_icon = icon('icons/blanks/32x128.dmi', "nothing")
+	var/offset = 0
+	for (var/dir in GLOB.cardinals)
+		preview_icon.Blend(icon('icons/turf/floors.dmi', "floor"), ICON_OVERLAY, 0, offset)
+		preview_icon.Blend(icon(char_icon, dir=dir), ICON_OVERLAY, 0, offset)
+		offset += 32
+
+	data["character_preview_icon"] = icon2base64(preview_icon)
+
 	data["active_slot"] = preferences.default_slot
 
 	// We should definitely cache this.
@@ -159,7 +171,10 @@
 /datum/preferences_menu/ui_static_data(mob/user)
 	var/list/data = list()
 
-	data["character_preview_view"] = character_preview_view.assigned_map
+	// Fuck maps and especially this dogshit """engine""", I have better shit to do.
+	// If someone wants to make this a map, then good fucking luck, I wasted five hours on this fucking garbage.
+	// data["character_preview_view"] = character_preview_view.assigned_map
+
 	data["overflow_role"] = SSjob.GetJobType(SSjob.overflow_role).id
 	data["window"] = current_window
 
@@ -212,7 +227,7 @@
 
 		// HACK: Without this the character starts out really tiny because of some BYOND bug.
 		// You can fix it by changing a preference, so let's just forcably update the body to emulate this.
-		addtimer(CALLBACK(character_preview_view, TYPE_PROC_REF(/atom/movable/screen/map_view/byondui/char_preview, update_body)), 1 SECONDS)
+		// addtimer(CALLBACK(character_preview_view, TYPE_PROC_REF(/atom/movable/screen/map_view/byondui/char_preview, update_body)), 1 SECONDS)
 
 /datum/preferences_menu/proc/create_character_preview_view(mob/user)
 	character_preview_view = new(null, preferences, user.client)
