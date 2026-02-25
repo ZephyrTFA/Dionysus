@@ -79,7 +79,7 @@ export const AppearancePage = (props) => {
               </Stack>
             </Stack.Item>
             <Stack.Item width="300px">
-              <CharacterPreview />
+              <CharacterPreview id={data.character_preview_view} />
             </Stack.Item>
           </Stack>
         );

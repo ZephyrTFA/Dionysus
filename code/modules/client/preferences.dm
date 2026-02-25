@@ -174,8 +174,14 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 		var/tree_key = "character[index]"
 		var/save_data = savefile.get_entry(tree_key)
 		var/name = index == default_slot ? read_preference(/datum/preference/name/real_name) : save_data?["real_name"]
-		var/data = list(list("name" = name, "image" = name ? icon2base64(get_flat_human_icon(null, get_highest_priority_job() || SSjob.GetJobType(SSjob.overflow_role), src, null, list(SOUTH))) : null))
-
+		var/should_icon = index == default_slot && preferences_menu?.character_preview_view?.body
+		var/icon = should_icon ? icon2base64(get_flat_existing_human_icon(preferences_menu.character_preview_view.body, SOUTH)) : null
+		var/data = list(
+			list(
+				"name" = name,
+				"image" = icon
+			)
+		)
 		profiles += data
 
 
