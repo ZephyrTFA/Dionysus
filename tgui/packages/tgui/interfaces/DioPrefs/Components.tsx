@@ -88,7 +88,12 @@ export const MainFeature = (props: {
           width: `${CLOTHING_CELL_SIZE}px`,
         }}
         position="relative"
-        tooltip={catalog.name + ' (' + props.currentValue + ')'}
+        tooltip={
+          <>
+            {catalog.name}
+            <br /> <Box textColor="grey">{props.currentValue}</Box>
+          </>
+        }
         tooltipPosition="right"
       >
         <Box
