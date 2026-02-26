@@ -24,7 +24,7 @@
 	return preview_job
 
 /datum/preferences/proc/render_new_preview_appearance(mob/living/carbon/human/dummy/mannequin)
-	var/datum/job/preview_job = get_highest_priority_job()
+	var/datum/job/preview_job = get_highest_priority_job() || SSjob.GetJobType(SSjob.overflow_role)
 
 	// Set up the dummy for its photoshoot
 	mannequin.dna.species.replace_missing_bodyparts(mannequin) // Augments modify bodyparts, so we need to reset them incase augs were removed.

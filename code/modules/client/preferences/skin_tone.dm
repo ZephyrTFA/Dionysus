@@ -21,6 +21,7 @@
 	return initial(species_type.use_skintones)
 
 /datum/preference/color/skin_color
+	explanation = "Skin Color"
 	category = PREFERENCE_CATEGORY_APPEARANCE_TORSO
 	savefile_identifier = PREFERENCE_SAVEFILE_CHARACTER
 	savefile_key = "skin_color"

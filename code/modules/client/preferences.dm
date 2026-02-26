@@ -174,12 +174,13 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 		var/tree_key = "character[index]"
 		var/save_data = savefile.get_entry(tree_key)
 		var/name = index == default_slot ? read_preference(/datum/preference/name/real_name) : save_data?["real_name"]
-		// var/should_icon = index == default_slot && preferences_menu?.character_preview_view?.body
-		// var/icon = should_icon ? icon2base64(get_flat_existing_human_icon(preferences_menu.character_preview_view.body, list(SOUTH))) : null
+		var/should_icon = index == default_slot && preferences_menu?.character_preview_view?.body
+		// temp until I can be arsed to set up caching
+		var/icon = should_icon ? icon2base64(get_flat_existing_human_icon(preferences_menu.character_preview_view.body, list(SOUTH))) : null
 		var/data = list(
 			list(
 				"name" = name,
-				"image" = null
+				"image" = icon
 			)
 		)
 		profiles += data

@@ -42,7 +42,7 @@
 
 		canvas = image(dummy)
 
-	preferences.render_new_preview_appearance(body)
+	preferences.preferences_menu.render_new_preview_appearance(body)
 
 	var/offset = -96
 	for(var/dir in GLOB.cardinals)

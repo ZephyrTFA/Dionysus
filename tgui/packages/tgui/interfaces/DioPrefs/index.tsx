@@ -1,4 +1,7 @@
+import { Button } from 'tgui-core/components';
+
 import { useBackend, useLocalState } from '../../backend';
+import { Stack } from '../../components';
 import { Window } from '../../layouts';
 import { PreferencesMenuData } from '../PreferencesMenu/data';
 import { AppearancePage } from './AppearancePage';
@@ -7,7 +10,10 @@ import { DioPrefsPage } from './Preferences';
 
 export const DioPrefs = (props) => {
   const { data } = useBackend<PreferencesMenuData>();
-  const [current_page] = useLocalState('DioPrefs_page', DioPrefsPage.SELECT);
+  const [current_page, setCurrentPage] = useLocalState(
+    'DioPrefs_page',
+    DioPrefsPage.SELECT,
+  );
 
   let page;
 
@@ -25,7 +31,14 @@ export const DioPrefs = (props) => {
 
   return (
     <Window title={current_page} theme="rounded_base" width={920} height={770}>
-      {page}
+      <Stack vertical fill>
+        <Stack.Item>
+          <Button onClick={() => setCurrentPage(DioPrefsPage.SELECT)}>
+            Select
+          </Button>
+        </Stack.Item>
+        <Stack.Item height="100%">{page}</Stack.Item>
+      </Stack>
     </Window>
   );
 };
