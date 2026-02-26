@@ -66,7 +66,7 @@ export const GamePreferencesPage = (props) => {
         <Flex.Item grow={1} basis={0}>
           {(feature && (
             <FeatureValueInput
-              feature={feature}
+              feature={feature.component}
               featureId={featureId}
               value={value}
               act={act}
