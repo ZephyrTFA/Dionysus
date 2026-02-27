@@ -60,16 +60,10 @@ window "inventory-pane"
 		size = 640x480
 		anchor1 = -1,-1
 		anchor2 = -1,-1
-		background-color = none
 		drop-zone = true
 		saved-params = "pos;size;is-minimized;is-maximized"
 		title = "Inventory"
 		is-pane = true
-		outer-size = 648x532
-		outer-pos = 281,39
-		inner-pos = 4,30
-		screen-size = 1920x1048
-		screen-pos = 0,32
 	elem "inventory_map"
 		type = MAP
 		pos = 0,0
@@ -86,26 +80,18 @@ window "mainwindow"
 		size = 640x440
 		anchor1 = -1,-1
 		anchor2 = -1,-1
-		background-color = none
 		is-default = true
 		saved-params = "pos;size;is-minimized;is-maximized"
 		statusbar = false
 		icon = 'icons\\ui_icons\\common\\ss13_32.png'
 		macro = "default"
 		menu = "menu"
-		outer-size = 648x493
-		outer-pos = 630,277
-		inner-size = 640x440
-		inner-pos = 4,49
-		screen-size = 1920x1048
-		screen-pos = 0,32
 	elem "split"
 		type = CHILD
 		pos = 3,0
 		size = 634x440
 		anchor1 = 0,0
 		anchor2 = 100,100
-		background-color = none
 		saved-params = "splitter"
 		left = "mapwindow"
 		right = "info_and_buttons"
@@ -116,7 +102,6 @@ window "mainwindow"
 		size = 200x200
 		anchor1 = -1,-1
 		anchor2 = -1,-1
-		background-color = none
 		is-visible = false
 		saved-params = ""
 	elem "tooltip"
@@ -125,7 +110,6 @@ window "mainwindow"
 		size = 999x999
 		anchor1 = -1,-1
 		anchor2 = -1,-1
-		background-color = none
 		is-visible = false
 		saved-params = ""
 
@@ -329,22 +313,14 @@ window "output_selector"
 		size = 640x475
 		anchor1 = -1,-1
 		anchor2 = -1,-1
-		background-color = none
 		saved-params = "pos;size;is-minimized;is-maximized"
 		is-pane = true
-		outer-size = 648x527
-		outer-pos = 760,182
-		inner-size = 640x475
-		inner-pos = 4,30
-		screen-size = 1920x1048
-		screen-pos = 0,32
 	elem "legacy_output_selector"
 		type = CHILD
 		pos = 0,0
 		size = 640x475
 		anchor1 = 0,0
 		anchor2 = 100,100
-		background-color = none
 		saved-params = "splitter"
 		left = "output_legacy"
 		is-vert = false
@@ -529,22 +505,15 @@ window "statbrowser-pane"
 		size = 640x480
 		anchor1 = -1,-1
 		anchor2 = -1,-1
-		background-color = none
 		saved-params = "pos;size;is-minimized;is-maximized"
 		title = "Stat Browser"
 		is-pane = true
-		outer-size = 648x532
-		outer-pos = 281,39
-		inner-pos = 4,30
-		screen-size = 1920x1048
-		screen-pos = 0,32
 	elem "statbrowser"
 		type = BROWSER
 		pos = 0,0
 		size = 640x480
 		anchor1 = 0,0
 		anchor2 = 100,100
-		background-color = none
 		saved-params = ""
 		auto-format = true
 
@@ -555,21 +524,14 @@ window "statwindow"
 		size = 640x480
 		anchor1 = -1,-1
 		anchor2 = -1,-1
-		background-color = none
 		saved-params = "pos;size;is-minimized;is-maximized"
 		is-pane = true
-		outer-size = 648x532
-		outer-pos = 281,39
-		inner-pos = 4,30
-		screen-size = 1920x1048
-		screen-pos = 0,32
 	elem "statwindow-tabs"
 		type = TAB
 		pos = 0,0
 		size = 640x480
 		anchor1 = 0,0
 		anchor2 = 100,100
-		background-color = none
 		saved-params = ""
 		tabs = "statbrowser-pane,inventory-pane"
 		current-tab = "inventory-pane"

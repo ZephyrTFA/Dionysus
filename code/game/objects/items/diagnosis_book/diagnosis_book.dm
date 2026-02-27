@@ -20,7 +20,7 @@
 	var/static/list/static_data
 
 	/// Byond UI screen object used by the interface
-	var/atom/movable/screen/map_view/byondui/byondui_screen
+	var/atom/movable/screen/map_view/byondui_screen
 
 	/// Data for the selected mob.
 	var/list/selected_mob_data = list()
@@ -84,7 +84,7 @@
 	if(!ui)
 		ui = new(user, src, "DiagnosisBook")
 		ui.open()
-		byondui_screen.render_to_tgui(user.client, ui.window)
+		byondui_screen.display_to(user.client, ui.window)
 
 /obj/item/diagnosis_book/ui_status(mob/user)
 	// Even harder to read if your blind...braile? humm
@@ -214,7 +214,7 @@
 	character_appearance.transform = new_transform
 	character_appearance.dir = SOUTH
 
-	byondui_screen.rendered_atom.appearance = character_appearance.appearance
+	// byondui_screen.rendered_atom.appearance = character_appearance.appearance
 
 	ui_interact(user)
 	return TRUE
@@ -229,7 +229,7 @@
 	I.transform = new_transform
 	I.color = list(rgb(77,77,77), rgb(150,150,150), rgb(28,28,28), rgb(0,0,0))
 
-	byondui_screen.rendered_atom.appearance = I.appearance
+	// byondui_screen.rendered_atom.appearance = I.appearance
 
 /obj/item/diagnosis_book/proc/diagnose(mob/user, diagnosis)
 	if(!user.get_empty_held_index())

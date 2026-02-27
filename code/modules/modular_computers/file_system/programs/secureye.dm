@@ -22,7 +22,7 @@
 	var/list/concurrent_users = list()
 
 	// Stuff needed to render the map
-	var/atom/movable/screen/map_view/byondui/camera/cam_screen
+	var/atom/movable/screen/map_view/camera/cam_screen
 
 
 /datum/computer_file/program/secureye/New()
@@ -57,7 +57,7 @@
 		concurrent_users += user_ref
 
 	// Register map objects
-	cam_screen.render_to_tgui(user.client, ui.window)
+	cam_screen.display_to(user.client, ui.window)
 
 /datum/computer_file/program/secureye/ui_status(mob/user)
 	. = ..()

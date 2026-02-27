@@ -1,33 +1,22 @@
-/**
- * A screen object, which acts as a container for turfs and other things
- * you want to show on the map, which you usually attach to "vis_contents".
- */
-/atom/movable/screen/map_view
-	// Map view has to be on the lowest plane to enable proper lighting
-	layer = GAME_PLANE
-	plane = GAME_PLANE
-
 /atom/movable/screen/map_view/inventory
-	assigned_map = "inventory_map"
-	screen_loc = "inventory_map:1:0,1:0"
-	del_on_map_removal = FALSE
-	var/list/my_plane_masters
+	var/atom/movable/screen/background/cam_background
 
 /atom/movable/screen/map_view/inventory/Initialize(mapload)
 	. = ..()
-	my_plane_masters = list()
-	for(var/plane in subtypesof(/atom/movable/screen/plane_master) - /atom/movable/screen/plane_master/blackness)
-		var/atom/movable/screen/plane_master/instance = new plane
-		if(instance.blend_mode_override)
-			instance.blend_mode = instance.blend_mode_override
-		instance.assigned_map = "inventory_map"
-		instance.screen_loc = "inventory_map:CENTER"
-		instance.del_on_map_removal = FALSE
-		my_plane_masters += instance
+	generate_view("inventory_map")
+	cam_background = new
+	cam_background.del_on_map_removal = FALSE
+	cam_background.assigned_map = "inventory_map"
+	cam_background.icon_state = "scanline2"
+	cam_background.fill_rect(1, 1, 15, 15)
 
 /atom/movable/screen/map_view/inventory/Destroy()
-	QDEL_LIST(my_plane_masters)
+	QDEL_NULL(cam_background)
 	return ..()
+
+/atom/movable/screen/map_view/inventory/display_to_client(client/show_to)
+	. = ..()
+	show_to.register_map_obj(cam_background)
 
 /**
  * A generic background object.
@@ -63,101 +52,6 @@
 		screen_loc = "[assigned_map]:[x1],[y1] to [x2],[y2]"
 	else
 		screen_loc = "[x1],[y1] to [x2],[y2]"
-
-/atom/movable/screen/map_view/byondui
-	del_on_map_removal = FALSE
-	var/list/plane_masters = list()
-
-	/// Weakrefs to client(s) viewing thisUI
-	var/list/datum/weakref/viewing_clients = list()
-
-	/// The atom rendered.
-	var/atom/movable/screen/background/rendered_atom
-
-/atom/movable/screen/map_view/byondui/Initialize(mapload, datum/hud/hud_owner)
-	. = ..()
-
-	generate_view()
-
-/atom/movable/screen/map_view/byondui/Destroy()
-	for(var/datum/weakref/client_ref as anything in viewing_clients)
-		var/client/C = client_ref.resolve()
-		if(C)
-			hide_from_client(C)
-
-	QDEL_LIST(plane_masters)
-
-	viewing_clients = null
-	plane_masters = null
-
-	return ..()
-
-/atom/movable/screen/map_view/byondui/proc/generate_view(map_key)
-	assigned_map = map_key || "byondui_[ref(src)]"
-	set_position(1, 1)
-
-	for (var/plane_master_type in subtypesof(/atom/movable/screen/plane_master) - /atom/movable/screen/plane_master/blackness)
-		var/atom/movable/screen/plane_master/plane_master = new plane_master_type()
-		plane_master.assigned_map = assigned_map
-		if(plane_master.blend_mode_override)
-			plane_master.blend_mode = plane_master.blend_mode_override
-		plane_master.screen_loc = "[assigned_map]:CENTER"
-		plane_master.del_on_map_removal = FALSE
-		plane_masters += plane_master
-
-	rendered_atom = new
-	rendered_atom.assigned_map = assigned_map
-	rendered_atom.del_on_map_removal = FALSE
-	rendered_atom.set_position(1, 1)
-
-/// Returns a list of objects to shove into the client's screen.
-/atom/movable/screen/map_view/byondui/proc/get_screen_objects()
-	RETURN_TYPE(/list)
-	SHOULD_CALL_PARENT(TRUE)
-	. = list(src)
-	. += plane_masters
-	. += rendered_atom
-
-/**
- * Generates and displays the map view to a client
- * Make sure you at least try to pass tgui_window if map view needed on UI,
- * so it will wait a signal from TGUI, which tells windows is fully visible.
- *
- * * show_to - Mob which needs map view
- * * window - Optional. TGUI window which needs map view
- */
-/atom/movable/screen/map_view/byondui/proc/render_to_tgui(client/show_to, datum/tgui_window/window)
-	if (!show_to)
-		return
-
-	if(show_to.weak_reference in viewing_clients)
-		return
-
-	if(window && !window.visible)
-		RegisterSignal(window, COMSIG_TGUI_WINDOW_VISIBLE, PROC_REF(display_on_ui_visible))
-	else
-		render_to_client(show_to)
-
-/atom/movable/screen/map_view/byondui/proc/display_on_ui_visible(datum/tgui_window/window, client/show_to)
-	PRIVATE_PROC(TRUE)
-	SIGNAL_HANDLER
-
-	render_to_client(show_to)
-	UnregisterSignal(window, COMSIG_TGUI_WINDOW_VISIBLE)
-
-/atom/movable/screen/map_view/byondui/proc/render_to_client(client/client)
-	PRIVATE_PROC(TRUE)
-
-	viewing_clients += WEAKREF(client)
-
-	var/list/screen_objects = get_screen_objects()
-	for(var/screen_object in screen_objects)
-		client.register_map_obj(screen_object)
-
-/// Does what it says on the tin, removes this ui from their screen and removes them from us.
-/atom/movable/screen/map_view/byondui/proc/hide_from_client(client/C)
-	C.clear_map(assigned_map)
-	viewing_clients -= C.weak_reference
 
 /**
  * Registers screen obj with the client, which makes it visible on the
