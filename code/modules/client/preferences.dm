@@ -173,10 +173,18 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	for (var/index in 1 to max_save_slots)
 		var/tree_key = "character[index]"
 		var/save_data = savefile.get_entry(tree_key)
-		var/name = index == default_slot ? read_preference(/datum/preference/name/real_name) : save_data?["real_name"]
-		var/should_icon = index == default_slot && preferences_menu?.character_preview_view?.body
-		// temp until I can be arsed to set up caching
-		var/icon = should_icon ? icon2base64(get_flat_existing_human_icon(preferences_menu.character_preview_view.body, list(SOUTH))) : null
+
+		var/is_default = index == default_slot
+
+		var/name = is_default ? read_preference(/datum/preference/name/real_name) : save_data?["real_name"]
+		var/icon = is_default ? read_preference(/datum/preference/stored_appearance) : save_data?["stored_appearance"]
+		if (!icon && is_default)
+			icon = icon2base64(get_flat_existing_human_icon(preferences_menu.character_preview_view.body, list(SOUTH)))
+			write_preference(
+				GLOB.preference_entries[/datum/preference/stored_appearance],
+				icon
+			)
+
 		var/data = list(
 			list(
 				"name" = name,

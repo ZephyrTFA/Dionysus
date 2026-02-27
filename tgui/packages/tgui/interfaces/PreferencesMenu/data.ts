@@ -159,7 +159,6 @@ export type PreferencesMenuData = {
     torso: Record<string, string>;
   };
 
-  character_preview_icon: string;
   character_preview_view: string;
 
   character_profiles: CharacterProfile[];

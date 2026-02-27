@@ -58,6 +58,9 @@
 			if (istype(requested_preference, /datum/preference/name))
 				preferences.tainted_character_profiles = TRUE
 
+			if (requested_preference.savefile_identifier == PREFERENCE_SAVEFILE_CHARACTER)
+				preferences.write_preference(GLOB.preference_entries[/datum/preference/stored_appearance], null)
+
 			return TRUE
 		if ("set_color_preference")
 			var/requested_preference_key = params["preference"]
@@ -84,6 +87,9 @@
 
 			if (!preferences.update_preference(requested_preference, new_color))
 				return FALSE
+
+			if (requested_preference.savefile_identifier == PREFERENCE_SAVEFILE_CHARACTER)
+				preferences.write_preference(GLOB.preference_entries[/datum/preference/stored_appearance], null)
 
 			return TRUE
 
@@ -125,6 +131,9 @@
 			if (!preferences.update_preference(requested_preference, jointext(old_value_list, ";")))
 				return FALSE
 
+			if (requested_preference.savefile_identifier == PREFERENCE_SAVEFILE_CHARACTER)
+				preferences.write_preference(GLOB.preference_entries[/datum/preference/stored_appearance], null)
+
 			return TRUE
 
 	for (var/datum/preference_middleware/preference_middleware as anything in preferences.middleware)
@@ -160,7 +169,6 @@
 
 	data["active_slot"] = preferences.default_slot
 
-	// We should definitely cache this.
 	data["character_profiles"] = preferences.create_character_profiles()
 
 	for (var/datum/preference_middleware/preference_middleware as anything in preferences.middleware)

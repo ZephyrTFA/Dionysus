@@ -2646,6 +2646,7 @@ W// DM Environment file for dionysus.dme.
 #include "code\modules\client\preferences\skin_tone.dm"
 #include "code\modules\client\preferences\species.dm"
 #include "code\modules\client\preferences\statpanel.dm"
+#include "code\modules\client\preferences\stored_appearance.dm"
 #include "code\modules\client\preferences\tgui.dm"
 #include "code\modules\client\preferences\tooltips.dm"
 #include "code\modules\client\preferences\ui_style.dm"
