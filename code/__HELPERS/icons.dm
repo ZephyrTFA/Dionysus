@@ -783,7 +783,7 @@ GLOBAL_LIST_EMPTY(friendly_animal_types)
  * * existing_human - The human we want to get a flat icon out of.
  * * directions_to_output - The directions of the resulting flat icon, defaults to all cardinal directions.
  */
-/proc/get_flat_existing_human_icon(mob/living/carbon/human/existing_human, directions_to_output = GLOB.cardinals)
+/proc/get_flat_existing_human_icon(mob/living/carbon/human/existing_human, list/directions_to_output = GLOB.cardinals)
 	RETURN_TYPE(/icon)
 	if(!existing_human || !istype(existing_human))
 		CRASH("Attempted to call get_flat_existing_human_icon on a [existing_human ? existing_human.type : "null"].")
