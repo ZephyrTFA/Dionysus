@@ -51,7 +51,7 @@
 	var/obj/structure/closet/supplypod/centcompod/temp_pod //The temporary pod that is modified by this datum, then cloned. The buildObject() clone of this pod is what is launched
 	// Stuff needed to render the map
 	var/map_name
-	var/atom/movable/screen/map_view/byondui/camera/cam_screen
+	var/atom/movable/screen/map_view/camera/cam_screen
 
 	var/tabIndex = 1
 	var/renderLighting = FALSE
@@ -86,13 +86,6 @@
 	cam_screen = new
 	cam_screen.generate_view(map_name)
 
-	if(!renderLighting)
-		for(var/atom/movable/screen/plane_master/PM as anything in cam_screen.plane_masters)
-			if(PM.plane != LIGHTING_PLANE)
-				continue
-
-			PM.alpha = 100
-
 	refreshView()
 
 /datum/centcom_podlauncher/ui_state(mob/user)
@@ -111,7 +104,7 @@
 		// Open UI
 		ui = new(user, src, "CentcomPodLauncher")
 		ui.open()
-		cam_screen.render_to_tgui(user, ui.window)
+		cam_screen.display_to(user, ui.window)
 		refreshView()
 
 /datum/centcom_podlauncher/ui_static_data(mob/user)

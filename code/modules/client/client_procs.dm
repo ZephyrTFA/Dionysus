@@ -381,6 +381,7 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 		inline_js = file("html/statbrowser.js"),
 		inline_css = file("html/statbrowser.css"),
 	)
+	inventory_panel.display_to(mob)
 
 	addtimer(CALLBACK(src, PROC_REF(check_panel_loaded)), 30 SECONDS)
 	INVOKE_ASYNC(src, PROC_REF(acquire_dpi))
