@@ -9,12 +9,9 @@
 	slot = ORGAN_SLOT_EXTERNAL_HAIR
 	layers = list(BODY_ADJ_LAYER)
 
-	dna_block = DNA_HAIRSTYLE_BLOCK
-
 	feature_key = "hair"
-	preference = "feature_hair"
 
-	color_source = ORGAN_COLOR_DNA
+	color_source = ORGAN_COLOR_OVERRIDE
 
 /obj/item/organ/hair/can_draw_on_bodypart(mob/living/carbon/human/human)
 	if(!(human.obscured_slots & HIDEHAIR))
@@ -24,17 +21,26 @@
 /obj/item/organ/hair/get_global_feature_list()
 	return GLOB.hairstyles_list
 
+/obj/item/organ/hair/override_color(rgb_value)
+	// If the owner's human, grab their human hair color, otherwise try dna, and failing that, just use the provided color.
+	if (istype(owner, /mob/living/carbon/human))
+		return human_hair_color(owner)
+
+	var/dna_color = owner.dna.features["[feature_key]_color"]
+	if (islist(dna_color))
+		dna_color = dna_color[1]
+
+	return dna_color || rgb_value
+
+/obj/item/organ/hair/proc/human_hair_color(mob/living/carbon/human/own)
+	return own.hair_color
+
 /obj/item/organ/hair/facial
 	name = "facial hair"
 
-	zone = BODY_ZONE_HEAD
 	slot = ORGAN_SLOT_EXTERNAL_FACIAL_HAIR
-	layers = list(BODY_ADJ_LAYER)
-
-	dna_block = DNA_FACIAL_HAIRSTYLE_BLOCK
 
 	feature_key = "facial_hair"
-	preference = "feature_facial_hair"
 
 /obj/item/organ/hair/facial/get_global_feature_list()
 	return GLOB.facial_hairstyles_list
@@ -43,3 +49,6 @@
 	if(!(human.obscured_slots & HIDEFACIALHAIR))
 		return TRUE
 	return FALSE
+
+/obj/item/organ/hair/facial/human_hair_color(mob/living/carbon/human/own)
+	return own.facial_hair_color
