@@ -2,13 +2,18 @@
 	name = "\improper Human"
 	id = SPECIES_HUMAN
 	default_color = "FFFFFF"
-	species_traits = list(EYECOLOR, LIPS, BODY_RESIZABLE)
+	species_traits = list(EYECOLOR, LIPS, BODY_RESIZABLE, SCLERA)
 	inherent_traits = list(
 		TRAIT_ADVANCEDTOOLUSER,
 		TRAIT_CAN_STRIP,
 		TRAIT_CAN_USE_FLIGHT_POTION,
 	)
-	mutant_bodyparts = list("wings" = "None", "tail" = "None", "ears" = "None", "hair" = "None", "facial_hair" = "None")
+	mutant_bodyparts = list(
+		"tail" = "None",
+		"ears" = "None",
+		"hair" = "None",
+		"facial_hair" = "None", // Omg guys they're getting facial'd
+	)
 	use_skintones = 1
 	skinned_type = /obj/item/stack/sheet/animalhide/human
 	disliked_food = GROSS | RAW | CLOTH

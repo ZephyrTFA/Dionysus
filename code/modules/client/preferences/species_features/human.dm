@@ -11,13 +11,6 @@
 
 PREFERENCES_SET_MUTANT_CHOICE_LIST(tail_human, GLOB.tails_list_human)
 
-/datum/preference/choiced/mutant/tail_human/generate_icon_state(datum/sprite_accessory/sprite_accessory, original_icon_state, suffix)
-
-	if(icon_exists(sprite_accessory.icon, "m_tail_lizard_[original_icon_state]_FRONT[suffix]"))
-		return "m_tail_lizard_[original_icon_state]_FRONT[suffix]"
-
-	return "m_tail_[original_icon_state]_FRONT[suffix]"
-
 /datum/preference/color/mutant/tail_human
 	savefile_key = "tail_human_color"
 	relevant_mutant_bodypart = "tail"
@@ -29,18 +22,11 @@ PREFERENCES_SET_MUTANT_CHOICE_LIST(tail_human, GLOB.tails_list_human)
 	greyscale_color = COLOR_DARK_BROWN
 	explanation = "Ears"
 	color_feature = /datum/preference/color/mutant/ears
-	crop_area = list(11, 22, 21, 32) // We want just the head area.
+	crop_area = list(10, 19, 22, 31) // We want just the head area.
 	category = PREFERENCE_CATEGORY_APPEARANCE_HEAD
-	organ_type_to_use = /obj/item/organ/ears/cat // TODO: Maybe make these not a direct nerf, but at the same time... cuteness comes at a cost
+	organ_type_to_use = /obj/item/organ/ears/cat // RIMI TODO: Maybe make these not a direct nerf, but at the same time... cuteness comes at a cost
 
 PREFERENCES_SET_MUTANT_CHOICE_LIST(ears, GLOB.ears_list)
-
-/datum/preference/choiced/mutant/ears/generate_icon_state(datum/sprite_accessory/sprite_accessory, original_icon_state, suffix)
-
-	if(icon_exists(sprite_accessory.icon, "m_ears_[original_icon_state]_ADJ[suffix]") && !findtext(sprite_accessory.icon_state, "bigwolf")) // Look, don't judge me, this was the easiest way to do it, and I've been dealing with fucking ear code for nearly 4 hours now - Rimi
-		return "m_ears_[original_icon_state]_ADJ[suffix]"
-
-	return "m_ears_[original_icon_state]_FRONT[suffix]"
 
 /datum/preference/color/mutant/ears
 	savefile_key = "ears_color"

@@ -436,10 +436,6 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 
 	return data
 
-/// Returns the icon state to use. Should only be overridden if the sprite accessory DMIs have their own name format.
-/datum/preference/choiced/proc/generate_icon_state(datum/sprite_accessory/sprite_accessory, original_icon_state, suffix)
-	return "[original_icon_state][suffix]"
-
 /// Generates and allows for post-processing on icons, such as greyscaling and cropping.
 /datum/preference/choiced/proc/generate_icon(datum/sprite_accessory/sprite_accessory, dir = SOUTH)
 	if(!sprite_accessory?.icon_state || lowertext(sprite_accessory.icon_state) == "none")
@@ -556,6 +552,9 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 			icons[choice] = get_spritesheet_key(choice)
 
 		data["icons"] = icons
+
+	if (crop_area) // Used to adjust the preview dummy, so we're not cutting icons every time a preference changes.
+		data["crop_area"] = crop_area
 
 	return data
 

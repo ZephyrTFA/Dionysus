@@ -1,4 +1,4 @@
-W// DM Environment file for dionysus.dme.
+// DM Environment file for dionysus.dme.
 // All manual changes should be made outside the BEGIN_ and END_ blocks.
 // New source code should be placed in .dm files: choose File/New --> Code File.
 // BEGIN_INTERNALS
@@ -2677,9 +2677,12 @@ W// DM Environment file for dionysus.dme.
 #include "code\modules\client\preferences\middleware\keybindings.dm"
 #include "code\modules\client\preferences\middleware\legacy_toggles.dm"
 #include "code\modules\client\preferences\species_features\_mutant.dm"
+#include "code\modules\client\preferences\species_features\appearance_mods.dm"
 #include "code\modules\client\preferences\species_features\basic.dm"
+#include "code\modules\client\preferences\species_features\eyes.dm"
 #include "code\modules\client\preferences\species_features\human.dm"
 #include "code\modules\client\preferences\species_features\lizard.dm"
+#include "code\modules\client\preferences\species_features\spritemods.dm"
 #include "code\modules\client\verbs\looc.dm"
 #include "code\modules\client\verbs\ooc.dm"
 #include "code\modules\client\verbs\ping.dm"
