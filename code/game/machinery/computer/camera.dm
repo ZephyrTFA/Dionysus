@@ -14,7 +14,7 @@
 	var/turf/last_camera_turf
 	var/list/concurrent_users = list()
 
-	var/atom/movable/screen/map_view/byondui/camera/cam_screen
+	var/atom/movable/screen/map_view/camera/cam_screen
 
 	interaction_flags_machine = INTERACT_MACHINE_ALLOW_SILICON | INTERACT_MACHINE_SET_MACHINE | INTERACT_MACHINE_REQUIRES_SIGHT
 
@@ -32,6 +32,7 @@
 
 	// Initialize map objects
 	cam_screen = new()
+	cam_screen.assigned_map = map_name
 	cam_screen.generate_view(map_name)
 
 /obj/machinery/computer/security/Destroy()
@@ -66,7 +67,7 @@
 		// Open UI
 		ui = new(user, src, "CameraConsole", name)
 		ui.open()
-		cam_screen.render_to_tgui(user.client, ui.window)
+		cam_screen.display_to(user.client, ui.window)
 
 /obj/machinery/computer/security/ui_status(mob/user)
 	. = ..()
@@ -162,36 +163,36 @@
 		playsound(src, 'sound/machines/terminal_off.ogg', 25, FALSE)
 		use_power(0)
 
-/atom/movable/screen/map_view/byondui/camera
+/atom/movable/screen/map_view/camera
 	/// Contains the scanline effect.
 	var/atom/movable/screen/background/cam_background
 
-/atom/movable/screen/map_view/byondui/camera/Initialize(mapload, datum/hud/hud_owner)
+/atom/movable/screen/map_view/camera/Initialize(mapload, datum/hud/hud_owner)
 	. = ..()
 	cam_background = new
 	cam_background.del_on_map_removal = FALSE
 	cam_background.assigned_map = assigned_map
 
-/atom/movable/screen/map_view/byondui/camera/Destroy()
+/atom/movable/screen/map_view/camera/Destroy()
 	QDEL_NULL(cam_background)
 	return ..()
 
-/atom/movable/screen/map_view/byondui/camera/get_screen_objects()
-	. = ..()
-	. += cam_background
-
-/atom/movable/screen/map_view/byondui/camera/generate_view(map_key)
+/atom/movable/screen/map_view/camera/generate_view(map_key)
 	. = ..()
 	cam_background = new
 	cam_background.del_on_map_removal = FALSE
 	cam_background.assigned_map = assigned_map
 
-/atom/movable/screen/map_view/byondui/camera/proc/show_camera(list/visible_turfs, size_x, size_y)
+/atom/movable/screen/map_view/camera/display_to_client(client/show_to)
+	. = ..()
+	show_to.register_map_obj(cam_background)
+
+/atom/movable/screen/map_view/camera/proc/show_camera(list/visible_turfs, size_x, size_y)
 	vis_contents = visible_turfs
 	cam_background.icon_state = "clear"
 	cam_background.fill_rect(1, 1, size_x, size_y)
 
-/atom/movable/screen/map_view/byondui/camera/proc/show_camera_static()
+/atom/movable/screen/map_view/camera/proc/show_camera_static()
 	vis_contents.Cut()
 	cam_background.icon_state = "scanline2"
 	cam_background.fill_rect(1, 1, DEFAULT_MAP_SIZE, DEFAULT_MAP_SIZE)

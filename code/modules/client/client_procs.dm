@@ -248,6 +248,9 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 	stat_panel = new(src, "statbrowser")
 	stat_panel.subscribe(src, PROC_REF(on_stat_panel_message))
 
+	// Instantiate inventory panel
+	inventory_panel = new
+
 	// Instantiate tgui panel
 	tgui_panel = new(src, "browseroutput")
 
@@ -378,6 +381,7 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 		inline_js = file("html/statbrowser.js"),
 		inline_css = file("html/statbrowser.css"),
 	)
+	inventory_panel.display_to(mob)
 
 	addtimer(CALLBACK(src, PROC_REF(check_panel_loaded)), 30 SECONDS)
 	INVOKE_ASYNC(src, PROC_REF(acquire_dpi))
@@ -577,6 +581,7 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 	if(persistent_client)
 		persistent_client.SetClient(null)
 
+	QDEL_NULL(inventory_panel)
 	GLOB.clients -= src
 	GLOB.directory -= ckey
 	log_access("Logout: [key_name(src)]")
