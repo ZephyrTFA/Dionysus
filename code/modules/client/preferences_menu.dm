@@ -1,6 +1,6 @@
 /datum/preferences_menu
 	var/datum/preferences/preferences
-	var/atom/movable/screen/map_view/byondui/char_preview/character_preview_view
+	var/atom/movable/screen/map_view/char_preview/character_preview_view
 
 	/// The current window, PREFERENCE_TAB_* in [`code/__DEFINES/preferences.dm`]
 	var/current_window = PREFERENCE_TAB_CHARACTER
@@ -155,17 +155,17 @@
 
 	data["character_preferences"] = preferences.compile_character_preferences(user)
 
-	character_preview_view.update_body()
+	// character_preview_view.update_body()
 
-	var/icon/char_icon = get_flat_existing_human_icon(character_preview_view.body)
-	var/icon/preview_icon = icon('icons/blanks/32x128.dmi', "nothing")
-	var/offset = 0
-	for (var/dir in GLOB.cardinals)
-		preview_icon.Blend(icon('icons/turf/floors.dmi', "floor"), ICON_OVERLAY, 0, offset)
-		preview_icon.Blend(icon(char_icon, dir=dir), ICON_OVERLAY, 0, offset)
-		offset += 32
+	// var/icon/char_icon = get_flat_existing_human_icon(character_preview_view.body)
+	// var/icon/preview_icon = icon('icons/blanks/32x128.dmi', "nothing")
+	// var/offset = 0
+	// for (var/dir in GLOB.cardinals)
+	// 	preview_icon.Blend(icon('icons/turf/floors.dmi', "floor"), ICON_OVERLAY, 0, offset)
+	// 	preview_icon.Blend(icon(char_icon, dir=dir), ICON_OVERLAY, 0, offset)
+	// 	offset += 32
 
-	data["character_preview_icon"] = icon2base64(preview_icon)
+	// data["character_preview_icon"] = icon2base64(preview_icon)
 
 	data["active_slot"] = preferences.default_slot
 
@@ -181,7 +181,7 @@
 
 	// Fuck maps and especially this dogshit """engine""", I have better shit to do.
 	// If someone wants to make this a map, then good fucking luck, I wasted five hours on this fucking garbage.
-	// data["character_preview_view"] = character_preview_view.assigned_map
+	data["character_preview_view"] = character_preview_view.assigned_map
 
 	data["overflow_role"] = SSjob.GetJobType(SSjob.overflow_role).id
 	data["window"] = current_window
@@ -232,13 +232,15 @@
 		ui = new(user, src, current_window == PREFERENCE_TAB_CHARACTER ? "DioPrefs" : "PreferencesMenu")
 		ui.set_autoupdate(FALSE)
 		ui.open()
+		character_preview_view.display_to(user, ui.window)
 
 		// HACK: Without this the character starts out really tiny because of some BYOND bug.
 		// You can fix it by changing a preference, so let's just forcably update the body to emulate this.
-		// addtimer(CALLBACK(character_preview_view, TYPE_PROC_REF(/atom/movable/screen/map_view/byondui/char_preview, update_body)), 1 SECONDS)
+		addtimer(CALLBACK(character_preview_view, TYPE_PROC_REF(/atom/movable/screen/map_view/char_preview, update_body)), 1 SECONDS)
 
 /datum/preferences_menu/proc/create_character_preview_view(mob/user)
 	character_preview_view = new(null, preferences, user.client)
+	character_preview_view.generate_view("character_preview_[REF(character_preview_view)]")
 	character_preview_view.update_body()
 
 	return character_preview_view

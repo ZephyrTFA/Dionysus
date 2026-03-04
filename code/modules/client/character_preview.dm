@@ -1,5 +1,5 @@
 /// A preview of a character for use in the preferences menu
-/atom/movable/screen/map_view/byondui/char_preview
+/atom/movable/screen/map_view/char_preview
 	name = "character_preview"
 
 	/// The body that is displayed
@@ -9,15 +9,13 @@
 
 	var/image/canvas
 
-	var/list/subscreens = list()
-
 	bound_height = 128
 
-/atom/movable/screen/map_view/byondui/char_preview/Initialize(mapload, datum/preferences/preferences)
+/atom/movable/screen/map_view/char_preview/Initialize(mapload, datum/preferences/preferences)
 	. = ..()
 	src.preferences = preferences
 
-/atom/movable/screen/map_view/byondui/char_preview/Destroy()
+/atom/movable/screen/map_view/char_preview/Destroy()
 	canvas?.cut_overlays()
 	canvas = null
 	QDEL_NULL(body)
@@ -26,7 +24,7 @@
 	return ..()
 
 /// Updates the currently displayed body
-/atom/movable/screen/map_view/byondui/char_preview/proc/update_body()
+/atom/movable/screen/map_view/char_preview/proc/update_body()
 	if (isnull(body))
 		create_body()
 	else
@@ -44,17 +42,22 @@
 
 	preferences.preferences_menu.render_new_preview_appearance(body)
 
-	var/offset = -96
+	var/offset = 0
 	for(var/dir in GLOB.cardinals)
 		var/static/dummy = icon('icons/turf/floors.dmi', "floor")
-		var/image/app = image(dummy, dir=dir, pixel_y=offset)
-		// app.vis_contents += body
-		canvas.add_overlay(app)
-		offset+=1
+		var/image/bg = image(dummy, dir=dir, pixel_y=offset, layer=SPACE_LAYER)
+
+		// Look man, I have no idea why this works. The body appearance doesn't add properly otherwise.
+		var/image/body_apearance = image(dummy, dir=dir, pixel_y=offset)
+		body_apearance.appearance = body.appearance // You'd be able to see it if it wasn't under the tile :)
+
+		bg.add_overlay(body_apearance)
+		canvas.add_overlay(bg)
+		offset+=32
 
 	appearance = canvas.appearance
 
-/atom/movable/screen/map_view/byondui/char_preview/proc/create_body()
+/atom/movable/screen/map_view/char_preview/proc/create_body()
 	QDEL_NULL(body)
 
 	body = new

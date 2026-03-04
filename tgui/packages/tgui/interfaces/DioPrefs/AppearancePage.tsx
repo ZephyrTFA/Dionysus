@@ -17,7 +17,7 @@ import { CharacterPreview } from './Preferences';
 import { PREFERENCE_ID_TO_COMPONENT } from './PreferenceTypes';
 
 // These consts make thinking about this 1000% easier.
-const DOLL_SIZE = 32 * 10;
+const DOLL_SIZE = 32 * 14;
 const CENTER = 32 * 0.484375;
 
 export const AppearancePage = (props) => {
@@ -31,8 +31,8 @@ export const AppearancePage = (props) => {
     <ServerPreferencesFetcher
       render={(serverData) => {
         return (
-          <Stack fill>
-            <Stack.Item>
+          <Box position="relative" width="100%" height="100%">
+            <Box position="absolute" left="0" top="50%">
               <CharacterDoll
                 selectedPart={selectedPart}
                 setSelectedPart={setSelectedPart}
@@ -40,61 +40,19 @@ export const AppearancePage = (props) => {
                 parts={parts}
                 center={CENTER}
               />
-            </Stack.Item>
-            <Stack.Item width="100%">
-              <Stack vertical>
-                <Stack.Item>
-                  <Section
-                    title={
-                      selectedPart
-                        ? `Organs of ${selectedPart?.name}`
-                        : 'No part selected'
-                    }
-                  >
-                    {!!selectedPart &&
-                      !!serverData &&
-                      !!data.character_preferences[selectedPart.id] &&
-                      Object.entries(
-                        data.character_preferences[selectedPart.id],
-                      )
-                        .filter(
-                          (e) =>
-                            (serverData[e[0]] as FeatureChoicedServerData)
-                              .feature === 'icon_box',
-                        )
-                        .map((feature) => {
-                          const [id, value] = feature;
-                          return (
-                            <Box inline key={id}>
-                              <MainFeature
-                                catalog={
-                                  serverData[id] as FeatureChoicedServerData
-                                }
-                                currentValue={value as string /* yolo */}
-                                handleClose={() => {
-                                  setCurrentFeatureMenu(null);
-                                }}
-                                handleOpen={() => {
-                                  setCurrentFeatureMenu(id);
-                                }}
-                                handleSelect={createSetPreference(act, id)}
-                                isOpen={currentFeatureMenu === id}
-                                setRandomization={() => {}}
-                              />
-                            </Box>
-                          );
-                        })}
-                  </Section>
-                </Stack.Item>
-                <Stack.Item>
-                  <Section
-                    title={
-                      selectedPart
-                        ? `Limb Options for ${selectedPart?.name}`
-                        : 'No part selected'
-                    }
-                  >
-                    <LabeledList>
+            </Box>
+            <Stack fill>
+              <Stack.Item width="50%" />
+              <Stack.Item width="50%">
+                <Stack vertical>
+                  <Stack.Item>
+                    <Section
+                      title={
+                        selectedPart
+                          ? `Organs of ${selectedPart?.name}`
+                          : 'No part selected'
+                      }
+                    >
                       {!!selectedPart &&
                         !!serverData &&
                         !!data.character_preferences[selectedPart.id] &&
@@ -104,47 +62,92 @@ export const AppearancePage = (props) => {
                           .filter(
                             (e) =>
                               (serverData[e[0]] as FeatureChoicedServerData)
-                                .feature !== 'icon_box',
+                                .feature === 'icon_box',
                           )
                           .map((feature) => {
                             const [id, value] = feature;
-                            const featureProps = serverData[
-                              id
-                            ] as FeatureChoicedServerData;
                             return (
-                              <LabeledList.Item
-                                key={feature[0]}
-                                label={
-                                  featureProps.name ||
-                                  (featureProps.feature === 'tri_color' &&
-                                    'Part Color')
-                                }
-                              >
-                                <FeatureValueInput
-                                  act={(action, data) => {
-                                    act(action, data);
-                                  }}
-                                  feature={
-                                    PREFERENCE_ID_TO_COMPONENT[
-                                      featureProps.feature
-                                    ]
+                              <Box inline key={id}>
+                                <MainFeature
+                                  catalog={
+                                    serverData[id] as FeatureChoicedServerData
                                   }
-                                  featureId={id}
-                                  shrink
-                                  value={value}
+                                  currentValue={value as string /* yolo */}
+                                  handleClose={() => {
+                                    setCurrentFeatureMenu(null);
+                                  }}
+                                  handleOpen={() => {
+                                    setCurrentFeatureMenu(id);
+                                  }}
+                                  handleSelect={createSetPreference(act, id)}
+                                  isOpen={currentFeatureMenu === id}
+                                  setRandomization={() => {}}
                                 />
-                              </LabeledList.Item>
+                              </Box>
                             );
                           })}
-                    </LabeledList>
-                  </Section>
-                </Stack.Item>
-              </Stack>
-            </Stack.Item>
-            <Stack.Item style={{ width: '158px' }}>
-              <CharacterPreview id={data.character_preview_view} />
-            </Stack.Item>
-          </Stack>
+                    </Section>
+                  </Stack.Item>
+                  <Stack.Item>
+                    <Section
+                      title={
+                        selectedPart
+                          ? `Limb Options for ${selectedPart?.name}`
+                          : 'No part selected'
+                      }
+                    >
+                      <LabeledList>
+                        {!!selectedPart &&
+                          !!serverData &&
+                          !!data.character_preferences[selectedPart.id] &&
+                          Object.entries(
+                            data.character_preferences[selectedPart.id],
+                          )
+                            .filter(
+                              (e) =>
+                                (serverData[e[0]] as FeatureChoicedServerData)
+                                  .feature !== 'icon_box',
+                            )
+                            .map((feature) => {
+                              const [id, value] = feature;
+                              const featureProps = serverData[
+                                id
+                              ] as FeatureChoicedServerData;
+                              return (
+                                <LabeledList.Item
+                                  key={feature[0]}
+                                  label={
+                                    featureProps.name ||
+                                    (featureProps.feature === 'tri_color' &&
+                                      'Part Color')
+                                  }
+                                >
+                                  <FeatureValueInput
+                                    act={(action, data) => {
+                                      act(action, data);
+                                    }}
+                                    feature={
+                                      PREFERENCE_ID_TO_COMPONENT[
+                                        featureProps.feature
+                                      ]
+                                    }
+                                    featureId={id}
+                                    shrink
+                                    value={value}
+                                  />
+                                </LabeledList.Item>
+                              );
+                            })}
+                      </LabeledList>
+                    </Section>
+                  </Stack.Item>
+                </Stack>
+              </Stack.Item>
+              <Stack.Item style={{ width: '158px' }}>
+                <CharacterPreview id={data.character_preview_view} />
+              </Stack.Item>
+            </Stack>
+          </Box>
         );
       }}
     />
@@ -152,7 +155,7 @@ export const AppearancePage = (props) => {
 };
 
 // These are all in sprite-space pixels
-// These should *probably* be DM-controlled in the future for species specific stuff...
+// The positions of these should *probably* be DM-controlled in the future for species specific stuff...
 // but I honestly don't see any species bucking this trend for now, and this has less moving parts.
 const parts: Part[] = [
   {

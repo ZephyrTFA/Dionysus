@@ -1,8 +1,7 @@
 import { Button } from 'tgui-core/components';
 
 import { useBackend, useLocalState } from '../../backend';
-import { Box, Stack } from '../../components';
-import { Image } from '../../components/Image';
+import { Box, ByondUi, Stack } from '../../components';
 import { PreferencesMenuData } from '../PreferencesMenu/data';
 
 export enum DioPrefsPage {
@@ -28,18 +27,18 @@ export const CharacterPreview = (props) => {
         {current_page === DioPrefsPage.SPECIES && <> [M] [F]</>}
       </Stack.Item>
       <Stack.Item height="100%">
-        {/* <ByondUi
+        <ByondUi
           width="220px"
           height="100%"
           params={{
             id: props.id,
             type: 'map',
           }}
-        /> */}
-        <Image
+        />
+        {/* <Image
           className="DioPrefs__CharacterPreview"
           src={`data:image/png;base64,${data.character_preview_icon}`}
-        />
+        /> */}
       </Stack.Item>
       <Stack.Item align="center" width="100%" basis="0" height="100px">
         <Button icon="arrow-left" ml="2px" />
