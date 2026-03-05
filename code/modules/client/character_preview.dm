@@ -39,6 +39,7 @@
 			dummy.Scale(32, 128)
 
 		canvas = image(dummy)
+		canvas.plane = GAME_PLANE
 
 	preferences.preferences_menu.render_new_preview_appearance(body)
 
@@ -46,10 +47,12 @@
 	for(var/dir in GLOB.cardinals)
 		var/static/dummy = icon('icons/turf/floors.dmi', "floor")
 		var/image/bg = image(dummy, dir=dir, pixel_y=offset, layer=SPACE_LAYER)
+		bg.plane = GAME_PLANE
 
 		// Look man, I have no idea why this works. The body appearance doesn't add properly otherwise.
 		var/image/body_apearance = image(dummy, dir=dir, pixel_y=offset)
-		body_apearance.appearance = body.appearance // You'd be able to see it if it wasn't under the tile :)
+		body_apearance.appearance = body.appearance
+		body_apearance.plane = GAME_PLANE
 
 		bg.add_overlay(body_apearance)
 		canvas.add_overlay(bg)
