@@ -62,11 +62,6 @@ $bg-map: colors.$bg-map !default;
   user-select: none;
   -ms-user-select: none;
 
-  &:last-child {
-    margin-right: 0;
-    margin-bottom: 0;
-  }
-
   .fa,
   .fas,
   .far {
@@ -78,6 +73,7 @@ $bg-map: colors.$bg-map !default;
 }
 
 .Button--hasContent {
+
   // Add a margin to the icon to keep it separate from the text
   .fa,
   .fas,
@@ -87,6 +83,7 @@ $bg-map: colors.$bg-map !default;
 }
 
 .Button--hasContent.Button--iconPosition--right {
+
   .fa,
   .fas,
   .far {
