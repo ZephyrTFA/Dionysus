@@ -410,6 +410,8 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 
 	/// A list of the four co-ordinates to crop to, if `generate_icons` is enabled. Useful for icons whose main contents are smaller than 32x32. Please keep it square. (x1, y1, x2, y2)
 	var/list/crop_area
+	/// The direction to use when creating icons.
+	var/sprite_direction = SOUTH
 	/// A color to apply to the icon if it's greyscale, and `generate_icons` is enabled.
 	var/greyscale_color
 
@@ -421,7 +423,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 		CRASH("Invalid greyscale color paramater! The provided greyscale color list is not three entries long!")
 
 /// Automatically handles generating icon states and values for mutant parts.
-/datum/preference/choiced/proc/generate_mutant_valid_values(list/accessories, dir = SOUTH, accessories_to_ignore = null)
+/datum/preference/choiced/proc/generate_mutant_valid_values(list/accessories, accessories_to_ignore = null)
 	var/list/data = list()
 
 	for(var/accessory_name in accessories)
@@ -432,7 +434,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 				if(istype(accessory, path))
 					continue
 
-		data[initial(accessory.name) || accessory_name] = generate_icon(accessory, dir)
+		data[initial(accessory.name) || accessory_name] = generate_icon(accessory, sprite_direction)
 
 	return data
 
@@ -459,7 +461,7 @@ GLOBAL_LIST_INIT(preference_entries_by_key, init_preference_entries_by_key())
 
 	var/icon/human_icon = sprite_accessory.get_base_preview_icon()
 
-	var/icon/iconsheet = build_external_organ_icon(relevant_mutant_bodypart, sprite_accessory, MALE, color, sprite_accessory.color_src == TRI_COLOR_LAYERS ? TRI_COLOR_LAYERS : null)
+	var/icon/iconsheet = build_external_organ_icon(relevant_mutant_bodypart, sprite_accessory, MALE, color, sprite_accessory.color_src)
 	var/list/generated_icon_states = icon_states(iconsheet)
 
 	var/icon/icon_to_return

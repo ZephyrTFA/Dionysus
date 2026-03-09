@@ -4,6 +4,8 @@
 	relevant_mutant_bodypart = "hair"
 	exclude_species_traits = list(NONHUMANHAIR)
 	color_feature = /datum/preference/color/mutant/hair_color
+	crop_area = PREF_CROP_AREA_HEAD
+	greyscale_color = COLOR_DARK_BROWN
 	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 	organ_type_to_use = /obj/item/organ/hair
 	category = PREFERENCE_CATEGORY_APPEARANCE_HEAD
@@ -32,6 +34,8 @@ PREFERENCES_SET_MUTANT_CHOICE_LIST(hairstyle, GLOB.hairstyles_list)
 	relevant_mutant_bodypart = "facial_hair"
 	exclude_species_traits = list(NONHUMANHAIR)
 	color_feature = /datum/preference/color/mutant/facial_hair_color
+	crop_area = PREF_CROP_AREA_HEAD
+	greyscale_color = COLOR_DARK_BROWN
 	feature_identifier = PREFERENCE_FEATURE_ICON_BOX
 	organ_type_to_use = /obj/item/organ/hair/facial
 	category = PREFERENCE_CATEGORY_APPEARANCE_HEAD

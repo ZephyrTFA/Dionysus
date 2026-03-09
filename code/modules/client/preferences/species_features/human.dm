@@ -22,7 +22,7 @@ PREFERENCES_SET_MUTANT_CHOICE_LIST(tail_human, GLOB.tails_list_human)
 	greyscale_color = COLOR_DARK_BROWN
 	explanation = "Ears"
 	color_feature = /datum/preference/color/mutant/ears
-	crop_area = list(10, 19, 22, 31) // We want just the head area.
+	crop_area = PREF_CROP_AREA_HEAD // We want just the head area.
 	category = PREFERENCE_CATEGORY_APPEARANCE_HEAD
 	organ_type_to_use = /obj/item/organ/ears/cat // RIMI TODO: Maybe make these not a direct nerf, but at the same time... cuteness comes at a cost
 

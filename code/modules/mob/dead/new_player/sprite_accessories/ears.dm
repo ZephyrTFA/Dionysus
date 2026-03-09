@@ -11,7 +11,7 @@
 	name = "Cat"
 	icon = 'icons/mob/mutant_bodyparts.dmi'
 	icon_state = "cat"
-	hasinner = TRUE
+	has_inner = TRUE
 	color_src = MUTCOLORS
 
 // Sprites ported from Skyrat.

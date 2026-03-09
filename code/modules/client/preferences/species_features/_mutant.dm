@@ -14,8 +14,6 @@
 	var/color_feature
 	/// The global list containing the sprite accessories to use. Override New to set.
 	var/list/sprite_accessory
-	/// Direction to render the preview on. Can take NORTH, SOUTH, EAST, WEST.
-	var/sprite_direction = SOUTH
 	/// A list of types to exclude, including their subtypes.
 	var/list/accessories_to_ignore
 	/// Organ to use for this sprite accessory. The organ's sprites are overriden by the accessory sprites.
@@ -25,7 +23,7 @@
 	return "None"
 
 /datum/preference/choiced/mutant/init_possible_values()
-	return generate_mutant_valid_values(sprite_accessory, sprite_direction, accessories_to_ignore)
+	return generate_mutant_valid_values(sprite_accessory, accessories_to_ignore)
 
 /datum/preference/choiced/mutant/apply_to_human(mob/living/carbon/human/target, value, datum/preferences/preferences)
 	target.dna.features[relevant_mutant_bodypart] = value

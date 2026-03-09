@@ -127,6 +127,7 @@
 #define PREFERENCE_CATEGORY_APPEARANCE_TORSO "torso"
 #define PREFERENCE_CATEGORY_APPEARANCE_LEFT_LEG "left_leg"
 #define PREFERENCE_CATEGORY_APPEARANCE_RIGHT_LEG "right_leg"
+#define PREFERENCE_CATEGORY_APPEARANCE_GENERAL "general"
 
 // Playtime is tracked in minutes
 /// The time needed to unlock hardcore random mode in preferences
@@ -157,3 +158,5 @@
 	. = ..(); \
 	sprite_accessory = ##global_list; \
 }
+
+#define PREF_CROP_AREA_HEAD list(10, 19, 22, 31)

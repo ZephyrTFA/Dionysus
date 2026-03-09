@@ -2,7 +2,7 @@
 	name = "\improper Human"
 	id = SPECIES_HUMAN
 	default_color = "FFFFFF"
-	species_traits = list(EYECOLOR, LIPS, BODY_RESIZABLE, SCLERA)
+	species_traits = list(EYECOLOR, LIPS, BODY_RESIZABLE)
 	inherent_traits = list(
 		TRAIT_ADVANCEDTOOLUSER,
 		TRAIT_CAN_STRIP,
