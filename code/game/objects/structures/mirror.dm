@@ -218,7 +218,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/structure/mirror, 28)
 			if(amazed_human.dna.species.use_skintones)
 				var/new_s_tone = tgui_input_list(user, "Choose your skin tone", "Race change", GLOB.skin_tones)
 				if(new_s_tone)
-					amazed_human.skin_tone = new_s_tone
+					amazed_human.skin_tone = skintone2hex(new_s_tone)
 					amazed_human.dna.update_ui_block(DNA_SKIN_TONE_BLOCK)
 
 			if(MUTCOLORS in amazed_human.dna.species.species_traits)
