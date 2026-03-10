@@ -1,12 +1,12 @@
 /// A preview of a character for use in the preferences menu
 /atom/movable/screen/map_view/char_preview
-	name = "character_preview"
 
 	/// The body that is displayed
 	var/mob/living/carbon/human/dummy/body
 	/// The preferences this refers to
 	var/datum/preferences/preferences
 
+	var/atom/movable/screen/background/background
 	var/image/canvas
 
 	bound_height = 128
@@ -14,10 +14,16 @@
 /atom/movable/screen/map_view/char_preview/Initialize(mapload, datum/preferences/preferences)
 	. = ..()
 	src.preferences = preferences
+	generate_view("character_preview")
+	background = new
+	background.del_on_map_removal = FALSE
+	background.assigned_map = "character_preview"
+	background.fill_rect(1, 1, 1, 4)
 
 /atom/movable/screen/map_view/char_preview/Destroy()
 	canvas?.cut_overlays()
 	canvas = null
+	QDEL_NULL(background)
 	QDEL_NULL(body)
 	preferences?.preferences_menu?.character_preview_view = null
 	preferences = null
@@ -40,6 +46,7 @@
 
 		canvas = image(dummy)
 		canvas.plane = GAME_PLANE
+		background.vis_contents += canvas
 
 	preferences.preferences_menu.render_new_preview_appearance(body)
 
@@ -58,9 +65,11 @@
 		canvas.add_overlay(bg)
 		offset+=32
 
-	appearance = canvas.appearance
-
 /atom/movable/screen/map_view/char_preview/proc/create_body()
 	QDEL_NULL(body)
 
 	body = new
+
+/atom/movable/screen/map_view/char_preview/display_to_client(client/show_to)
+	. = ..()
+	show_to.register_map_obj(background)
