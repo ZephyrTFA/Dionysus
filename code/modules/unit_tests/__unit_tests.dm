@@ -124,6 +124,7 @@
 #include "canreach.dm"
 #include "dcs_get_id_from_elements.dm"
 #include "designs.dm"
+#include "door_construction.dm"
 #include "dummy_spawn.dm"
 #include "egg_glands.dm"
 #include "emoting.dm"

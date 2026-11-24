@@ -3,7 +3,7 @@
 	desc = "An all-in-one kit for paneling doors."
 	icon_state = "skub"
 	color = "green"
-	/// The material the panels in this kit are made of. Null until a sheet loads it.
+	/// The material for the panels.
 	var/datum/material/panel_material = null
-	/// How many panels are left in the kit. One sheet restocks one panel.
+	/// How many panels are left.
 	var/uses_left = 0

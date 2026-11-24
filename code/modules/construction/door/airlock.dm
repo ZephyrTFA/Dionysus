@@ -10,11 +10,10 @@
 	layer = CLOSED_DOOR_LAYER
 	can_atmos_pass = CANPASS_DENSITY
 	max_integrity = /datum/material/steel::wall_integrity
-	// Nothing to process yet: opening, power and access all come later.
 	processing_flags = NONE
-	/// The AC board installed in this door, carried over from its frame.
+	/// The AC board installed in this door.
 	var/obj/item/electronics/board = null
-	/// The material of this door's panelling. Visual only: it never touches integrity.
+	/// The material of this door's panelling.
 	var/datum/material/panel_material = null
 
 /obj/machinery/door/airlock
