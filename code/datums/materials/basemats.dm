@@ -18,6 +18,9 @@
 		'icons/construction/wall/iron/wall/wall_1.dmi',
 		'icons/construction/wall/iron/wall/wall_0.dmi',
 	)
+	door_icons = list(
+		'icons/obj/doors/airlocks/station/airlock.dmi',
+	)
 	wall_icons_trim_top = list(
 		'icons/construction/wall/iron/trim_top/trim_top_5.dmi',
 		'icons/construction/wall/iron/trim_top/trim_top_4.dmi',

@@ -83,3 +83,64 @@
 
 	TEST_ASSERT_EQUAL(frame.fitting_stage, DOOR_FIT_BOARD_SECURED, "The board was not secured")
 	TEST_ASSERT_EQUAL(frame.construction_stage, DOOR_CONSTRUCT_READY, "A secured board with nothing else installed did not make the frame ready")
+
+/datum/unit_test/door_panelling
+	name = "DOOR: Panelling is visual only"
+
+/datum/unit_test/door_panelling/Run()
+	var/mob/living/carbon/human/user = allocate(/mob/living/carbon/human)
+	var/obj/item/wrench/wrench = allocate(/obj/item/wrench)
+	var/obj/item/screwdriver/screwdriver = allocate(/obj/item/screwdriver)
+	var/obj/item/crowbar/crowbar = allocate(/obj/item/crowbar)
+	user.put_in_active_hand(wrench, forced = TRUE)
+
+	var/obj/item/door_panel_kit/kit = allocate(/obj/item/door_panel_kit)
+	kit.attackby(allocate(/obj/item/stack/sheet/bronze), user)
+	TEST_ASSERT_EQUAL(kit.uses_left, 1, "A bronze sheet did not restock the kit")
+	TEST_ASSERT_EQUAL(kit.panel_material, /datum/material/bronze, "The kit did not take the bronze material")
+	kit.attackby(allocate(/obj/item/stack/sheet/glass), user)
+	TEST_ASSERT_EQUAL(kit.uses_left, 1, "A sheet of the wrong material restocked the kit")
+
+	var/obj/structure/door_frame/frame = allocate(/obj/structure/door_frame)
+	var/plain_integrity = frame.max_integrity
+
+	frame.wrench_act(user, wrench)
+	frame.attackby(allocate(/obj/item/stack/cable_coil, null, DOOR_WIRING_COST), user)
+	frame.attackby(allocate(/obj/item/electronics), user)
+	TEST_ASSERT_EQUAL(frame.fitting_stage, DOOR_FIT_BOARD_SEATED, "The board was not seated")
+
+	kit.pre_attack(frame, user)
+	TEST_ASSERT(isnull(frame.panel_material), "Panels were hung over a loose board")
+	TEST_ASSERT_EQUAL(kit.uses_left, 1, "A refused panel still spent a use")
+
+	user.put_in_active_hand(screwdriver, forced = TRUE)
+	frame.screwdriver_act(user, screwdriver)
+	TEST_ASSERT_EQUAL(frame.fitting_stage, DOOR_FIT_BOARD_SECURED, "The board was not secured")
+
+	kit.pre_attack(frame, user)
+	TEST_ASSERT(!isnull(frame.panel_material), "The kit did not panel the frame")
+	TEST_ASSERT_EQUAL(frame.fitting_stage, DOOR_FIT_PANEL_HUNG, "Panelling did not hang at the hung stage")
+	TEST_ASSERT_EQUAL(kit.uses_left, 0, "Hanging a panel did not spend a use")
+	TEST_ASSERT_EQUAL(frame.max_integrity, plain_integrity, "Bronze panelling changed the frame's integrity")
+
+	kit.pre_attack(frame, user)
+	TEST_ASSERT_EQUAL(kit.uses_left, 0, "A second panel on a panelled frame spent a use")
+
+	frame.screwdriver_act(user, screwdriver)
+	TEST_ASSERT_EQUAL(frame.fitting_stage, DOOR_FIT_PANEL_SECURED, "The panels were not secured")
+	frame.screwdriver_act_secondary(user, screwdriver)
+	TEST_ASSERT_EQUAL(frame.fitting_stage, DOOR_FIT_PANEL_FINALIZED, "The panels were not finalized")
+	TEST_ASSERT_EQUAL(frame.construction_stage, DOOR_CONSTRUCT_READY, "Finalised panels did not make the frame weldable")
+
+	user.put_in_active_hand(crowbar, forced = TRUE)
+	frame.crowbar_act(user, crowbar)
+	TEST_ASSERT(isnull(frame.panel_material), "The crowbar did not strip the panels")
+	TEST_ASSERT_EQUAL(frame.fitting_stage, DOOR_FIT_BOARD_SECURED, "Stripping the panels did not rewind to the secured board")
+
+	// Review Focus 2: a material with no door art of its own draws steel's.
+	var/obj/structure/door_frame/steel_frame = allocate(/obj/structure/door_frame)
+	steel_frame.panel_material = /datum/material/steel
+	var/obj/structure/door_frame/fallback_frame = allocate(/obj/structure/door_frame)
+	fallback_frame.panel_material = /datum/material/bronze
+	TEST_ASSERT_NOTNULL(fallback_frame.panel_icon(), "A material with no door_icons has no fallback")
+	TEST_ASSERT_EQUAL(fallback_frame.panel_icon(), steel_frame.panel_icon(), "The fallback is not steel's art")

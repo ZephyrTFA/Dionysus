@@ -53,6 +53,18 @@
 		ready = fitting_stage >= DOOR_FIT_PANEL_FINALIZED
 	construction_stage = ready ? DOOR_CONSTRUCT_READY : DOOR_CONSTRUCT_WIRED
 
+/// The icon file this frame's panelling should draw, falling back to steel's so
+/// that the 109 materials with no door art of their own still look like a door.
+/obj/structure/door_frame/proc/panel_icon()
+	if(!SSmaterials.initialized)
+		return
+	var/datum/material/instance = GET_MATERIAL_REF(panel_material)
+	var/list/icon/icons = (isnull(instance) ? null : instance.door_icons) || /datum/material/steel::door_icons
+	if(!length(icons))
+		stack_trace("unimplemented door_icons: [panel_material]")
+		return
+	return icons[MAP(atom_integrity / max_integrity, 0, 1, 1, length(icons))]
+
 /obj/structure/door_frame/attackby(obj/item/held, mob/user, params)
 	if(!Adjacent(held))
 		return ..()
@@ -103,8 +115,6 @@
 /obj/structure/door_frame/screwdriver_act(mob/living/user, obj/item/tool)
 	if(!Adjacent(user))
 		return ..()
-	if(isnull(board))
-		return ..()
 	switch(fitting_stage)
 		if(DOOR_FIT_BOARD_SEATED)
 			balloon_alert_to_viewers("securing board...")
@@ -112,12 +122,50 @@
 				return TRUE
 			fitting_stage = DOOR_FIT_BOARD_SECURED
 		if(DOOR_FIT_BOARD_SECURED)
+			if(isnull(board))
+				return ..()
 			balloon_alert_to_viewers("loosening board...")
 			if(!tool.use_tool(src, user, DOOR_CONSTRUCT_FIT_STEP_TIME, volume = 50))
 				return TRUE
 			fitting_stage = DOOR_FIT_BOARD_SEATED
+		if(DOOR_FIT_PANEL_HUNG)
+			balloon_alert_to_viewers("securing panels...")
+			if(!tool.use_tool(src, user, DOOR_CONSTRUCT_FIT_STEP_TIME, volume = 50))
+				return TRUE
+			fitting_stage = DOOR_FIT_PANEL_SECURED
+		if(DOOR_FIT_PANEL_SECURED)
+			balloon_alert_to_viewers("loosening panels...")
+			if(!tool.use_tool(src, user, DOOR_CONSTRUCT_FIT_STEP_TIME, volume = 50))
+				return TRUE
+			fitting_stage = DOOR_FIT_PANEL_HUNG
 		else
 			return ..()
+	advance_fitting()
+	return TRUE
+
+/obj/structure/door_frame/screwdriver_act_secondary(mob/living/user, obj/item/tool)
+	if(!Adjacent(user))
+		return ..()
+	if(fitting_stage != DOOR_FIT_PANEL_SECURED)
+		return ..()
+	balloon_alert_to_viewers("finishing panels...")
+	if(!tool.use_tool(src, user, DOOR_CONSTRUCT_FIT_STEP_TIME, volume = 50))
+		return TRUE
+	fitting_stage = DOOR_FIT_PANEL_FINALIZED
+	advance_fitting()
+	return TRUE
+
+/obj/structure/door_frame/crowbar_act(mob/living/user, obj/item/tool)
+	if(!Adjacent(user))
+		return ..()
+	if(isnull(panel_material))
+		return ..()
+	balloon_alert_to_viewers("removing panels...")
+	if(!tool.use_tool(src, user, DOOR_CONSTRUCT_STEP_TIME, volume = 50))
+		return TRUE
+	user.put_in_hands(new panel_material.sheet_type(drop_location(), DOOR_PANEL_COST))
+	panel_material = null
+	fitting_stage = isnull(board) ? DOOR_FIT_NONE : DOOR_FIT_BOARD_SECURED
 	advance_fitting()
 	return TRUE
 
