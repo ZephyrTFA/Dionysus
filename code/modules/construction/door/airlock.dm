@@ -19,3 +19,12 @@
 /obj/machinery/door/airlock
 	name = "airlock"
 	desc = "A steel airlock."
+
+/// The one place a finished door takes its state from the frame it was welded out of.
+/obj/machinery/door/airlock/proc/apply_from_frame(obj/structure/door_frame/frame)
+	panel_material = frame.panel_material
+	board = frame.board
+	if(!isnull(board))
+		board.forceMove(src)
+	icon = frame.panel_icon() || initial(icon)
+	update_appearance()

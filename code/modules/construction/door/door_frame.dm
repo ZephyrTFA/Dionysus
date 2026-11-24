@@ -169,6 +169,27 @@
 	advance_fitting()
 	return TRUE
 
+/obj/structure/door_frame/welder_act_secondary(mob/living/user, obj/item/tool)
+	if(!Adjacent(user))
+		return ..()
+	if(construction_stage != DOOR_CONSTRUCT_READY)
+		return ..()
+	if(!can_finish(user))
+		return TRUE
+	balloon_alert_to_viewers("welding...")
+	if(!tool.use_tool(src, user, DOOR_CONSTRUCT_STEP_TIME, volume = 50))
+		return TRUE
+	finalize_door()
+	return TRUE
+
+/// Turns this frame into the finished door. The turf under the frame is left
+/// exactly as it was: a door is an object, so it never changes the floor.
+/obj/structure/door_frame/proc/finalize_door()
+	var/obj/machinery/door/airlock/new_door = new(drop_location())
+	new_door.apply_from_frame(src)
+	qdel(src)
+	return new_door
+
 /obj/structure/door_frame/wrench_act(mob/living/user, obj/item/tool)
 	if(!Adjacent(user))
 		return ..()

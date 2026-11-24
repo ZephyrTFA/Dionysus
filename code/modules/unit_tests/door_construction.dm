@@ -144,3 +144,65 @@
 	fallback_frame.panel_material = /datum/material/bronze
 	TEST_ASSERT_NOTNULL(fallback_frame.panel_icon(), "A material with no door_icons has no fallback")
 	TEST_ASSERT_EQUAL(fallback_frame.panel_icon(), steel_frame.panel_icon(), "The fallback is not steel's art")
+
+/datum/unit_test/door_finalization
+	name = "DOOR: Welding finalizes without touching the turf"
+
+/datum/unit_test/door_finalization/Run()
+	var/mob/living/carbon/human/user = allocate(/mob/living/carbon/human)
+	var/obj/item/wrench/wrench = allocate(/obj/item/wrench)
+	var/obj/item/weldingtool/welder = allocate(/obj/item/weldingtool)
+	welder.set_welding(TRUE)
+	user.put_in_active_hand(welder, forced = TRUE)
+	var/obj/item/screwdriver/screwdriver = allocate(/obj/item/screwdriver)
+
+	var/obj/structure/door_frame/frame = allocate(/obj/structure/door_frame)
+	var/turf/test_turf = get_turf(frame)
+	var/initial_turf_type = test_turf.type
+
+	frame.welder_act_secondary(user, welder)
+	TEST_ASSERT(isnull(locate(/obj/machinery/door/airlock) in test_turf), "Welding an unready frame made a door")
+
+	frame.wrench_act(user, wrench)
+	frame.attackby(allocate(/obj/item/stack/cable_coil, null, DOOR_WIRING_COST), user)
+	TEST_ASSERT_EQUAL(frame.construction_stage, DOOR_CONSTRUCT_READY, "A wired frame is not weldable")
+
+	// Review Focus 4: an unlit welder interrupts, and nothing is spent or spawned.
+	var/obj/item/weldingtool/unlit = allocate(/obj/item/weldingtool)
+	frame.welder_act_secondary(user, unlit)
+	TEST_ASSERT(isnull(locate(/obj/machinery/door/airlock) in test_turf), "An unlit welder finalized the frame")
+	TEST_ASSERT_EQUAL(frame.construction_stage, DOOR_CONSTRUCT_READY, "An unlit welder changed the stage")
+
+	var/obj/item/electronics/board = allocate(/obj/item/electronics)
+	frame.attackby(board, user)
+	user.put_in_active_hand(screwdriver, forced = TRUE)
+	frame.screwdriver_act(user, screwdriver)
+	user.put_in_active_hand(welder, forced = TRUE)
+	frame.panel_material = /datum/material/bronze
+	TEST_ASSERT_EQUAL(frame.construction_stage, DOOR_CONSTRUCT_READY, "A wired and boarded frame is not weldable")
+
+	frame.welder_act_secondary(user, welder)
+
+	var/obj/machinery/door/airlock/door = locate(/obj/machinery/door/airlock) in test_turf
+	TEST_ASSERT_NOTNULL(door, "A ready frame with a lit welder did not become a door")
+	var/door_count = 0
+	for(var/obj/machinery/door/airlock/welded in test_turf)
+		door_count++
+	TEST_ASSERT_EQUAL(door_count, 1, "Welding did not produce exactly one door")
+	TEST_ASSERT(QDELETED(frame), "The frame survived being welded into a door")
+	TEST_ASSERT_EQUAL(get_turf(door), test_turf, "The door is not on the frame's turf")
+	TEST_ASSERT_EQUAL(test_turf.type, initial_turf_type, "Welding a door changed the turf")
+	TEST_ASSERT(door.density, "The door is not dense")
+	TEST_ASSERT(door.opacity, "The door is not opaque")
+	TEST_ASSERT_EQUAL(door.layer, CLOSED_DOOR_LAYER, "The door is not on the closed door layer")
+	TEST_ASSERT_EQUAL(door.panel_material, /datum/material/bronze, "The door did not carry the frame's panelling")
+	TEST_ASSERT_EQUAL(door.board, board, "The door did not carry the frame's board")
+
+	// Review Focus 1: a frame whose floor has gone cannot be welded into a door.
+	qdel(door)
+	var/obj/structure/door_frame/plating_frame = allocate(/obj/structure/door_frame, test_turf)
+	plating_frame.construction_stage = DOOR_CONSTRUCT_READY
+	test_turf.ChangeTurf(/turf/open/floor/plating)
+	plating_frame.welder_act_secondary(user, welder)
+	TEST_ASSERT(isnull(locate(/obj/machinery/door/airlock) in test_turf), "A frame on plating was welded into a door")
+	test_turf.ChangeTurf(initial_turf_type)
