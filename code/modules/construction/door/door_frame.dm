@@ -41,6 +41,86 @@
 		return FALSE
 	return TRUE
 
+/// The one place that decides a frame is ready to weld, so that a board and
+/// panelling being optional lives in exactly one proc.
+/obj/structure/door_frame/proc/advance_fitting()
+	if(construction_stage < DOOR_CONSTRUCT_WIRED)
+		return
+	var/ready = TRUE
+	if(!isnull(board))
+		ready = fitting_stage >= DOOR_FIT_BOARD_SECURED
+	if(ready && !isnull(panel_material))
+		ready = fitting_stage >= DOOR_FIT_PANEL_FINALIZED
+	construction_stage = ready ? DOOR_CONSTRUCT_READY : DOOR_CONSTRUCT_WIRED
+
+/obj/structure/door_frame/attackby(obj/item/held, mob/user, params)
+	if(!Adjacent(held))
+		return ..()
+	if(istype(held, /obj/item/stack/cable_coil))
+		return add_wiring(user, held)
+	if(istype(held, /obj/item/electronics))
+		return seat_board(user, held)
+	return ..()
+
+/obj/structure/door_frame/proc/add_wiring(mob/user, obj/item/stack/cable_coil/coils)
+	if(construction_stage != DOOR_CONSTRUCT_SECURED)
+		balloon_alert(user, construction_stage == DOOR_CONSTRUCT_FRAME ? "secure it first!" : "already wired!")
+		return TRUE
+	if(coils.get_amount() < DOOR_WIRING_COST)
+		balloon_alert(user, "not enough!")
+		return TRUE
+	balloon_alert_to_viewers("wiring...")
+	if(!coils.use_tool(src, user, DOOR_CONSTRUCT_STEP_TIME, volume = 50))
+		return TRUE
+	if(!coils.use(DOOR_WIRING_COST))
+		balloon_alert(user, "not enough!")
+		return TRUE
+	construction_stage = DOOR_CONSTRUCT_WIRED
+	advance_fitting()
+	return TRUE
+
+/obj/structure/door_frame/proc/seat_board(mob/user, obj/item/electronics/board_item)
+	if(construction_stage < DOOR_CONSTRUCT_WIRED)
+		balloon_alert(user, "needs wiring!")
+		return TRUE
+	if(!isnull(board))
+		balloon_alert(user, "already boarded!")
+		return TRUE
+	balloon_alert_to_viewers("seating...")
+	if(!board_item.use_tool(src, user, DOOR_CONSTRUCT_FIT_STEP_TIME, volume = 50))
+		return TRUE
+	if(QDELETED(src) || !Adjacent(board_item))
+		return TRUE
+	if(!user.temporarilyRemoveItemFromInventory(board_item))
+		balloon_alert(user, "can't reach!")
+		return TRUE
+	board_item.forceMove(src)
+	board = board_item
+	fitting_stage = DOOR_FIT_BOARD_SEATED
+	advance_fitting()
+	return TRUE
+
+/obj/structure/door_frame/screwdriver_act(mob/living/user, obj/item/tool)
+	if(!Adjacent(user))
+		return ..()
+	if(isnull(board))
+		return ..()
+	switch(fitting_stage)
+		if(DOOR_FIT_BOARD_SEATED)
+			balloon_alert_to_viewers("securing board...")
+			if(!tool.use_tool(src, user, DOOR_CONSTRUCT_FIT_STEP_TIME, volume = 50))
+				return TRUE
+			fitting_stage = DOOR_FIT_BOARD_SECURED
+		if(DOOR_FIT_BOARD_SECURED)
+			balloon_alert_to_viewers("loosening board...")
+			if(!tool.use_tool(src, user, DOOR_CONSTRUCT_FIT_STEP_TIME, volume = 50))
+				return TRUE
+			fitting_stage = DOOR_FIT_BOARD_SEATED
+		else
+			return ..()
+	advance_fitting()
+	return TRUE
+
 /obj/structure/door_frame/wrench_act(mob/living/user, obj/item/tool)
 	if(!Adjacent(user))
 		return ..()
@@ -61,3 +141,10 @@
 			. += span_notice("The floor anchor bolts can be [span_bold("wrenched")] secure.")
 		if(DOOR_CONSTRUCT_SECURED)
 			. += span_notice("The frame can be [span_bold("wrenched")] loose, and needs <i>wiring</i>.")
+		if(DOOR_CONSTRUCT_WIRED)
+			if(isnull(board))
+				. += span_notice("The maintenance panel is wired, and its circuit slot is <i>empty</i>.")
+			else
+				. += span_notice("The circuit is <i>connected loosely</i> to its slot, and the panel is [span_bold("screwed")] shut.")
+		if(DOOR_CONSTRUCT_READY)
+			. += span_notice("This frame can be [span_bold("welded")] into a door.")
