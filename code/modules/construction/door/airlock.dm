@@ -16,6 +16,16 @@
 	/// The material of this door's panelling.
 	var/datum/material/panel_material = null
 
+/obj/machinery/door/Initialize(mapload)
+	. = ..()
+	update_appearance(UPDATE_ICON)
+
+/obj/machinery/door/update_icon(updates)
+	. = ..()
+	var/panel_file = get_door_panel_icon(panel_material, max_integrity ? atom_integrity / max_integrity : 1)
+	if(!isnull(panel_file))
+		icon = panel_file
+
 /obj/machinery/door/airlock
 	name = "airlock"
 	desc = "A steel airlock."
@@ -26,5 +36,33 @@
 	board = frame.board
 	if(!isnull(board))
 		board.forceMove(src)
-	icon = frame.panel_icon() || initial(icon)
-	update_appearance()
+	update_appearance(UPDATE_ICON)
+
+/// Builds the frame back out of this door, carrying its fittings with it. The floor
+/// under the door is left alone: a door is an object, so it never changes the turf.
+/obj/machinery/door/airlock/proc/deconstruct_to_frame()
+	var/obj/structure/door_frame/frame = new(drop_location())
+	frame.panel_material = panel_material
+	frame.anchored = TRUE
+	frame.construction_stage = DOOR_CONSTRUCT_READY
+	frame.update_smoothing(TRUE)
+	if(!isnull(board))
+		board.forceMove(frame)
+		frame.board = board
+		frame.fitting_stage = DOOR_FIT_BOARD_SECURED
+	frame.advance_fitting()
+	qdel(src)
+	return frame
+
+/obj/machinery/door/airlock/crowbar_act(mob/living/user, obj/item/tool)
+	if(!Adjacent(user))
+		return ..()
+	balloon_alert_to_viewers("prying...")
+	if(!tool.use_tool(src, user, DOOR_CONSTRUCT_STEP_TIME, volume = 50))
+		return TRUE
+	deconstruct_to_frame()
+	return TRUE
+
+/obj/machinery/door/airlock/atom_destruction(damage_flag)
+	. = ..()
+	deconstruct_to_frame()

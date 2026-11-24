@@ -160,10 +160,11 @@
 	var/turf/test_turf = get_turf(frame)
 	var/initial_turf_type = test_turf.type
 
-	frame.welder_act_secondary(user, welder)
-	TEST_ASSERT(isnull(locate(/obj/machinery/door/airlock) in test_turf), "Welding an unready frame made a door")
-
 	frame.wrench_act(user, wrench)
+	frame.welder_act_secondary(user, welder)
+	TEST_ASSERT(isnull(locate(/obj/machinery/door/airlock) in test_turf), "Welding an unwired frame made a door")
+	TEST_ASSERT(!QDELETED(frame), "Welding an unwired frame took the frame apart")
+
 	frame.attackby(allocate(/obj/item/stack/cable_coil, null, DOOR_WIRING_COST), user)
 	TEST_ASSERT_EQUAL(frame.construction_stage, DOOR_CONSTRUCT_READY, "A wired frame is not weldable")
 
@@ -206,3 +207,70 @@
 	plating_frame.welder_act_secondary(user, welder)
 	TEST_ASSERT(isnull(locate(/obj/machinery/door/airlock) in test_turf), "A frame on plating was welded into a door")
 	test_turf.ChangeTurf(initial_turf_type)
+
+/datum/unit_test/door_deconstruction
+	name = "DOOR: The chain reverses"
+
+/datum/unit_test/door_deconstruction/Run()
+	var/mob/living/carbon/human/user = allocate(/mob/living/carbon/human)
+	var/obj/item/wrench/wrench = allocate(/obj/item/wrench)
+	var/obj/item/screwdriver/screwdriver = allocate(/obj/item/screwdriver)
+	var/obj/item/crowbar/crowbar = allocate(/obj/item/crowbar)
+	var/obj/item/wirecutters/wirecutters = allocate(/obj/item/wirecutters)
+	var/obj/item/weldingtool/welder = allocate(/obj/item/weldingtool)
+	welder.set_welding(TRUE)
+
+	var/obj/structure/door_frame/frame = allocate(/obj/structure/door_frame)
+	var/turf/test_turf = get_turf(frame)
+	var/initial_turf_type = test_turf.type
+
+	frame.wrench_act(user, wrench)
+	frame.attackby(allocate(/obj/item/stack/cable_coil, null, DOOR_WIRING_COST), user)
+	var/obj/item/electronics/board = allocate(/obj/item/electronics)
+	frame.attackby(board, user)
+	frame.screwdriver_act(user, screwdriver)
+	frame.panel_material = /datum/material/bronze
+	frame.fitting_stage = DOOR_FIT_PANEL_HUNG
+	frame.screwdriver_act(user, screwdriver)
+	frame.screwdriver_act_secondary(user, screwdriver)
+	TEST_ASSERT_EQUAL(frame.construction_stage, DOOR_CONSTRUCT_READY, "A fully fitted frame is not weldable")
+
+	frame.welder_act_secondary(user, welder)
+	var/obj/machinery/door/airlock/door = locate(/obj/machinery/door/airlock) in test_turf
+	TEST_ASSERT_NOTNULL(door, "The full chain did not produce a door")
+
+	door.crowbar_act(user, crowbar)
+	var/obj/structure/door_frame/back = locate(/obj/structure/door_frame) in test_turf
+	TEST_ASSERT_NOTNULL(back, "Crowbarring a door did not yield a frame")
+	TEST_ASSERT(QDELETED(door), "The door survived being crowbarred")
+	TEST_ASSERT_EQUAL(back.panel_material, /datum/material/bronze, "The frame lost the door's panelling")
+	TEST_ASSERT_EQUAL(back.board, board, "The frame lost the door's board")
+	TEST_ASSERT_EQUAL(test_turf.type, initial_turf_type, "Crowbarring a door changed the turf")
+
+	back.crowbar_act(user, crowbar)
+	TEST_ASSERT(isnull(back.panel_material), "The crowbar did not strip the panels")
+	TEST_ASSERT(!isnull(locate(/obj/item/stack/sheet/bronze) in user) || !isnull(locate(/obj/item/stack/sheet/bronze) in test_turf), "Stripping the panels returned no sheet")
+
+	back.screwdriver_act(user, screwdriver)
+	TEST_ASSERT_EQUAL(back.fitting_stage, DOOR_FIT_BOARD_SEATED, "The board was not loosened")
+	back.crowbar_act(user, crowbar)
+	TEST_ASSERT(isnull(back.board), "The crowbar did not take the board out")
+	TEST_ASSERT(!isnull(locate(/obj/item/electronics) in user) || !isnull(locate(/obj/item/electronics) in test_turf), "The board did not come back")
+
+	back.wirecutter_act(user, wirecutters)
+	TEST_ASSERT_EQUAL(back.construction_stage, DOOR_CONSTRUCT_SECURED, "The wiring was not cut out")
+	TEST_ASSERT(!isnull(locate(/obj/item/stack/cable_coil) in user) || !isnull(locate(/obj/item/stack/cable_coil) in test_turf), "Cutting the wiring returned no coils")
+
+	back.wrench_act(user, wrench)
+	TEST_ASSERT(!back.anchored, "The frame was not unsecured")
+	TEST_ASSERT_EQUAL(back.construction_stage, DOOR_CONSTRUCT_FRAME, "Unsecuring did not rewind the stage")
+
+	back.welder_act_secondary(user, welder)
+	TEST_ASSERT(QDELETED(back), "The frame survived being dismantled")
+	TEST_ASSERT(!isnull(locate(/obj/item/stack/sheet/steel) in user) || !isnull(locate(/obj/item/stack/sheet/steel) in test_turf), "Dismantling the frame returned no steel")
+	TEST_ASSERT_EQUAL(test_turf.type, initial_turf_type, "Deconstructing a door changed the turf")
+
+	var/obj/machinery/door/airlock/panelled/bronze/bronze_door = allocate(/obj/machinery/door/airlock/panelled/bronze)
+	var/obj/machinery/door/airlock/panelled/steel/steel_door = allocate(/obj/machinery/door/airlock/panelled/steel)
+	TEST_ASSERT_EQUAL(bronze_door.panel_material, /datum/material/bronze, "A mapped bronze door has the wrong panelling")
+	TEST_ASSERT_EQUAL(bronze_door.max_integrity, steel_door.max_integrity, "Bronze panelling changed a mapped door's integrity")

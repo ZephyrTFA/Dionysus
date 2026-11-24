@@ -56,14 +56,22 @@
 /// The icon file this frame's panelling should draw, falling back to steel's so
 /// that the 109 materials with no door art of their own still look like a door.
 /obj/structure/door_frame/proc/panel_icon()
+	return get_door_panel_icon(panel_material, max_integrity ? atom_integrity / max_integrity : 1)
+
+/// Steel's art stands in for any material without door_icons of its own.
+/proc/get_door_panel_icon(datum/material/panel_material, integrity_pct)
 	if(!SSmaterials.initialized)
 		return
-	var/datum/material/instance = GET_MATERIAL_REF(panel_material)
-	var/list/icon/icons = (isnull(instance) ? null : instance.door_icons) || /datum/material/steel::door_icons
+	var/list/icon/icons
+	if(!isnull(panel_material))
+		var/datum/material/instance = GET_MATERIAL_REF(panel_material)
+		icons = isnull(instance) ? null : instance.door_icons
+	if(isnull(icons) || !length(icons))
+		icons = /datum/material/steel::door_icons
 	if(!length(icons))
 		stack_trace("unimplemented door_icons: [panel_material]")
 		return
-	return icons[MAP(atom_integrity / max_integrity, 0, 1, 1, length(icons))]
+	return icons[MAP(integrity_pct, 0, 1, 1, length(icons))]
 
 /obj/structure/door_frame/attackby(obj/item/held, mob/user, params)
 	if(!Adjacent(held))
@@ -158,28 +166,64 @@
 /obj/structure/door_frame/crowbar_act(mob/living/user, obj/item/tool)
 	if(!Adjacent(user))
 		return ..()
-	if(isnull(panel_material))
+	if(!isnull(panel_material))
+		balloon_alert_to_viewers("removing panels...")
+		if(!tool.use_tool(src, user, DOOR_CONSTRUCT_STEP_TIME, volume = 50))
+			return TRUE
+		user.put_in_hands(new panel_material.sheet_type(drop_location(), DOOR_PANEL_COST))
+		panel_material = null
+		fitting_stage = isnull(board) ? DOOR_FIT_NONE : DOOR_FIT_BOARD_SECURED
+		advance_fitting()
+		return TRUE
+	if(isnull(board) || fitting_stage != DOOR_FIT_BOARD_SEATED)
 		return ..()
-	balloon_alert_to_viewers("removing panels...")
+	balloon_alert_to_viewers("prying out board...")
 	if(!tool.use_tool(src, user, DOOR_CONSTRUCT_STEP_TIME, volume = 50))
 		return TRUE
-	user.put_in_hands(new panel_material.sheet_type(drop_location(), DOOR_PANEL_COST))
-	panel_material = null
-	fitting_stage = isnull(board) ? DOOR_FIT_NONE : DOOR_FIT_BOARD_SECURED
+	user.put_in_hands(board)
+	board = null
+	fitting_stage = DOOR_FIT_NONE
 	advance_fitting()
+	return TRUE
+
+/obj/structure/door_frame/wirecutter_act(mob/living/user, obj/item/tool)
+	if(!Adjacent(user))
+		return ..()
+	if(construction_stage != DOOR_CONSTRUCT_SECURED && construction_stage != DOOR_CONSTRUCT_WIRED && construction_stage != DOOR_CONSTRUCT_READY)
+		return ..()
+	if(fitting_stage != DOOR_FIT_NONE)
+		balloon_alert(user, "remove the fittings!")
+		return TRUE
+	balloon_alert_to_viewers("cutting wiring...")
+	if(!tool.use_tool(src, user, DOOR_CONSTRUCT_STEP_TIME, volume = 50))
+		return TRUE
+	user.put_in_hands(new /obj/item/stack/cable_coil(drop_location(), DOOR_WIRING_COST))
+	construction_stage = DOOR_CONSTRUCT_SECURED
 	return TRUE
 
 /obj/structure/door_frame/welder_act_secondary(mob/living/user, obj/item/tool)
 	if(!Adjacent(user))
 		return ..()
-	if(construction_stage != DOOR_CONSTRUCT_READY)
-		return ..()
-	if(!can_finish(user))
-		return TRUE
-	balloon_alert_to_viewers("welding...")
-	if(!tool.use_tool(src, user, DOOR_CONSTRUCT_STEP_TIME, volume = 50))
-		return TRUE
-	finalize_door()
+	switch(construction_stage)
+		if(DOOR_CONSTRUCT_READY)
+			if(!can_finish(user))
+				return TRUE
+			balloon_alert_to_viewers("welding...")
+			if(!tool.use_tool(src, user, DOOR_CONSTRUCT_STEP_TIME, volume = 50))
+				return TRUE
+			finalize_door()
+		if(DOOR_CONSTRUCT_FRAME)
+			if(anchored)
+				balloon_alert(user, "unsecure it first!")
+				return TRUE
+			balloon_alert_to_viewers("dismantling...")
+			if(!tool.use_tool(src, user, DOOR_CONSTRUCT_STEP_TIME, volume = 50))
+				return TRUE
+			user.put_in_hands(new /obj/item/stack/sheet/steel(drop_location(), DOOR_FRAME_COST))
+			qdel(src)
+		else
+			balloon_alert(user, "strip it back first!")
+			return TRUE
 	return TRUE
 
 /// Turns this frame into the finished door. The turf under the frame is left
@@ -194,6 +238,9 @@
 	if(!Adjacent(user))
 		return ..()
 	if(!anchored && !can_finish(user))
+		return TRUE
+	if(anchored && construction_stage > DOOR_CONSTRUCT_SECURED)
+		balloon_alert(user, "strip the wiring first!")
 		return TRUE
 	balloon_alert_to_viewers(anchored ? "unsecuring..." : "securing...")
 	if(!tool.use_tool(src, user, DOOR_CONSTRUCT_STEP_TIME, volume = 50))
